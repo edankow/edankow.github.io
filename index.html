@@ -798,9 +798,15 @@ async function postImmediateID() {
       //only post comment if new ID is not agreeing or it's stuck above genus
       if (taxonInfo && CURRENT_COMMUNITY_ID !== taxonInfo.taxonId || taxonInfo && taxonInfo.rank !== "species") {
 	// 3. POST THE NARRATIVE COMMENT AT THE END
-            const narrativeText = document.getElementById('summary-content').innerHTML;
+            let narrativeText = document.getElementById('summary-content').innerHTML;
             const placeholder = "Select traits to generate description.";
-            
+
+			// append "special text" ONLY if it's NOT the placeholder AND user is edanko
+			const isPlaceholder = (narrativeText === "Select traits to generate description." || !narrativeText);
+			if (!isPlaceholder && document.getElementById('token-status').innerText==="ACTIVE: edanko") {
+ 			   narrativeText += "\n\ntest";
+			}
+		  
             if (narrativeText && narrativeText !== placeholder) {
                 try {
                     fetch("https://api.inaturalist.org/v1/comments", {
