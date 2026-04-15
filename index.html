@@ -804,7 +804,7 @@ async function postImmediateID() {
 			// append "special text" ONLY if it's NOT the placeholder AND user is edanko
 			const isPlaceholder = (narrativeText === "Select traits to generate description." || !narrativeText);
 			if (!isPlaceholder && document.getElementById('token-status').innerText==="ACTIVE: edanko") {
- 			   narrativeText += "\n\ntest";
+ 			   narrativeText += "\n\n--------------------------\n\nI made this web page recently to help identify green bottle-flies: https://edankow.github.io/identify/. I’m improving it gradually, and I’d like to know what more people think. If you take a look, would you like to let me know the first thing that challenges or confuses you?";
 			}
 		  
             if (narrativeText && narrativeText !== placeholder) {
