@@ -89,12 +89,13 @@
 <div id="token-bar">
     <div>
         <span id="token-status"></span>
-	<div class="dropdown" tabindex="0">
+	<div class="dropdown hidden" tabindex="0" id="filter-dropdown-container">
 	    <button class="btn-toggle" style="font-size: 0.7rem;">Change Filters ▼</button>
 	    <div class="dropdown-content">
 	        <a href="#" onclick="event.preventDefault(); openTaxonFilterModal()">🪰 Change Taxon</a>
 	        <a href="#" onclick="event.preventDefault(); openLocationModal()">📍 Change Location</a>
 	        <a href="#" onclick="event.preventDefault(); openFiltersModal()">⚙️ URL Parameters</a>
+		<a href="#" onclick="event.preventDefault(); logoutInat()" style="color: #d9534f;">🚪 Unlink iNat Account</a>
 	    </div>
 	</div>
         <span id="queue-count" style="font-size: 0.8em; opacity: 0.8;"></span>
@@ -106,11 +107,25 @@
 
 <button id="toggle-viewer-btn" onclick="toggleViewerPanel()" class="btn-toggle">Hide iNat interface</button>
 
+	<div id="token-controls" class="hidden">
+	    <button onclick="openTokenModal()" class="btn-toggle" style="background: var(--inat-green); border: none;">	Link iNaturalist account</button>
+	</div>	
+    <div id="modal-token" class="modal">
+    <div class="modal-content">
+        <h3>iNaturalist API Token</h3>
+        <p style="font-size: 0.8rem; color: #666;">
+            To submit identifications, you need to link your iNaturalist account.
 
-    <div id="token-controls" class="hidden">
-        <a href="https://www.inaturalist.org/users/api_token" target="_blank" class="token-link">Get Token</a>
-        <input type="text" id="token-input" placeholder="Paste api_token...">
-        <button onclick="updateTokenManual()" style="background:var(--inat-green); color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Save</button>
+        </p>
+	<p style="font-size: 0.8rem; color: #666;"> 
+	Log in and copy the 'api_token' to your clipboard by visiting <br> <a href="https://www.inaturalist.org/users/api_token" target="_blank" class="token-link" style="color: var(--primary); font-weight: bold; font-size: 0.8rem;">https://www.inaturalist.org/users/api_token</a>
+	</p>
+        <input type="text" id="token-input-modal" placeholder="Paste api_token here..." style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+        <div style="display:flex; gap:10px;">
+            <button onclick="updateTokenFromModal()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Save Token</button>
+            <button onclick="closeModals()" class="btn-skip" style="cursor: pointer; flex:1; padding:10px;">Cancel</button>
+        </div>
+    </div>
     </div>
 </div>
 
@@ -365,6 +380,9 @@ function closeModals() {
     if (filtersModal) {
         filtersModal.style.display = 'none';
     }
+
+    const tokenModal = document.getElementById('modal-token');
+    if (tokenModal) tokenModal.style.display = 'none';
 }
 
     async function submitManualID() {
@@ -443,13 +461,17 @@ function copyNarrativeToClipboard() {
     async function updateStatusUI() {
         const statusEl = document.getElementById('token-status');
         const controls = document.getElementById('token-controls');
+	const filterDropdown = document.getElementById('filter-dropdown-container'); // Get the container
         const viewerPanel = document.querySelector('.viewer-panel');
 	const toggleBtn = document.getElementById('toggle-viewer-btn');
 	const toggleLocBtn = document.getElementById('change-loc-btn');
+	const queueCountEl = document.getElementById('queue-count'); // Get the counter element
         if (!isTokenValid(MY_TOKEN)) {
             statusEl.innerText = "";<!--versus "EXPIRED/MISSING" -->
             statusEl.className = "";<!-- versus "status-bad" -->
+	    queueCountEl.innerText = ""; // Clear the count
             controls.classList.remove('hidden');
+	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide if not valid
             if (viewerPanel) viewerPanel.style.display = 'none';
             if (toggleBtn) toggleBtn.classList.add('hidden');
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
@@ -467,6 +489,7 @@ function copyNarrativeToClipboard() {
                 statusEl.innerHTML = `<a href="https://www.inaturalist.org/identifications/${user.login}" target="_blank" style="color: white; text-decoration: none;">ACTIVE: ${user.login}</a>`;
                 statusEl.className = "status-good";
                 controls.classList.add('hidden');
+		if (filterDropdown) filterDropdown.classList.remove('hidden'); // Show when linked
 		if (toggleLocBtn) toggleLocBtn.classList.remove('hidden');
                 if (toggleBtn) toggleBtn.classList.remove('hidden');
                 if (viewerPanel) viewerPanel.style.display = 'block';
@@ -476,6 +499,7 @@ function copyNarrativeToClipboard() {
             statusEl.innerText = "TOKEN ERROR";
             statusEl.className = "status-bad";
             controls.classList.remove('hidden');
+	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide on error
             if (toggleBtn) toggleBtn.classList.add('hidden');
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
             if (viewerPanel) viewerPanel.style.display = 'none';
@@ -1307,8 +1331,59 @@ function jumpToNextQuestion() {
     }
 }
 
+function openTokenModal() {
+    document.getElementById('modal-token').style.display = 'flex';
+    // Pre-fill with existing token if available
+    document.getElementById('token-input-modal').value = MY_TOKEN;
+}
 
+function updateTokenFromModal() {
+    let val = document.getElementById('token-input-modal').value.trim();
+    
+    // 1. Check if the user pasted the entire JSON object
+    if (val.startsWith('{')) {
+        try {
+            const parsed = JSON.parse(val);
+            if (parsed.api_token) {
+                val = parsed.api_token;
+            }
+        } catch (e) {
+            console.error("Attempted to parse JSON token but failed", e);
+        }
+    }
 
+    // 2. Existing logic to strip quotes if they remain
+    const match = val.match(/"([^"]{20,})"/);
+    if (match) val = match[1];
+
+    if (val) {
+        MY_TOKEN = val;
+        localStorage.setItem('inat_token', val);
+        closeModals();
+	OBSERVATION_QUEUE = [];
+	updateStatusUI().then(fetchObservations);
+	input.value = "";
+    } else {
+        alert("Please paste a valid token or JSON object containing an api_token.");
+    }
+}
+
+function logoutInat() {
+    // Remove the token from persistent storage
+    localStorage.removeItem('inat_token');
+    
+    // Reset internal state
+    MY_TOKEN = "";
+    MY_USER_ID = null;
+    OBSERVATION_QUEUE = [];
+    
+    // Update the UI and stop fetching data
+    updateStatusUI();
+    document.getElementById('observation-grid').innerHTML = 
+        '<div style="text-align:center; padding: 50px; color: #666;">Account unlinked. Please provide a new token to continue.</div>';
+    
+    console.log("iNaturalist account unlinked.");
+}
 
 </script>
 
