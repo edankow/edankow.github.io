@@ -11,7 +11,7 @@
 <div id="modal-filters" class="modal">
     <div class="modal-content">
         <h3>Add Extra URL Filters</h3>
-        <p style="font-size: 0.8rem; color: #666;">Enter additional iNaturalist API parameters (e.g., <code>user_id=username</code> or <code>lrank=complex</code>).</p>
+        <p style="font-size: 0.8rem; color: #666;">Enter additional iNaturalist API parameters (e.g., <code>user_id=username</code>,<code>order=asc</code>, or <code>lrank=complex</code>).</p>
         <input type="text" id="new-other-filters" placeholder="e.g. user_id=edanko">
         <div style="display:flex; gap:10px;">
             <button onclick="updateOtherFilters()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Update & Refresh</button>
@@ -178,7 +178,7 @@
     let CURRENT_COMMUNITY_ID = null;
     let CURRENT_PLACE_ID = "6712,1"; // Default: USA & Canada
     let OTHER_FILTERS = ""; // Default other filters
-    let API_BASE = "https://api.inaturalist.org/v1/observations?taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id&order=asc";
+    let API_BASE = "https://api.inaturalist.org/v1/observations?taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id";
 
 let isPinned = false; 
 
@@ -240,7 +240,7 @@ function updateTaxonFilter() {
     if (newId) {
         CURRENT_TAXON_ID = newId;
         // Update the API_BASE to reflect the new taxon ID
-        API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${CURRENT_TAXON_ID}&only_id=false&fields=all&quality_grade=needs_id&order=asc`;
+        API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${CURRENT_TAXON_ID}&only_id=false&fields=all&quality_grade=needs_id`;
         
         OBSERVATION_QUEUE = []; 
         FINISHED_OBS_IDS = [];
