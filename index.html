@@ -114,7 +114,11 @@
     <div class="modal-content">
         <h3>iNaturalist API Token</h3>
         <p style="font-size: 0.8rem; color: #666;">
-            To submit identifications, you need to link your iNaturalist account. I'm hoping to add an actual iNat login soon, but for now I just have a temporary setup that does almost the same thing:
+            To submit identifications, you need to link your iNaturalist account. 
+
+		<button onclick="loginWithINat()" style="background:#74ac00; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">
+        Log in with iNaturalist
+    </button>
 
         </p>
 	<p style="font-size: 0.8rem; color: #666;"> 
@@ -1390,6 +1394,40 @@ function logoutInat() {
     
     console.log("iNaturalist account unlinked.");
 }
+
+const CONFIG = {
+    clientId: '8IY4sCq5m5mUaAiAyVjDJL5ro2QstghP9sAXljKYWbE', // Paste your ID from Step 1
+    redirectUri: window.location.origin + window.location.pathname
+};
+
+// 1. Function to start the login flow
+function loginWithINat() {
+    const authUrl = `https://www.inaturalist.org/oauth/authorize?client_id=${CONFIG.clientId}&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}&response_type=token`;
+    window.location.href = authUrl;
+}
+
+// 2. Logic to run when the page loads
+window.addEventListener('DOMContentLoaded', () => {
+    // Check if we just returned from iNat with a token in the URL
+    const hash = window.location.hash;
+    if (hash.includes('access_token=')) {
+        const params = new URLSearchParams(hash.replace('#', '?'));
+        const token = params.get('access_token');i
+        
+        if (token) {
+            MY_TOKEN = token;
+            localStorage.setItem('inat_token', token);
+            // Clean the URL so the token doesn't stay in the address bar
+            window.history.replaceState({}, document.title, CONFIG.redirectUri);
+        }
+    }
+    
+    // Continue with your existing initialization
+    updateStatusUI();
+    if (MY_TOKEN) fetchObservations();
+});
+
+
 
 </script>
 
