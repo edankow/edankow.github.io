@@ -1417,8 +1417,7 @@ async function loginWithINat() {
         redirect_uri: CONFIG.redirectUri,
         response_type: 'code',
         code_challenge: challenge,
-        code_challenge_method: 'S256',
-	scope: 'write account'
+        code_challenge_method: 'S256'
     });
 
     window.location.href = `${CONFIG.authEndpoint}?${params.toString()}`;
