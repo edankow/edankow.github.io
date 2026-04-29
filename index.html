@@ -1458,7 +1458,17 @@ async function checkLogin() {
                 
                 console.log("Step 5: Cleaning URL...");
                 window.history.replaceState({}, document.title, window.location.pathname);
-                MY_TOKEN = data.access_token;
+		TEMP_TOKEN = data.access_token;
+
+		//now need to exchange temp token for a JWT token!
+		// Swap your OAuth token for the API JWT
+		const tokenExchange = await fetch("https://www.inaturalist.org/users/api_token", {
+		    headers: { "Authorization": `Bearer ${TEMP_TOKEN}` }
+		});
+		const data = await tokenExchange.json();
+		const MY_TOKEN = data.api_token;		
+
+                
 		updateStatusUI();
 		fetchObservations();
             } else {
