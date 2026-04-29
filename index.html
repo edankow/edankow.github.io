@@ -1418,6 +1418,7 @@ async function loginWithINat() {
         response_type: 'code',
         code_challenge: challenge,
         code_challenge_method: 'S256'
+	scope: 'write account'
     });
 
     window.location.href = `${CONFIG.authEndpoint}?${params.toString()}`;
