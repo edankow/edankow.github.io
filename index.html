@@ -1439,7 +1439,12 @@ async function checkLogin() {
     const code = urlParams.get('code');
 
     if (code) {
+	console.log("Step 1: Auth code detected in URL:", code);
+
         const verifier = localStorage.getItem('pkce_code_verifier');
+	console.log("Step 2: Retrieved verifier from localStorage:", verifier);
+
+	console.log("Step 3: Requesting access token from iNaturalist...");
         
         // Exchange the code for a token
         const response = await fetch(CONFIG.tokenEndpoint, {
@@ -1454,13 +1459,22 @@ async function checkLogin() {
             })
         });
 
+	console.log("Step 4: Network response status:", response.status, response.statusText);
+
         const data = await response.json();
-        if (data.access_token) {
-            localStorage.setItem('inat_token', data.access_token);
-            // Clean up the URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            location.reload(); 
-        }
+            if (data.access_token) {
+                console.log("✅ Success! Access token received:", data.access_token);
+                localStorage.setItem('inat_token', data.access_token);
+                
+                console.log("Step 5: Cleaning URL and reloading page...");
+                window.history.replaceState({}, document.title, window.location.pathname);
+                location.reload(); 
+            } else {
+                console.warn("⚠️ No access_token in response data. Full response:", data);
+                if (data.error) {
+                    console.error("Reason for failure:", data.error_description || data.error);
+                }
+            }
     }
 }
 
