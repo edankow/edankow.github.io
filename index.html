@@ -1207,8 +1207,16 @@ function getFilteredFlies() {
     }
 
     window.onload = () => {
-        initMatrix();
-        updateStatusUI().then(() => { if (MY_TOKEN) fetchObservations(); });
+        // 1. Check if we are returning from iNat with a login code
+        checkLogin().then(() => {
+            // 2. Initialize the matrix
+            initMatrix();
+        
+            // 3. Update UI and fetch data
+            updateStatusUI().then(() => { 
+                if (MY_TOKEN) fetchObservations(); 
+            });
+        });
     };
 
 
