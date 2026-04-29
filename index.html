@@ -1468,7 +1468,8 @@ async function checkLogin() {
                 
                 console.log("Step 5: Cleaning URL and reloading page...");
                 window.history.replaceState({}, document.title, window.location.pathname);
-                location.reload(); 
+                MY_TOKEN = data.access_token;
+		updateStatusUI().then(fetchObservations);
             } else {
                 console.warn("⚠️ No access_token in response data. Full response:", data);
                 if (data.error) {
