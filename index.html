@@ -455,11 +455,13 @@ function copyNarrativeToClipboard() {
 
     /* --- iNAT VIEWER LOGIC --- */
     function isTokenValid(token) {
-        if (!token || token.length < 20) return false;
-        try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            return Date.now() < (payload.exp * 1000);
-        } catch (e) { return false; }
+	return (token && token.length > 20);
+        // this older code doesnt work with oath tokens:
+	//if (!token || token.length < 20) return false;
+        //try {
+        //    const payload = JSON.parse(atob(token.split('.')[1]));
+        //    return Date.now() < (payload.exp * 1000);
+        //} catch (e) { return false; }
     }
 
     async function updateStatusUI() {
