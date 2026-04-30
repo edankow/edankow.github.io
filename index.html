@@ -1454,7 +1454,7 @@ async function checkLogin() {
         const data = await response.json();
             if (data.access_token) {
                 console.log("✅ Success! Access token received:", data.access_token);
-                localStorage.setItem('inat_token', data.access_token);
+                
                 
                 console.log("Step 5: Cleaning URL...");
                 window.history.replaceState({}, document.title, window.location.pathname);
@@ -1467,6 +1467,7 @@ async function checkLogin() {
 		});
 		datatwo = await tokenExchange.json();
 		MY_TOKEN = datatwo.api_token;
+		localStorage.setItem('inat_token', MY_TOKEN);
 
 		updateStatusUI();
 		fetchObservations();
