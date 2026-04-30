@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lucilia Database Editor - Circular Protection</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; margin: 20px; background: #f8fafc; color: #1e293b; }
+        .container { max-width: 1200px; margin: auto; }
+        .upload-card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; border: 2px dashed #cbd5e1; margin-bottom: 25px; }
+        .btn { border: none; color: white; background-color: #2563eb; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .wrapper { position: relative; overflow: hidden; display: inline-block; }
+        input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+        .tabs { display: flex; gap: 4px; }
+        .tab-btn { padding: 10px 16px; cursor: pointer; border: 1px solid #cbd5e1; border-bottom: none; background: #e2e8f0; border-radius: 6px 6px 0 0; }
+        .tab-btn.active { background: white; color: #2563eb; font-weight: bold; border-top: 2px solid #2563eb; }
+        .tab-btn:disabled { opacity: 0.4; }
+        .pane-container { background: white; border: 1px solid #cbd5e1; padding: 20px; border-radius: 0 6px 6px 6px; }
+        .pane { display: none; }
+        .pane.active { display: block; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #e2e8f0; padding: 8px 12px; font-size: 13px; text-align: left; }
+        th { background: #f8fafc; position: sticky; top: 0; }
+        td:focus { outline: 2px solid #2563eb; background: #eff6ff; }
+        .download-btn { background-color: #16a34a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; }
+        #log { font-family: monospace; font-size: 11px; padding: 10px; background: #0f172a; color: #38bdf8; border-radius: 6px; margin-top: 15px; max-height: 100px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Lucilia Database Editor</h2>
+    
+    <div class="upload-card">
+        <p>Upload <b>taxa.js</b>, <b>traits.js</b>, and <b>flyData.js</b></p>
+        <div class="wrapper">
+            <button class="btn">Upload Files</button>
+            <input type="file" multiple onchange="loadFiles(event)">
+        </div>
+        <div id="log">Ready.</div>
+    </div>
+
+    <div class="tabs">
+        <button id="tab-taxa" class="tab-btn" onclick="switchTab('taxa')" disabled>Taxa</button>
+        <button id="tab-traits" class="tab-btn" onclick="switchTab('traits')" disabled>Traits</button>
+        <button id="tab-flyData" class="tab-btn" onclick="switchTab('flyData')" disabled>Fly Data</button>
+    </div>
+
+    <div class="pane-container">
+        <div id="pane-taxa" class="pane">
+            <div style="display:flex; justify-content:space-between; align-items:center;"><b>Taxonomy</b><button class="download-btn" onclick="exportFile('taxa')">Export taxa.js</button></div>
+            <div id="table-taxa"></div>
+        </div>
+        <div id="pane-traits" class="pane">
+            <div style="display:flex; justify-content:space-between; align-items:center;"><b>Traits</b><button class="download-btn" onclick="exportFile('traits')">Export traits.js</button></div>
+            <div id="table-traits"></div>
+        </div>
+        <div id="pane-flyData" class="pane">
+            <div style="display:flex; justify-content:space-between; align-items:center;"><b>Fly Data</b><button class="download-btn" onclick="exportFile('flyData')">Export flyData.js</button></div>
+            <div id="table-flyData"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let db = { taxa: null, traits: null, flyData: null };
+
+    function printLog(msg, isError = false) {
+        const logger = document.getElementById('log');
+        const color = isError ? '#f87171' : '#38bdf8';
+        logger.innerHTML += `<div style="color: ${color}">> ${msg}</div>`;
+        logger.scrollTop = logger.scrollHeight;
+    }
+
+    async function loadFiles(event) {
+        const files = Array.from(event.target.files);
+        for (const file of files) {
+            const name = file.name.toLowerCase();
+            let type = name.includes('taxa') ? 'taxa' : name.includes('traits') ? 'traits' : name.includes('flydata') ? 'flyData' : null;
+            if (type) {
+                const text = await file.text();
+                try {
+                    const parser = new Function(`${text}; return ${type};`);
+                    db[type] = JSON.parse(JSON.stringify(parser()));
+                    document.getElementById(`tab-${type}`).disabled = false;
+                    render(type);
+                    printLog(`Loaded: ${file.name}`);
+                    switchTab(type);
+                } catch (e) { printLog(`Error: ${e.message}`, true); }
+            }
+        }
+    }
+
+    function render(type) {
+        const data = db[type];
+        if (!data || !data.length) return;
+        const keys = Object.keys(data[0]);
+        let html = `<table><thead><tr>${keys.map(k => `<th>${k}</th>`).join('')}</tr></thead><tbody>`;
+        data.forEach((row, rIdx) => {
+            html += `<tr>`;
+            keys.forEach(k => {
+                let display = (typeof row[k] === 'object' && row[k] !== null) ? JSON.stringify(row[k]) : (row[k] ?? "");
+                html += `<td contenteditable="true" onblur="editCell('${type}', ${rIdx}, '${k}', this.innerText)">${display}</td>`;
+            });
+            html += `</tr>`;
+        });
+        document.getElementById(`table-${type}`).innerHTML = html + `</tbody></table>`;
+    }
+
+    // SAFE hierarchy generator with Circular Reference Protection
+    function getTaxonHierarchy(speciesName) {
+        if (!db.taxa) return [];
+        let list = [];
+        let visited = new Set(); // Track visited names to detect loops
+        let current = db.taxa.find(t => t.name === speciesName);
+        
+        while (current) {
+            if (visited.has(current.name)) {
+                printLog(`CRITICAL ERROR: Circular reference detected at "${current.name}". Hierarchy calculation stopped to prevent crash.`, true);
+                return ["CIRCULAR_ERROR"]; 
+            }
+            visited.add(current.name);
+            list.unshift(current.name);
+            current = db.taxa.find(t => t.name === current.parent);
+        }
+        return list;
+    }
+
+    function syncAllFlyData() {
+        if (!db.flyData) return;
+        db.flyData.forEach(fly => {
+            if (fly.species) {
+                fly.taxonomy = getTaxonHierarchy(fly.species);
+            }
+        });
+        render('flyData');
+    }
+
+    function editCell(type, rIdx, key, val) {
+        let oldVal = db[type][rIdx][key];
+        let newVal;
+        try { newVal = (val.startsWith('[') || val.startsWith('{')) ? JSON.parse(val) : val; } catch (e) { newVal = val; }
+        if (JSON.stringify(oldVal) === JSON.stringify(newVal)) return;
+
+        db[type][rIdx][key] = newVal;
+
+        // --- TAXONOMY NAME CHANGE ---
+        if (type === 'taxa' && key === 'name') {
+            db.taxa.forEach(taxon => {
+                if (taxon.parent === oldVal) taxon.parent = newVal;
+            });
+            render('taxa');
+            syncAllFlyData();
+            printLog(`Updated name and synced all references.`);
+        }
+
+        // --- PARENT CHANGE ---
+        if (type === 'taxa' && key === 'parent') {
+            syncAllFlyData();
+            printLog(`Hierarchy updated via parent change.`);
+        }
+
+        // --- SPECIES CHANGE IN FLY DATA ---
+        if (type === 'flyData' && key === 'species') {
+            db.flyData[rIdx].taxonomy = getTaxonHierarchy(newVal);
+            render('flyData');
+            printLog(`Species taxonomy recalculated.`);
+        }
+    }
+
+    function switchTab(type) {
+        document.querySelectorAll('.pane, .tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(`pane-${type}`).classList.add('active');
+        document.getElementById(`tab-${type}`).classList.add('active');
+    }
+
+    function exportFile(type) {
+        let text = `const ${type} = ${type === 'taxa' ? 'Object.freeze(' : ''}${JSON.stringify(db[type], null, 2)}${type === 'taxa' ? ')' : ''};`;
+        const blob = new Blob([text], { type: 'text/javascript' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `${type}.js`;
+        a.click();
+        printLog(`Exported ${type}.js`);
+    }
+</script>
+</body>
+</html>
