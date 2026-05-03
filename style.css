@@ -225,14 +225,14 @@ body.wide-layout .identification-area {
 }
 
 .token-section-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    left: auto;
+    transform: none;
     width: auto;
     text-align: center;
     font-weight: bold;
     font-size: 1.1rem;
-    white-space: nowrap; /* Prevents wrapping if the window gets small */
+    white-space: normal;
     z-index: 1;
 }
 

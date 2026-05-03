@@ -122,7 +122,7 @@
 
         </p>
 	<p style="font-size: 0.8rem; color: #666;"> 
-	Otherwise, you can also link your account manually. Log in and copy the 'api_token' to your clipboard by visiting <br> <a href="https://www.inaturalist.org/users/api_token" target="_blank" class="token-link" style="color: var(--primary); font-weight: bold; font-size: 0.8rem;">https://www.inaturalist.org/users/api_token</a>
+	If that doesn't work (e.g. if you are running a copy of this page on your computer), you can also link your account manually. Log in and copy the 'api_token' to your clipboard by visiting <br> <a href="https://www.inaturalist.org/users/api_token" target="_blank" class="token-link" style="color: var(--primary); font-weight: bold; font-size: 0.8rem;">https://www.inaturalist.org/users/api_token</a>
 	</p>
         <input type="text" id="token-input-modal" placeholder="Paste api_token here..." style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
         <div style="display:flex; gap:10px;">
@@ -142,9 +142,11 @@
 
     <div class="matrix-container">
         <div class="matrix-panel">
-            <div class="question-menu" id="question-menu"></div>
+            <div class="question-menu" id="question-menu">
+            </div>
             <div class="identification-area">
                 <div class="active-question-section" id="active-question-area">
+
                     <div style="color:#999; text-align:center; padding-top:50px;">Select a trait to begin identification.</div>
                 </div>
                 <div class="summary-box">
@@ -810,7 +812,7 @@ async function postImmediateID() {
 			// append "special text" ONLY if it's NOT the placeholder AND user is edanko
 			const isPlaceholder = (narrativeText === "Select traits to generate description." || !narrativeText);
 			if (!isPlaceholder && document.getElementById('token-status').innerText==="ACTIVE: edanko") {
- 			   narrativeText += "\n\n--------------------------\n\nI made this web page recently to help identify green bottle-flies: https://edankow.github.io/identify/. I’m improving it gradually, and I’d like to know what more people think. If you take a look, would you like to let me know the first thing that challenges or confuses you?";
+ 			   narrativeText += "\n\n--------------------------\n\nI made an interactive web page recently to help identify green bottle-flies at https://edankow.github.io/identify/. I’m improving it gradually, and I’d like to know what more people think. If you take a look, would you like to let me know the first thing that challenges or confuses you?";
 			}
 		  
             if (narrativeText && narrativeText !== placeholder) {
@@ -924,13 +926,13 @@ async function postImmediateID() {
 
         const finalOrder = [...answered.map(q => ({ ...q, bgColor: '#ffffff' })), ...sortedUnanswered];
 
-        menu.innerHTML = finalOrder.map((q, index) => {
-            const isAnswered = currentFilters[q.id] !== null;
+        menu.innerHTML =`<div><h4 style="margin: 0; color: var(--primary); text-align: center; font-size: 1.1rem;"> Identification choices</h4></div>`+finalOrder.map((q, index) => {
+	    const isAnswered = currentFilters[q.id] !== null;
             const isFirstUnanswered = index === answered.length;
             
             // 2. Insert the message right before the first unanswered question if all scores are 0
             let itemHtml = `
-                <div class="menu-item ${activeId === q.id ? 'active' : ''}" 
+ 		<div class="menu-item ${activeId === q.id ? 'active' : ''}" 
                      style="background-color: ${activeId === q.id ? '' : q.bgColor};" 
                      onclick="selectQuestion('${q.id}')">
                     <span>${q.title}</span>
@@ -1510,7 +1512,7 @@ async function generateCodeChallenge(verifier) {
         Select traits from the menu to filter matching species and generate a diagnostic narrative.
 		<p>A few important functions that may not be obvious:
 			<ul>
-		  <li>Authenticating your iNat account with the iNat API unlocks a set of functions equivalent to the 'Identify' tool.</li>
+		  <li>Connect your iNat account to this site to turn on features similar to the 'Identify' tool.</li>
 		  <li>If your ID is above species level and the same as the new community ID, the 'Post Results' button will mark "Based on the evidence, can the Community Taxon still be confirmed or improved?" as "No, it's as good as it can be."</li>
 		  <li>If your ID is not an agreement with an existing species-level community ID, the 'Post Results' button will paste a description of your ID in a comment.</li>
 		  <li>Like in the 'Identify' tool, clicking on the current community ID will open the observation in a new tab.</li>
