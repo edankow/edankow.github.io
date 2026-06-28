@@ -1,4 +1,4 @@
-<!-- # AI-Generated: The bulk of the code for this website was generated using Gemini in early 2026. I had AI come up with a simplified mock-up and then designed and implemented individual AI-written functions after that, with a lot of editing on my own. -->
+<!-- # AI-Generated: The bulk of the code for this website was generated using Gemini in early 2026. I had AI come up with a simplified mock-up and then designed and implemented individual AI-written functions after that, with a lot of editing on my own. Mostly Gemini, some ChatGPT. Also a TON of manual editing and debugging. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -644,21 +644,26 @@ function autoSetRegionFromLocality(terms) {
 	    ...(obs.description ? [{
 	        user: obs.user?.login || "Observer",
 	        body: obs.description,
-	        type: 'note' // New type for styling
+	        type: 'note',
+		created_at: obs.created_at
 	    }] : []),
             ...(obs.identifications || []).map(i => ({ 
                 user: i.user.login, 
                 // If there's no body text, we show a default status message
                 body: i.body && i.body.trim() !== "" ? i.body : "added an identification.", 
                 taxonName: i.taxon?.name || "Unknown Taxon",
-                type: 'id'
+		rank: i.taxon?.rank,
+                type: 'id',
+		created_at: i.created_at
             })),
             ...(obs.comments || []).map(c => ({ 
                 user: c.user.login, 
                 body: c.body, 
-                type: 'comment' 
+                type: 'comment',
+		created_at: c.created_at
             }))
         ];
+	allDiscussion.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
             return `
                 <div class="card" data-id="${obs.id}">
                     <div class="img-container" 
@@ -705,7 +710,10 @@ function autoSetRegionFromLocality(terms) {
                     ? allDiscussion.map(item => `
                          <div class="comment-item" style="margin-bottom: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
                             <strong>${item.user}</strong> 
-                            ${item.type === 'id' ? `<span style="color:#2980b9; font-weight:bold;"> [ID: <i>${item.taxonName}</i>]</span>` : ''}: 
+				<span style="color:#888; font-size:0.75rem;">
+				    • ${new Date(item.created_at).toLocaleDateString()}
+				</span>
+                            ${item.type === 'id' ? `<span style="color:#2980b9; font-weight:bold;"> [ID: ${item.rank} <i>${item.taxonName}</i>]</span>` : ''}: 
                             <span style="${item.type === 'id' && item.body === 'added an identification.' ? 'font-style: italic; color: #888;' : ''}">
                                 ${item.body}
                             </span>
@@ -997,7 +1005,7 @@ async function postImmediateID() {
         const helpButtonHtml = trait.link 
             ? `
             <div style="margin: 6px 0 12px 0; width: 100%; display: flex; flex-direction: column;">
-                <button onclick="toggleDrawer('${trait.id}')" style="align-self: flex-end; display: inline-flex; align-items: center; gap: 6px; background: #eef9ff; border: 1px solid #b3e0ff; padding: 6px 12px; border-radius: 4px; cursor: pointer; color: #1c6394; font-size: 0.85rem; font-weight: 500; transition: background 0.2s;">
+                <button onclick="toggleDrawer('${trait.id}')" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: #eef9ff; border: 1px solid #b3e0ff; padding: 6px 12px; border-radius: 4px; cursor: pointer; color: #1c6394; font-size: 0.85rem; font-weight: 500; transition: background 0.2s;">
                     📖 View Reference Images <span id="chevron-${trait.id}" style="font-size: 0.75rem; margin-left: 2px;">▼</span>
                 </button>
             </div>` 
