@@ -1,187 +1,717 @@
+<!-- 
+    Lucilia Database Pro Editor
+    This editor was created by Manus AI by significantly modifying and enhancing 
+    an earlier version originally developed in Gemini.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lucilia Database Editor - Circular Protection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucilia Database Pro Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: -apple-system, sans-serif; margin: 20px; background: #f8fafc; color: #1e293b; }
-        .container { max-width: 1200px; margin: auto; }
-        .upload-card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; border: 2px dashed #cbd5e1; margin-bottom: 25px; }
-        .btn { border: none; color: white; background-color: #2563eb; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; }
-        .wrapper { position: relative; overflow: hidden; display: inline-block; }
-        input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
-        .tabs { display: flex; gap: 4px; }
-        .tab-btn { padding: 10px 16px; cursor: pointer; border: 1px solid #cbd5e1; border-bottom: none; background: #e2e8f0; border-radius: 6px 6px 0 0; }
-        .tab-btn.active { background: white; color: #2563eb; font-weight: bold; border-top: 2px solid #2563eb; }
-        .tab-btn:disabled { opacity: 0.4; }
-        .pane-container { background: white; border: 1px solid #cbd5e1; padding: 20px; border-radius: 0 6px 6px 6px; }
-        .pane { display: none; }
-        .pane.active { display: block; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #e2e8f0; padding: 8px 12px; font-size: 13px; text-align: left; }
-        th { background: #f8fafc; position: sticky; top: 0; }
-        td:focus { outline: 2px solid #2563eb; background: #eff6ff; }
-        .download-btn { background-color: #16a34a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; }
-        #log { font-family: monospace; font-size: 11px; padding: 10px; background: #0f172a; color: #38bdf8; border-radius: 6px; margin-top: 15px; max-height: 100px; overflow-y: auto; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .map-region { fill: #fff; stroke: #94a3b8; stroke-width: 0.5; transition: all 0.2s; cursor: pointer; }
+        .map-region:hover { fill: #f1f5f9; }
+        .map-region.selected { fill: #3b82f6; stroke: #1e40af; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .active-tab { border-left: 4px solid #2563eb; background-color: #eff6ff; color: #1e40af; }
+        .table-container { height: calc(100vh - 250px); }
+        [contenteditable]:focus { outline: 2px solid #3b82f6; background: #fff; position: relative; z-index: 20; min-width: 100%; }
+        
+        table { table-layout: fixed; width: max-content; min-width: 100%; }
+        th { position: relative; user-select: none; }
+        .resizer { position: absolute; right: 0; top: 0; height: 100%; width: 5px; cursor: col-resize; z-index: 30; }
+        .resizer:hover, .resizing { background: #3b82f6; width: 2px; }
+        td { vertical-align: top; overflow: hidden; }
+        .trait-pill { display: inline-block; padding: 2px 8px; background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; border-radius: 999px; font-size: 11px; margin: 2px; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 font-sans">
 
-<div class="container">
-    <h2>Lucilia Database Editor</h2>
-    
-    <div class="upload-card">
-        <p>Upload <b>taxa.js</b>, <b>traits.js</b>, and <b>flyData.js</b></p>
-        <div class="wrapper">
-            <button class="btn">Upload Files</button>
-            <input type="file" multiple onchange="loadFiles(event)">
-        </div>
-        <div id="log">Ready.</div>
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm">
+            <div class="p-6 border-b border-slate-100">
+                <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fas fa-bug text-blue-600"></i> Lucilia Editor
+                </h1>
+                <p class="text-xs text-slate-500 mt-1">Database Management Pro</p>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <button onclick="switchTab('taxa')" id="btn-taxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-sitemap w-5"></i> Taxonomy
+                </button>
+                <button onclick="switchTab('traits')" id="btn-traits" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-list-check w-5"></i> Traits
+                </button>
+                <button onclick="switchTab('flyData')" id="btn-flyData" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-database w-5"></i> Fly Database
+                </button>
+                <button onclick="switchTab('regions')" id="btn-regions" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-map-location-dot w-5"></i> Regions
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-slate-100 space-y-3">
+                <div class="relative">
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-file-import"></i> Import Files
+                    </button>
+                    <input type="file" multiple onchange="loadFiles(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                </div>
+                <div id="export-container" class="hidden space-y-2">
+                    <button onclick="exportCurrent()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-file-export"></i> Export Current
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center shadow-sm z-10">
+                <div>
+                    <h2 id="current-tab-title" class="text-lg font-bold text-slate-800 uppercase tracking-wider">Welcome</h2>
+                    <p id="current-tab-desc" class="text-sm text-slate-500">Upload your data files to get started.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search data..." class="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 w-64 transition-all">
+                    </div>
+                    <button onclick="addNewRow()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800 transition-all flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Add New
+                    </button>
+                </div>
+            </header>
+
+            <!-- Table Area -->
+            <div class="flex-1 p-8 overflow-hidden flex flex-col">
+                <div id="inat-note" class="hidden mb-6 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-info-circle text-amber-500 text-lg"></i>
+                        <p class="text-sm text-amber-800 font-medium">
+                            <span class="font-bold">Note:</span> The <code class="bg-amber-100 px-1.5 py-0.5 rounded">taxonID</code> must be retrieved from the <span class="font-bold">iNaturalist database</span> to ensure compatibility with the iNat integration features.
+                        </p>
+                    </div>
+                </div>
+                <div id="welcome-screen" class="h-full flex flex-col items-center justify-center text-center space-y-4">
+                    <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-3xl">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
+                    <p class="text-slate-500 max-w-md">Upload your <b>taxa.js</b>, <b>traits.js</b>, and <b>flydata.js</b> files using the sidebar to begin managing your database.</p>
+                </div>
+
+                <div id="data-view" class="hidden h-full flex flex-col">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex-1 overflow-hidden flex flex-col">
+                        <div class="overflow-auto custom-scrollbar flex-1" id="table-wrapper">
+                            <table class="w-full border-collapse text-sm" id="main-table">
+                                <thead id="table-head" class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                                    <!-- Header generated dynamically -->
+                                </thead>
+                                <tbody id="table-body" class="divide-y divide-slate-100">
+                                    <!-- Body generated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer/Logs -->
+            <footer class="bg-slate-900 text-slate-400 px-8 py-2 text-xs flex justify-between items-center">
+                <div id="status-log">System Ready. Waiting for file upload...</div>
+                <div class="flex gap-4">
+                    <span><i class="fas fa-circle text-emerald-500 text-[8px] mr-1"></i> Connected</span>
+                    <span id="file-counts">Files: 0/3</span>
+                </div>
+            </footer>
+        </main>
     </div>
 
-    <div class="tabs">
-        <button id="tab-taxa" class="tab-btn" onclick="switchTab('taxa')" disabled>Taxa</button>
-        <button id="tab-traits" class="tab-btn" onclick="switchTab('traits')" disabled>Traits</button>
-        <button id="tab-flyData" class="tab-btn" onclick="switchTab('flyData')" disabled>Fly Data</button>
-    </div>
-
-    <div class="pane-container">
-        <div id="pane-taxa" class="pane">
-            <div style="display:flex; justify-content:space-between; align-items:center;"><b>Taxonomy</b><button class="download-btn" onclick="exportFile('taxa')">Export taxa.js</button></div>
-            <div id="table-taxa"></div>
-        </div>
-        <div id="pane-traits" class="pane">
-            <div style="display:flex; justify-content:space-between; align-items:center;"><b>Traits</b><button class="download-btn" onclick="exportFile('traits')">Export traits.js</button></div>
-            <div id="table-traits"></div>
-        </div>
-        <div id="pane-flyData" class="pane">
-            <div style="display:flex; justify-content:space-between; align-items:center;"><b>Fly Data</b><button class="download-btn" onclick="exportFile('flyData')">Export flyData.js</button></div>
-            <div id="table-flyData"></div>
+    <!-- Modal for Complex Data Editing -->
+    <div id="modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div id="modal-container" class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transition-all duration-300">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-800">Edit Details</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-all"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div id="modal-content" class="p-6 overflow-hidden flex-1 flex flex-col">
+                <!-- Dynamic Content -->
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+                <button onclick="closeModal()" class="px-4 py-2 text-slate-600 font-semibold hover:bg-slate-200 rounded-lg transition-all">Cancel</button>
+                <button id="modal-save-btn" onclick="saveModal()" class="px-6 py-2 bg-blue-600 text-white font-bold hover:bg-blue-700 rounded-lg shadow-md transition-all">Save Changes</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    let db = { taxa: null, traits: null, flyData: null };
+    <script>
+        let db = { taxa: null, traits: null, flyData: null, regions: null };
+        let distributionClipboard = null;
+        // Map data placeholder - will be populated by map_paths.js content
+        let mapData = { viewBox: "0 0 1000 1000", paths: {} };
+        let currentTab = null;
+        let activeEdit = { type: null, index: null, key: null };
+        let searchQuery = "";
+        let columnWidths = {};
 
-    function printLog(msg, isError = false) {
-        const logger = document.getElementById('log');
-        const color = isError ? '#f87171' : '#38bdf8';
-        logger.innerHTML += `<div style="color: ${color}">> ${msg}</div>`;
-        logger.scrollTop = logger.scrollHeight;
-    }
+        const tabConfigs = {
+            taxa: { title: "Taxonomy Hierarchy", desc: "Manage species, complexes, and their parent relationships." },
+            traits: { title: "Character Traits", desc: "Define the physical traits and their possible options for identification." },
+            flyData: { title: "Fly Database", desc: "The core database mapping traits to specific fly species." },
+            regions: { title: "Regions", desc: "Manage US States and Canadian Provinces for distribution mapping." }
+        };
 
-    async function loadFiles(event) {
-        const files = Array.from(event.target.files);
-        for (const file of files) {
-            const name = file.name.toLowerCase();
-            let type = name.includes('taxa') ? 'taxa' : name.includes('traits') ? 'traits' : name.includes('flydata') ? 'flyData' : null;
-            if (type) {
+        function printLog(msg, isError = false) {
+            const log = document.getElementById('status-log');
+            log.innerHTML = `<span class="${isError ? 'text-red-400' : 'text-blue-400'}">></span> ${msg}`;
+        }
+
+        async function loadFiles(event) {
+            const files = Array.from(event.target.files);
+            let loadedCount = 0;
+            for (const file of files) {
+                const name = file.name.toLowerCase();
                 const text = await file.text();
-                try {
-                    const parser = new Function(`${text}; return ${type};`);
-                    db[type] = JSON.parse(JSON.stringify(parser()));
-                    document.getElementById(`tab-${type}`).disabled = false;
-                    render(type);
-                    printLog(`Loaded: ${file.name}`);
-                    switchTab(type);
-                } catch (e) { printLog(`Error: ${e.message}`, true); }
+                
+                if (name === 'map_paths.js') {
+                    try {
+                        const cleanText = text.replace(/const\s+\w+\s*=\s*(?:Object\.freeze\()?(.*?)(?:\);?|;)\s*$/s, '$1');
+                        mapData = eval(`(${cleanText})`);
+                        printLog(`Loaded map data.`);
+                        continue;
+                    } catch (e) { printLog(`Error loading map: ${e.message}`, true); }
+                }
+
+                let type = name.includes('taxa') ? 'taxa' : name.includes('traits') ? 'traits' : name.includes('flydata') ? 'flyData' : name.includes('regions') ? 'regions' : null;
+                if (type) {
+                    try {
+                        const cleanText = text.replace(/const\s+\w+\s*=\s*(?:Object\.freeze\()?(.*?)(?:\);?|;)\s*$/s, '$1');
+                        const data = eval(`(${cleanText})`);
+                        
+                        // Import Validation
+                        const pkMap = { taxa: 'name', traits: 'id', flyData: 'id' };
+                        const pk = pkMap[type];
+                        if (pk) {
+                            const seen = new Set();
+                            const dups = [];
+                            data.forEach(row => {
+                                if (seen.has(row[pk])) dups.push(row[pk]);
+                                seen.add(row[pk]);
+                            });
+                            if (dups.length > 0) {
+                                printLog(`WARNING: Found ${dups.length} duplicate ${pk}s in ${file.name}: ${dups.slice(0, 3).join(', ')}...`, true);
+                            }
+                        }
+
+                        db[type] = data;
+                        loadedCount++;
+                        printLog(`Successfully loaded ${file.name}`);
+                    } catch (e) { printLog(`Error parsing ${file.name}: ${e.message}`, true); }
+                }
+            }
+            updateUIState();
+            if (!currentTab && loadedCount > 0) {
+                const firstAvailable = db.taxa ? 'taxa' : db.traits ? 'traits' : 'flyData';
+                switchTab(firstAvailable);
             }
         }
-    }
 
-    function render(type) {
-        const data = db[type];
-        if (!data || !data.length) return;
-        const keys = Object.keys(data[0]);
-        let html = `<table><thead><tr>${keys.map(k => `<th>${k}</th>`).join('')}</tr></thead><tbody>`;
-        data.forEach((row, rIdx) => {
-            html += `<tr>`;
+        function updateUIState() {
+            let count = 0;
+            ['taxa', 'traits', 'flyData', 'regions'].forEach(t => {
+                const btn = document.getElementById(`btn-${t}`);
+                if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
+                else { btn.classList.add('opacity-50', 'cursor-not-allowed'); btn.disabled = true; }
+            });
+            document.getElementById('file-counts').innerText = `Files: ${count}/3`;
+            if (count > 0) {
+                document.getElementById('welcome-screen').classList.add('hidden');
+                document.getElementById('data-view').classList.remove('hidden');
+                document.getElementById('export-container').classList.remove('hidden');
+            }
+        }
+
+        function switchTab(tab) {
+            if (!db[tab]) return;
+            currentTab = tab;
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab'));
+            document.getElementById(`btn-${tab}`).classList.add('active-tab');
+            document.getElementById('current-tab-title').innerText = tabConfigs[tab].title;
+            document.getElementById('current-tab-desc').innerText = tabConfigs[tab].desc;
+            
+            // Show/Hide iNat Note for Taxonomy
+            const inatNote = document.getElementById('inat-note');
+            if (tab === 'taxa') inatNote.classList.remove('hidden');
+            else inatNote.classList.add('hidden');
+
+            renderTable();
+        }
+
+        function renderTable() {
+            const data = db[currentTab];
+            if (!data || data.length === 0) return;
+
+            let keys = Object.keys(data[0]);
+            if (currentTab === 'flyData') keys = keys.filter(k => k !== 'taxonomy');
+            if (currentTab === 'regions') { renderRegionsTable(); return; }
+
+            const filteredData = data.filter(row => {
+                if (!searchQuery) return true;
+                return JSON.stringify(row).toLowerCase().includes(searchQuery.toLowerCase());
+            });
+
+            const traitMap = {};
+            if (db.traits) db.traits.forEach(t => { traitMap[t.id] = t.title; });
+
+            // Header
+            let headHtml = '<tr><th class="px-4 py-3 text-left font-bold text-slate-600" style="width: 60px">#</th>';
             keys.forEach(k => {
-                let display = (typeof row[k] === 'object' && row[k] !== null) ? JSON.stringify(row[k]) : (row[k] ?? "");
-                html += `<td contenteditable="true" onblur="editCell('${type}', ${rIdx}, '${k}', this.innerText)">${display}</td>`;
+                const width = columnWidths[currentTab]?.[k] || (k === 'title' ? 300 : (k === 'id' ? 150 : 200));
+                let displayHeader = (currentTab === 'flyData' && traitMap[k]) ? traitMap[k] : k;
+                let quickAddBtn = (currentTab === 'flyData' && traitMap[k]) ? `<button onclick="quickAddTraitOption('${k}')" class="ml-2 text-blue-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all" title="Add new option to this trait"><i class="fas fa-plus-circle"></i></button>` : '';
+                
+                headHtml += `
+                    <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top" style="width: ${width}px" data-key="${k}" title="${k}">
+                        <div class="flex items-start">
+                            <div class="break-words whitespace-normal leading-tight flex-1">${displayHeader}</div>
+                            ${quickAddBtn}
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-mono mt-1 opacity-0 group-hover:opacity-100 transition-opacity">${k}</div>
+                        <div class="resizer" onmousedown="initResize(event)"></div>
+                    </th>`;
             });
-            html += `</tr>`;
-        });
-        document.getElementById(`table-${type}`).innerHTML = html + `</tbody></table>`;
-    }
+            headHtml += '<th class="px-4 py-3 text-right font-bold text-slate-600" style="width: 100px">Actions</th></tr>';
+            document.getElementById('table-head').innerHTML = headHtml;
 
-    // SAFE hierarchy generator with Circular Reference Protection
-    function getTaxonHierarchy(speciesName) {
-        if (!db.taxa) return [];
-        let list = [];
-        let visited = new Set(); // Track visited names to detect loops
-        let current = db.taxa.find(t => t.name === speciesName);
-        
-        while (current) {
-            if (visited.has(current.name)) {
-                printLog(`CRITICAL ERROR: Circular reference detected at "${current.name}". Hierarchy calculation stopped to prevent crash.`, true);
-                return ["CIRCULAR_ERROR"]; 
-            }
-            visited.add(current.name);
-            list.unshift(current.name);
-            current = db.taxa.find(t => t.name === current.parent);
-        }
-        return list;
-    }
+            // Body
+            let bodyHtml = '';
+            filteredData.forEach((row, idx) => {
+                const originalIdx = data.indexOf(row);
+                bodyHtml += `<tr class="hover:bg-slate-50 transition-all">`;
+                bodyHtml += `<td class="px-4 py-3 text-slate-400 font-mono text-xs">#${originalIdx + 1}</td>`;
+                
+                keys.forEach(k => {
+                    let val = row[k];
+                    let display = "";
+                    let isTrait = (currentTab === 'flyData' && traitMap[k]);
+                    let isComplex = Array.isArray(val) || (typeof val === 'object' && val !== null);
 
-    function syncAllFlyData() {
-        if (!db.flyData) return;
-        db.flyData.forEach(fly => {
-            if (fly.species) {
-                fly.taxonomy = getTaxonHierarchy(fly.species);
-            }
-        });
-        render('flyData');
-    }
+                    if (isTrait) {
+                        display = Array.isArray(val) ? val.map(v => `<span class="trait-pill">${v}</span>`).join('') : `<span class="trait-pill">${val}</span>`;
+                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openTraitPicker(${originalIdx}, '${k}')">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
+                    } else if (currentTab === 'flyData' && k === 'distribution') {
+                        display = Array.isArray(val) ? val.map(v => `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] mr-1">${v}</span>`).join('') : val;
+                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openRegionPicker(${originalIdx})">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
+                    } else if (isComplex) {
+                        display = Array.isArray(val) ? `<span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium">${val.length} items</span>` : `<span class="px-2 py-1 bg-purple-50 text-purple-600 rounded text-xs font-medium">Object</span>`;
+                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openComplexEditor('${currentTab}', ${originalIdx}, '${k}')">${display}</td>`;
+                    } else {
+                        display = val === null ? '<span class="text-slate-300 italic">null</span>' : val;
+                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal" contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText)">${display}</td>`;
+                    }
+                });
 
-    function editCell(type, rIdx, key, val) {
-        let oldVal = db[type][rIdx][key];
-        let newVal;
-        try { newVal = (val.startsWith('[') || val.startsWith('{')) ? JSON.parse(val) : val; } catch (e) { newVal = val; }
-        if (JSON.stringify(oldVal) === JSON.stringify(newVal)) return;
-
-        db[type][rIdx][key] = newVal;
-
-        // --- TAXONOMY NAME CHANGE ---
-        if (type === 'taxa' && key === 'name') {
-            db.taxa.forEach(taxon => {
-                if (taxon.parent === oldVal) taxon.parent = newVal;
+                bodyHtml += `
+                    <td class="px-4 py-3 text-right space-x-2">
+                        <button onclick="duplicateRow(${originalIdx})" class="text-slate-400 hover:text-blue-600 transition-all"><i class="fas fa-copy"></i></button>
+                        <button onclick="deleteRow(${originalIdx})" class="text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
             });
-            render('taxa');
-            syncAllFlyData();
-            printLog(`Updated name and synced all references.`);
+            document.getElementById('table-body').innerHTML = bodyHtml;
         }
 
-        // --- PARENT CHANGE ---
-        if (type === 'taxa' && key === 'parent') {
-            syncAllFlyData();
-            printLog(`Hierarchy updated via parent change.`);
+        // --- Resizing ---
+        let startX, startWidth, activeTh;
+        function initResize(e) { activeTh = e.target.parentElement; startX = e.pageX; startWidth = activeTh.offsetWidth; document.addEventListener('mousemove', handleResize); document.addEventListener('mouseup', stopResize); e.target.classList.add('resizing'); document.body.style.cursor = 'col-resize'; }
+        function handleResize(e) { const newWidth = startWidth + (e.pageX - startX); if (newWidth > 50) { activeTh.style.width = `${newWidth}px`; const key = activeTh.getAttribute('data-key'); if (!columnWidths[currentTab]) columnWidths[currentTab] = {}; columnWidths[currentTab][key] = newWidth; } }
+        function stopResize() { document.removeEventListener('mousemove', handleResize); document.removeEventListener('mouseup', stopResize); document.querySelectorAll('.resizer').forEach(r => r.classList.remove('resizing')); document.body.style.cursor = 'default'; }
+
+        function handleSearch() { searchQuery = document.getElementById('search-input').value; renderTable(); }
+
+        function updateCell(type, idx, key, val) {
+            const oldVal = db[type][idx][key];
+            let newVal = val;
+            if (typeof oldVal === 'number') newVal = parseFloat(val);
+            if (val === 'null') newVal = null;
+
+            // Primary Key and Uniqueness Validation
+            const pkMap = { taxa: ['name', 'taxonID'], traits: 'id', flyData: 'id', regions: ['name', 'code'] };
+            const checks = Array.isArray(pkMap[type]) ? pkMap[type] : [pkMap[type]];
+            
+            if (checks.includes(key) && newVal !== oldVal) {
+                const exists = db[type].some((row, i) => i !== idx && row[key] === newVal);
+                if (exists) {
+                    alert(`DUPLICATE VALUE ERROR: The ${key} "${newVal}" is already in use in the ${type} table. Each ${key} must be unique.`);
+                    renderTable(); // Revert UI
+                    return;
+                }
+            }
+
+            if (oldVal !== newVal) { 
+                // Weight Validation for Traits
+                if (type === 'traits' && key === 'weight') {
+                    const weight = parseInt(newVal);
+                    if (isNaN(weight) || weight < 1 || weight > 10) {
+                        alert("WEIGHT ERROR: Trait weight must be a whole number between 1 and 10.");
+                        renderTable();
+                        return;
+                    }
+                    newVal = weight; // Ensure it's stored as a number
+                }
+
+                db[type][idx][key] = newVal; 
+                if (type === 'taxa' && key === 'name') syncTaxonomyReferences(oldVal, newVal); 
+                if (type === 'traits' && key === 'id') syncTraitIdReferences(oldVal, newVal);
+            }
         }
 
-        // --- SPECIES CHANGE IN FLY DATA ---
-        if (type === 'flyData' && key === 'species') {
-            db.flyData[rIdx].taxonomy = getTaxonHierarchy(newVal);
-            render('flyData');
-            printLog(`Species taxonomy recalculated.`);
+        function syncTaxonomyReferences(oldName, newName) {
+            db.taxa.forEach(t => { if (t.parent === oldName) t.parent = newName; });
+            if (db.flyData) db.flyData.forEach(f => { if (f.species === oldName) f.species = newName; });
+            renderTable();
         }
-    }
 
-    function switchTab(type) {
-        document.querySelectorAll('.pane, .tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(`pane-${type}`).classList.add('active');
-        document.getElementById(`tab-${type}`).classList.add('active');
-    }
+        function syncTraitIdReferences(oldId, newId) {
+            if (db.flyData) {
+                db.flyData.forEach(f => {
+                    if (f.hasOwnProperty(oldId)) {
+                        f[newId] = f[oldId];
+                        delete f[oldId];
+                    }
+                });
+            }
+            renderTable();
+        }
 
-    function exportFile(type) {
-        let text = `const ${type} = ${type === 'taxa' ? 'Object.freeze(' : ''}${JSON.stringify(db[type], null, 2)}${type === 'taxa' ? ')' : ''};`;
-        const blob = new Blob([text], { type: 'text/javascript' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `${type}.js`;
-        a.click();
-        printLog(`Exported ${type}.js`);
-    }
-</script>
+        // --- Trait Picker (Enforce Strict Selection) ---
+        function renderRegionsTable() {
+            const data = db.regions;
+            let headHtml = '<tr><th class="px-4 py-3 text-left font-bold text-slate-600 w-12">#</th><th class="px-4 py-3 text-left font-bold text-slate-600">Name</th><th class="px-4 py-3 text-left font-bold text-slate-600">Code</th><th class="px-4 py-3 text-right font-bold text-slate-600 w-24">Actions</th></tr>';
+            document.getElementById('table-head').innerHTML = headHtml;
+            let bodyHtml = '';
+            data.forEach((row, idx) => {
+                bodyHtml += `<tr class="hover:bg-slate-50 transition-all"><td class="px-4 py-3 text-slate-400 font-mono text-xs">#${idx + 1}</td><td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'name', this.innerText)">${row.name}</td><td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'code', this.innerText)">${row.code}</td><td class="px-4 py-3 text-right"><button onclick="deleteRow(${idx})" class="text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash"></i></button></td></tr>`;
+            });
+            document.getElementById('table-body').innerHTML = bodyHtml;
+        }
+
+        function openRegionPicker(idx) {
+            if (!db.regions) { alert("Please upload regions.js first!"); return; }
+            activeEdit = { type: 'flyData', idx, key: 'distribution' };
+            const currentValues = db.flyData[idx].distribution || [];
+            const modal = document.getElementById('modal');
+            const container = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            const title = document.getElementById('modal-title');
+            
+            // Expand modal for map
+            container.classList.remove('max-w-2xl');
+            container.classList.add('max-w-6xl');
+            
+            title.innerText = `Distribution for: ${db.flyData[idx].species || 'New Fly'}`;
+            modal.classList.remove('hidden');
+
+            let html = `
+                <div class="flex gap-8">
+                    <div class="flex-1 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-slate-700 flex items-center gap-2">
+                                <i class="fas fa-map text-blue-500"></i> Interactive Map
+                            </h4>
+                            <div class="flex gap-2">
+                                <button onclick="copyDistribution()" class="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                                    <i class="fas fa-copy"></i> Copy Range
+                                </button>
+                                <button onclick="pasteDistribution()" class="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                                    <i class="fas fa-paste"></i> Paste Range
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex items-center justify-center shadow-inner">
+                            <svg viewBox="${mapData.viewBox}" class="w-full h-auto max-h-[600px] drop-shadow-sm">
+                                ${Object.entries(mapData.paths).map(([code, d]) => `
+                                    <path id="map-${code}" d="${d}" class="map-region ${currentValues.includes(code) ? 'selected' : ''}" 
+                                          onclick="toggleRegionCode('${code}')">
+                                        <title>${db.regions.find(r => r.code === code)?.name || code}</title>
+                                    </path>
+                                `).join('')}
+                            </svg>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] text-slate-400">
+                            <span>Tip: Click regions on the map to toggle selection</span>
+                            <span class="italic">Map data: SimpleMaps.com (Open Source)</span>
+                        </div>
+                    </div>
+                    <div class="w-80 flex flex-col border-l border-slate-100 pl-8 overflow-hidden">
+                        <h4 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <i class="fas fa-list-ul text-slate-400"></i> Checklist
+                        </h4>
+                        <div class="grid grid-cols-1 gap-1.5 overflow-y-auto custom-scrollbar pr-4 flex-1">
+                            ${db.regions.map(reg => {
+                                const isSelected = currentValues.includes(reg.code);
+                                return `
+                                    <label class="flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-50 hover:border-slate-200'}">
+                                        <input type="checkbox" id="check-${reg.code}" class="h-4 w-4 text-blue-600 rounded border-slate-300" value="${reg.code}" ${isSelected ? 'checked' : ''} onchange="toggleRegionOption(this)">
+                                        <div class="flex flex-col">
+                                            <span class="text-[11px] font-bold text-slate-800">${reg.name}</span>
+                                            <span class="text-[9px] text-slate-400 font-mono">${reg.code}</span>
+                                        </div>
+                                    </label>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>`;
+            content.innerHTML = html;
+            document.getElementById('modal-save-btn').classList.add('hidden');
+        }
+
+        function toggleRegionCode(code) {
+            const checkbox = document.getElementById(`check-${code}`);
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                
+                // If map click on MD, also toggle DC
+                if (code === 'MD') {
+                    const dcCheck = document.getElementById('check-DC');
+                    if (dcCheck) {
+                        dcCheck.checked = checkbox.checked;
+                        // We trigger the standard option toggle for DC too
+                        toggleRegionOption(dcCheck, false); 
+                    }
+                }
+                
+                toggleRegionOption(checkbox, false);
+            }
+        }
+
+        function copyDistribution() {
+            distributionClipboard = [...(db.flyData[activeEdit.idx].distribution || [])];
+            printLog("Distribution copied to clipboard.");
+        }
+
+        function pasteDistribution() {
+            if (!distributionClipboard) { alert("Clipboard is empty! Copy a distribution first."); return; }
+            db.flyData[activeEdit.idx].distribution = [...distributionClipboard];
+            openRegionPicker(activeEdit.idx); // Refresh modal
+            renderTable();
+            printLog("Distribution pasted from clipboard.");
+        }
+
+        function toggleRegionOption(checkbox, skipSync = true) {
+            const val = checkbox.value;
+            let current = db.flyData[activeEdit.idx].distribution || [];
+            
+            const updateVisual = (code, isSelected) => {
+                const path = document.getElementById(`map-${code}`);
+                if (path) path.classList.toggle('selected', isSelected);
+                const check = document.getElementById(`check-${code}`);
+                if (check) check.checked = isSelected;
+                const label = check?.parentElement;
+                if (label) {
+                    if (isSelected) { label.classList.add('border-blue-500', 'bg-blue-50'); label.classList.remove('border-slate-50'); }
+                    else { label.classList.remove('border-blue-500', 'bg-blue-50'); label.classList.add('border-slate-50'); }
+                }
+            };
+
+            if (checkbox.checked) {
+                if (!current.includes(val)) current.push(val);
+                updateVisual(val, true);
+            } else {
+                current = current.filter(v => v !== val);
+                updateVisual(val, false);
+            }
+            
+            db.flyData[activeEdit.idx].distribution = current;
+            renderTable();
+        }
+
+        function openTraitPicker(idx, traitId) {
+            activeEdit = { type: 'flyData', idx, key: traitId };
+            const traitDef = db.traits.find(t => t.id === traitId);
+            if (!traitDef) { alert("Trait definition not found! Add it to the Traits tab first."); return; }
+
+            const currentValues = db.flyData[idx][traitId] || [];
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+            const title = document.getElementById('modal-title');
+
+            title.innerText = `Select values for: ${traitDef.title}`;
+            modal.classList.remove('hidden');
+
+            let html = `<div class="space-y-3">`;
+            traitDef.options.forEach((opt, i) => {
+                const isSelected = currentValues.includes(opt.label);
+                html += `
+                    <label class="flex items-start gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-100 hover:border-slate-200'}">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded focus:ring-blue-500" value="${opt.label}" ${isSelected ? 'checked' : ''} onchange="toggleTraitOption(this)">
+                        <div>
+                            <div class="font-bold text-slate-800">${opt.label}</div>
+                            <div class="text-sm text-slate-500 mt-1">${opt.description}</div>
+                        </div>
+                    </label>`;
+            });
+            html += `</div>
+                <button onclick="quickAddTraitOption('${traitId}')" class="mt-6 w-full py-3 border-2 border-dashed border-blue-200 rounded-xl text-blue-500 hover:bg-blue-50 transition-all font-bold flex items-center justify-center gap-2">
+                    <i class="fas fa-plus"></i> Define New Option for this Trait
+                </button>`;
+            content.innerHTML = html;
+            document.getElementById('modal-save-btn').classList.add('hidden'); // Selection is live
+        }
+
+        function quickAddTraitOption(traitId) {
+            const traitIdx = db.traits.findIndex(t => t.id === traitId);
+            if (traitIdx === -1) return;
+            openComplexEditor('traits', traitIdx, 'options');
+        }
+
+        function toggleTraitOption(checkbox) {
+            const val = checkbox.value;
+            let current = db.flyData[activeEdit.idx][activeEdit.key];
+            if (!Array.isArray(current)) current = current ? [current] : [];
+            
+            if (checkbox.checked) { if (!current.includes(val)) current.push(val); }
+            else { current = current.filter(v => v !== val); }
+            
+            db.flyData[activeEdit.idx][activeEdit.key] = current;
+            renderTable();
+        }
+
+        function openComplexEditor(type, idx, key) {
+            activeEdit = { type, idx, key };
+            const data = db[type][idx][key];
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+            const title = document.getElementById('modal-title');
+            document.getElementById('modal-save-btn').classList.remove('hidden');
+
+            title.innerText = `Editing ${key}`;
+            modal.classList.remove('hidden');
+
+            let html = "";
+            if (key === 'options') {
+                html = `<div class="space-y-4" id="options-list">`;
+                (data || []).forEach((opt, i) => {
+                    html += `
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 relative group">
+                            <div class="flex justify-between mb-2"><span class="text-xs font-bold text-slate-400 uppercase">Option ${i + 1}</span><button onclick="removeOption(${i})" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-all"><i class="fas fa-times"></i></button></div>
+                            <div class="space-y-3">
+                                <input type="text" class="w-full p-2 border border-slate-200 rounded-lg text-sm" value="${opt.label || ''}" placeholder="Label" onchange="updateOption(${i}, 'label', this.value)">
+                                <textarea class="w-full p-2 border border-slate-200 rounded-lg text-sm" rows="2" placeholder="Description" onchange="updateOption(${i}, 'description', this.value)">${opt.description || ''}</textarea>
+                            </div>
+                        </div>`;
+                });
+                html += `</div><button onclick="addOption()" class="mt-4 w-full py-2 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:text-blue-500 transition-all font-medium">+ Add Option</button>`;
+            } else if (Array.isArray(data)) {
+                html = `<textarea id="list-editor" class="w-full h-64 p-4 border border-slate-200 rounded-xl font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none">${data.join('\n')}</textarea>`;
+            } else {
+                html = `<textarea id="json-editor" class="w-full h-64 p-4 border border-slate-200 rounded-xl font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none">${JSON.stringify(data, null, 2)}</textarea>`;
+            }
+            content.innerHTML = html;
+        }
+
+        function updateOption(i, key, val) { db[activeEdit.type][activeEdit.idx][activeEdit.key][i][key] = val; }
+        function addOption() { if(!db[activeEdit.type][activeEdit.idx][activeEdit.key]) db[activeEdit.type][activeEdit.idx][activeEdit.key] = []; db[activeEdit.type][activeEdit.idx][activeEdit.key].push({ label: "", description: "" }); openComplexEditor(activeEdit.type, activeEdit.idx, activeEdit.key); }
+        function removeOption(i) { db[activeEdit.type][activeEdit.idx][activeEdit.key].splice(i, 1); openComplexEditor(activeEdit.type, activeEdit.idx, activeEdit.key); }
+
+        function saveModal() {
+            const listEditor = document.getElementById('list-editor');
+            const jsonEditor = document.getElementById('json-editor');
+            if (listEditor) db[activeEdit.type][activeEdit.idx][activeEdit.key] = listEditor.value.split('\n').filter(s => s.trim() !== "");
+            else if (jsonEditor) try { db[activeEdit.type][activeEdit.idx][activeEdit.key] = JSON.parse(jsonEditor.value); } catch (e) { alert("Invalid JSON!"); return; }
+            closeModal(); renderTable();
+        }
+
+        function closeModal() { 
+            document.getElementById('modal').classList.add('hidden'); 
+            const container = document.getElementById('modal-container');
+            container.classList.remove('max-w-6xl');
+            container.classList.add('max-w-2xl');
+        }
+        function generateUniqueId(type, baseId, field) {
+            const pkMap = { taxa: 'name', traits: 'id', flyData: 'id', regions: 'code' };
+            const pk = field || pkMap[type];
+            let newId = baseId;
+            let counter = 1;
+            
+            // For taxonID, try to keep it numeric if it looks numeric
+            let isNumeric = !isNaN(baseId) && !isNaN(parseFloat(baseId));
+            
+            while (db[type].some(row => row[pk] === (isNumeric ? parseFloat(newId) : newId))) {
+                newId = `${baseId}_${counter++}`;
+            }
+            return isNumeric ? parseFloat(newId) : newId;
+        }
+
+        function addNewRow() { 
+            if (!currentTab) return; 
+            const template = JSON.parse(JSON.stringify(db[currentTab][0])); 
+            const pkMap = { taxa: 'name', traits: 'id', flyData: 'id', regions: 'code' };
+            const pk = pkMap[currentTab];
+            
+            Object.keys(template).forEach(k => { 
+                if (currentTab === 'taxa' && (k === 'name' || k === 'taxonID')) {
+                    template[k] = generateUniqueId('taxa', k === 'name' ? "New Taxon" : "9999", k);
+                } else if (currentTab === 'regions' && (k === 'name' || k === 'code')) {
+                    template[k] = generateUniqueId('regions', k === 'name' ? "New Region" : "NR", k);
+                } else if (k === pk) {
+                    template[k] = generateUniqueId(currentTab, "new_entry");
+                } else if (Array.isArray(template[k])) {
+                    template[k] = []; 
+                } else if (typeof template[k] === 'number') {
+                    template[k] = 0; 
+                } else {
+                    template[k] = ""; 
+                }
+            }); 
+            db[currentTab].unshift(template); 
+            renderTable(); 
+        }
+
+        function duplicateRow(idx) { 
+            const copy = JSON.parse(JSON.stringify(db[currentTab][idx])); 
+            const pkMap = { taxa: 'name', traits: 'id', flyData: 'id', regions: 'code' };
+            const pk = pkMap[currentTab];
+            
+            if (currentTab === 'taxa') {
+                copy.name = generateUniqueId('taxa', copy.name, 'name');
+                copy.taxonID = generateUniqueId('taxa', copy.taxonID, 'taxonID');
+            } else if (currentTab === 'regions') {
+                copy.name = generateUniqueId('regions', copy.name, 'name');
+                copy.code = generateUniqueId('regions', copy.code, 'code');
+            } else {
+                copy[pk] = generateUniqueId(currentTab, copy[pk]);
+            }
+            db[currentTab].splice(idx + 1, 0, copy); 
+            renderTable(); 
+        }
+        function deleteRow(idx) { if (confirm("Delete this row?")) { db[currentTab].splice(idx, 1); renderTable(); } }
+
+        function getTaxonomyHierarchy(speciesName) {
+            if (!db.taxa) return [];
+            let hierarchy = [], current = db.taxa.find(t => t.name === speciesName), visited = new Set();
+            while (current) { if (visited.has(current.name)) break; visited.add(current.name); hierarchy.unshift(current.name); current = db.taxa.find(t => t.name === current.parent); }
+            return hierarchy;
+        }
+
+        function exportCurrent() {
+            if (!currentTab) return;
+            let dataToExport = JSON.parse(JSON.stringify(db[currentTab]));
+            if (currentTab === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
+            const text = (currentTab === 'taxa' || currentTab === 'regions') ? `const ${currentTab} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${currentTab} = ${JSON.stringify(dataToExport, null, 2)};\n`;
+            const blob = new Blob([text], { type: 'text/javascript' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${currentTab === 'flyData' ? 'flydata' : currentTab}.js`; a.click();
+        }
+    </script>
 </body>
 </html>
