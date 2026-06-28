@@ -1,757 +1,2828 @@
-// The database of fly species and their associated traits
 const flyData = [
-{
-          id: 'l_cuprina_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'L. sericata complex', 'Lucilia cuprina'],
-          distribution: ['HI', 'AL', 'AR', 'FL', 'GA', 'KS', 'LA', 'MS', 'MO', 'NC', 'OK', 'SC', 'TN', 'TX', 'DE', 'DC', 'IL', 'IN', 'IA', 'KY', 'MD', 'NE', 'PA', 'NJ', 'OH', 'SD', 'VA', 'WV', 'WI', 'AZ', 'CA', 'NV', 'NM', 'OR', 'WA'],
-          species: 'Lucilia cuprina',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialcolor: ['silvery (Whitworth 2014)'],
-          Genae: ['with dark setae only'],
-          Occipitalsetae: ['stout and black'],
-          Occipitalsetaebehindinnerverticalseta: ['a single seta.'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Bodycolor: ['coppery brown', 'reddish-orange brown', 'orangish green'],
-          Setulaeonposteriorpostpronotum: ['small and number 2-3'],
-          Setulaeonposteriornotopleuron: ['small and number 2-3'],
-          acrostichalspostsutural: ['three'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_cuprina_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'L. sericata complex', 'Lucilia cuprina'],
-          distribution: ['HI', 'AL', 'AR', 'FL', 'GA', 'KS', 'LA', 'MS', 'MO', 'NC', 'OK', 'SC', 'TN', 'TX', 'DE', 'DC', 'IL', 'IN', 'IA', 'KY', 'MD', 'NE', 'PA', 'NJ', 'OH', 'SD', 'VA', 'WV', 'WI', 'AZ', 'CA', 'NV', 'NM', 'OR', 'WA'],
-          species: 'Lucilia cuprina',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)', 'Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['at least 35% of head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          IVSorientation: ['nearly parallel in dorsal view'],
-          Parafacialwidthatleveloflunule: ['broader than the width of the first flagellomere'],
-          Parafacialcolor: ['silvery (Whitworth 2014)'],
-          Genae: ['with dark setae only'],
-          Angleformedbyverticalsetae: ['a right angle'],
-          Occipitalsetae: ['stout and black'],
-          Occipitalsetaebehindinnerverticalseta: ['a single seta.'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Bodycolor: ['coppery brown', 'reddish-orange brown', 'orangish green'],
-          Setulaeonposteriorpostpronotum: ['small and number 2-3'],
-          Setulaeonposteriornotopleuron: ['small and number 2-3'],
-          acrostichalspostsutural: ['three'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_magnicornis_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'Lucilia magnicornis'],
-          distribution: ['AK', 'AB', 'BC', 'NT', 'NU', 'SK', 'YT', 'MB', 'ON', 'QB', 'NL'],
-          species: 'Lucilia magnicornis',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, more than half of the height of eye in lateral view'],
-          Palpscolor: ['at least partially dark brown to black'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['three'],
-          intraalarsetaepresutural: ['not present'],
-          intraalarsetaePostsutural: ['three'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_magnicornis_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'Lucilia magnicornis'],
-          distribution: ['AK', 'AB', 'BC', 'NT', 'NU', 'SK', 'YT', 'MB', 'ON', 'QB', 'NL'],
-          species: 'Lucilia magnicornis',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, more than half of the height of eye in lateral view'],
-          Palpscolor: ['at least partially dark brown to black'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['three'],
-          intraalarsetaepresutural: ['not present'],
-          intraalarsetaePostsutural: ['three'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_cluvia_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'Lucilia cluvia'],
-          distribution: ['AL', 'AR', 'FL', 'GA', 'KS', 'LA', 'MS', 'MO', 'NC', 'OK', 'SC', 'TX'],
-          species: 'Lucilia cluvia',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width', 'at most about 10% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialcolor: ['orange (Whitworth 2014)'],
-          Genae: ['posterior third with many pale setae'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['more or less entirely polished']
-},
-{
-          id: 'l_cluvia_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'Lucilia cluvia'],
-          distribution: ['AL', 'AR', 'FL', 'GA', 'KS', 'LA', 'MS', 'MO', 'NC', 'OK', 'SC', 'TX'],
-          species: 'Lucilia cluvia',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialcolor: ['orange (Whitworth 2014)'],
-          Genae: ['posterior third with many pale setae'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tergitepubescence: ['more or less entirely polished']
-},
-{
-          id: 'l_sericata_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'L. sericata complex', 'Lucilia sericata'],
-          distribution: ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'HI'],
-          species: 'Lucilia sericata',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)', 'Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialcolor: ['silvery (Whitworth 2014)'],
-          Genae: ['with dark setae only'],
-          Occipitalsetae: ['stout and black'],
-          Occipitalsetaebehindinnerverticalseta: ['two to five setae'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          Setulaeonposteriorpostpronotum: ['larger and number 6-8'],
-          Setulaeonposteriornotopleuron: ['larger and number 6-8'],
-          acrostichalspostsutural: ['three'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_sericata_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'L. sericata complex', 'Lucilia sericata'],
-          distribution: ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'HI'],
-          species: 'Lucilia sericata',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)', 'Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['at least 35% of head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          IVSorientation: ['convergent in dorsal view'],
-          Parafacialwidthatleveloflunule: ['broader than the width of the first flagellomere'],
-          Parafacialcolor: ['silvery (Whitworth 2014)'],
-          Genae: ['with dark setae only'],
-          Angleformedbyverticalsetae: ['an obtuse angle'],
-          Occipitalsetae: ['stout and black'],
-          Occipitalsetaebehindinnerverticalseta: ['two to five setae'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          Setulaeonposteriorpostpronotum: ['larger and number 6-8'],
-          Setulaeonposteriornotopleuron: ['larger and number 6-8'],
-          acrostichalspostsutural: ['three'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_silvarum_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'L. bufonivora complex', 'Lucilia silvarum'],
-          distribution: ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'],
-          species: 'Lucilia silvarum',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width', 'less than 7% of head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at most about 10% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['at least partially dark brown to black'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 'The distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance'],
-          acrostichalspostsutural: ['two', 'three'],
-          intraalarsetaepresutural: ['present'],
-          intraalarsetaePostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent'],
-          Malecercusinlateralview: ['with apical hook']
-},
-{
-          id: 'l_silvarum_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'L. bufonivora complex', 'Lucilia silvarum'],
-          distribution: ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'],
-          species: 'Lucilia silvarum',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['at least partially dark brown to black'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 'The distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance'],
-          acrostichalspostsutural: ['two', 'three'],
-          intraalarsetaepresutural: ['present'],
-          intraalarsetaePostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent'],
-          Femaleovipositorinventralview: ['with ST7 narrowing posteriorly, and ST8 elongate and parallel-sided']
-},
-{
-          id: 'l_bufonivora_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'L. bufonivora complex', 'Lucilia bufonivora'],
-          distribution: ['AK', 'AB', 'BC', 'NT', 'NU', 'SK', 'YT', 'ON', 'MB', 'WA', 'ID', 'MT', 'ND', 'MN', 'MI', 'NY'],
-          species: 'Lucilia bufonivora',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at most about 10% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['at least partially dark brown to black'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
-          acrostichalspostsutural: ['two', 'three'],
-          intraalarsetaepresutural: ['present'],
-          intraalarsetaePostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent'],
-          Malecercusinlateralview: ['without apical hook'],
-          Malesurstylus: ['bufonivora has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)'],
-          Morphometricsbufonivoraelongata: ['bufonivora has distinct morphometrics of the antennae and frons that distinguish it from elongata. See Jones et al. 2019']
-},
-{
-          id: 'l_bufonivora_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'L. bufonivora complex', 'Lucilia bufonivora'],
-          distribution: ['AK', 'AB', 'BC', 'NT', 'NU', 'SK', 'YT', 'ON', 'MB', 'WA', 'ID', 'MT', 'ND', 'MN', 'MI', 'NY'],
-          species: 'Lucilia bufonivora',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['at least partially dark brown to black'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
-          acrostichalspostsutural: ['two', 'three'],
-          intraalarsetaepresutural: ['present'],
-          intraalarsetaePostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent'],
-          Femaleovipositorinventralview: ['with ST7 and ST8 gradually widened posteriorly']
-},
-{
-          id: 'l_elongata_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'L. bufonivora complex', 'Lucilia elongata'],
-          distribution: ['AB', 'BC', 'ID', 'MT', 'OR', 'WA', 'CA', 'NV'],
-          species: 'Lucilia elongata',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['at least partially dark brown to black'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
-          acrostichalspostsutural: ['two', 'three'],
-          intraalarsetaepresutural: ['present'],
-          intraalarsetaePostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent'],
-          Malecercusinlateralview: ['without apical hook'],
-          Malesurstylus: ['elongata has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)'],
-          Morphometricsbufonivoraelongata: ['elongata has distinct morphometrics of the antennae and frons that distinguish it from bufonivora. See Jones et al. 2019']
-},
-{
-          id: 'l_elongata_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'L. bufonivora complex', 'Lucilia elongata'],
-          distribution: ['AB', 'BC', 'ID', 'MT', 'OR', 'WA', 'CA', 'NV'],
-          species: 'Lucilia elongata',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['at least partially dark brown to black'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
-          acrostichalspostsutural: ['two', 'three'],
-          intraalarsetaepresutural: ['present'],
-          intraalarsetaePostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent'],
-          Femaleovipositorinventralview: ['with ST7 and ST8 widened posteriorly after a sudden subapical constriction']
-},
-{
-          id: 'l_thatuna_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'Lucilia thatuna'],
-          distribution: ['AZ', 'CA', 'CO', 'NV', 'NM', 'UT', 'ID', 'MT', 'OR', 'WA', 'WY', 'BC', 'AB'],
-          species: 'Lucilia thatuna',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['less than 7% of head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['almost touching. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at most about 10% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['three'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_thatuna_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'Lucilia thatuna'],
-          distribution: ['AZ', 'CA', 'CO', 'NV', 'NM', 'UT', 'ID', 'MT', 'OR', 'WA', 'WY', 'BC', 'AB'],
-          species: 'Lucilia thatuna',
-          Headlength: ['Head longer; length of head at level of lunule more than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialwidthatleveloflunule: ['narrower than the width of the first flagellomere'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['three'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_coeruleivirids_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'Lucilia coeruleiviridis'],
-          distribution: ['AL', 'AR', 'FL', 'GA', 'KS', 'LA', 'MS', 'MO', 'NC', 'OK', 'SC', 'TN', 'TX', 'MB', 'NB', 'NL', 'NS', 'ON', 'PE', 'QC', 'CT', 'DE', 'DC', 'IL', 'IN', 'IA', 'KY', 'ME', 'MD', 'MA', 'MI', 'MN', 'NE', 'NH', 'NJ', 'NY', 'ND', 'OH', 'PA', 'RI', 'SD', 'VT', 'VA', 'WV', 'WI', 'AZ', 'CA', 'CO', 'NV', 'NM', 'UT'],
-          species: 'Lucilia coeruleiviridis',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['less than 7% of head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['almost touching. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at most about 10% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Genae: ['with dark setae only'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish', 'brown or black'],
-          Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['more or less entirely polished']
-},
-{
-          id: 'l_coeruleivirids_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'Lucilia coeruleiviridis'],
-          distribution: ['AL', 'AR', 'FL', 'GA', 'KS', 'LA', 'MS', 'MO', 'NC', 'OK', 'SC', 'TN', 'TX', 'MB', 'NB', 'NL', 'NS', 'ON', 'PE', 'QC', 'CT', 'DE', 'DC', 'IL', 'IN', 'IA', 'KY', 'ME', 'MD', 'MA', 'MI', 'MN', 'NE', 'NH', 'NJ', 'NY', 'ND', 'OH', 'PA', 'RI', 'SD', 'VT', 'VA', 'WV', 'WI', 'AZ', 'CA', 'CO', 'NV', 'NM', 'UT'],
-          species: 'Lucilia coeruleiviridis',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width', 'at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Genae: ['with dark setae only'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['orange, yellow, or whitish'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['appressed'],
-          Tergitepubescence: ['more or less entirely polished']
-},
-{
-          id: 'l_illustris_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'Lucilia illustris'],
-          distribution: ['AB', 'BC', 'NL', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'GA', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'ME', 'MD', 'MA', 'MI', 'MN', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'],
-          species: 'Lucilia illustris',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['less than 7% of head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at most about 10% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['1-5 black setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_illustris_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'Lucilia illustris'],
-          distribution: ['AB', 'BC', 'NL', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'GA', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'ME', 'MD', 'MA', 'MI', 'MN', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'],
-          species: 'Lucilia illustris',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['large, with base extending more than halfway to lunule'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['1-5 black setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent']
-},
-{
-          id: 'l_mexicana_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'Lucilia mexicana'],
-          distribution: ['AZ', 'CA', 'NV', 'NM', 'UT', 'OK', 'TX', 'KS'],
-          species: 'Lucilia mexicana',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['less than 7% of head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at most about 10% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialcolor: ['silvery (Whitworth 2014)'],
-          Genae: ['with dark setae only'],
-          Genaldilation: ['greyish-white (with dark setae)'],
-          Occipitalsetae: ['stout and black'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['extensively pubescent'],
-          Maleterminalia: ['posteriorly divergent; see Jones et al. 2019']
-},
-{
-          id: 'l_mexicana_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'Lucilia mexicana'],
-          distribution: ['AZ', 'CA', 'NV', 'NM', 'UT', 'OK', 'TX', 'KS'],
-          species: 'Lucilia mexicana',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialcolor: ['silvery (Whitworth 2014)'],
-          Genae: ['with dark setae only'],
-          Genaldilation: ['greyish-white (with dark setae)'],
-          Occipitalsetae: ['stout and black'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['appressed'],
-          Tergitepubescence: ['more or less entirely polished']
-},
-{
-          id: 'l_eximia_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'Lucilia eximia'],
-          distribution: ['AL', 'AR', 'FL', 'GA', 'KS', 'LA', 'MS', 'OK', 'TX'],
-          species: 'Lucilia eximia',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['conspicuously narrowed above antennal bases'],
-          FronswidthatnarrowesttohelpIDmales: ['less than 7% of head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['almost touching. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at most about 10% head width'],
-          fronswidthvscuprinamale: ['at most about 15% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialcolor: ['orange (Whitworth 2014)'],
-          Genae: ['with dark setae only'],
-          Genaldilation: ['orangeish-white (with lighter brown setae)'],
-          Occipitalsetae: ['pale and weak'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tposteriorsetae: ['erect'],
-          Tergitepubescence: ['more or less entirely polished'],
-          Maleterminalia: ['posteriorly parallel; see Jones et al. 2019']
-},
-{
-          id: 'l_eximia_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'Lucilia eximia'],
-          distribution: ['AL', 'AR', 'FL', 'GA', 'KS', 'LA', 'MS', 'OK', 'TX'],
-          species: 'Lucilia eximia',
-          Headlength: ['Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)'],
-          Fronsnarrowing: ['more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point'],
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width', 'at least 25% of head width'],
-          Frontoorbitalplatesformaleswithnarrowfrons: ['separated. See figures in Jones et al. 2019, p.167, 174, 180'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          fronswidthvscuprinamale: ['at least about 20% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Parafacialcolor: ['orange (Whitworth 2014)'],
-          Genae: ['with dark setae only'],
-          Genaldilation: ['orangeish-white (with lighter brown setae)'],
-          Occipitalsetae: ['pale and weak'],
-          stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
-          Palpscolor: ['entirely yellow-orange'],
-          Bodycolor: ['orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          acrostichalspostsutural: ['two'],
-          Subcostalscleritesetae: ['no setae'],
-          Basicostacolor: ['brown or black'],
-          Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
-          Tergitepubescence: ['more or less entirely polished']
-},
-{
-          id: 'l_graphita_male',
-          m_or_f: 'male',
-          taxonomy: ['Lucilia', 'Lucilia graphita'],
-          distribution: ['HI'],
-          species: 'Lucilia graphita',
-          FronswidthatnarrowesttohelpIDmales: ['less than 7% of head width'],
-          FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
-          Fronswidthatnarrowestabout: ['less than 25% head width'],
-          fronswidthvssericatamale: ['at most about 10% head width'],
-          Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
-          Bodycolor: ['shining black'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted']
-},
-{
-          id: 'l_graphita_female',
-          m_or_f: 'female',
-          taxonomy: ['Lucilia', 'Lucilia graphita'],
-          distribution: ['HI'],
-          species: 'Lucilia graphita',
-          FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
-          fronswidthvssericatamale: ['at least about 12% head width'],
-          Bodycolor: ['shining black'],
-          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted']
-}
+  {
+    "id": "l_cuprina_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "L. sericata complex",
+      "Lucilia cuprina"
+    ],
+    "distribution": [
+      "HI",
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "KS",
+      "LA",
+      "MS",
+      "MO",
+      "NC",
+      "OK",
+      "SC",
+      "TN",
+      "TX",
+      "DE",
+      "DC",
+      "IL",
+      "IN",
+      "IA",
+      "KY",
+      "MD",
+      "NE",
+      "PA",
+      "NJ",
+      "OH",
+      "SD",
+      "VA",
+      "WV",
+      "WI",
+      "AZ",
+      "CA",
+      "NV",
+      "NM",
+      "OR",
+      "WA"
+    ],
+    "species": "Lucilia cuprina",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialcolor": [
+      "silvery (Whitworth 2014)"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "Occipitalsetae": [
+      "stout and black"
+    ],
+    "Occipitalsetaebehindinnerverticalseta": [
+      "a single seta."
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Bodycolor": [
+      "coppery brown",
+      "reddish-orange brown",
+      "orangish green"
+    ],
+    "Setulaeonposteriorpostpronotum": [
+      "small and number 2-3"
+    ],
+    "Setulaeonposteriornotopleuron": [
+      "small and number 2-3"
+    ],
+    "acrostichalspostsutural": [
+      "three"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_cuprina_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "L. sericata complex",
+      "Lucilia cuprina"
+    ],
+    "distribution": [
+      "HI",
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "KS",
+      "LA",
+      "MS",
+      "MO",
+      "NC",
+      "OK",
+      "SC",
+      "TN",
+      "TX",
+      "DE",
+      "DC",
+      "IL",
+      "IN",
+      "IA",
+      "KY",
+      "MD",
+      "NE",
+      "PA",
+      "NJ",
+      "OH",
+      "SD",
+      "VA",
+      "WV",
+      "WI",
+      "AZ",
+      "CA",
+      "NV",
+      "NM",
+      "OR",
+      "WA"
+    ],
+    "species": "Lucilia cuprina",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)",
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "at least 35% of head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "IVSorientation": [
+      "nearly parallel in dorsal view"
+    ],
+    "Parafacialwidthatleveloflunule": [
+      "broader than the width of the first flagellomere"
+    ],
+    "Parafacialcolor": [
+      "silvery (Whitworth 2014)"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "Angleformedbyverticalsetae": [
+      "a right angle"
+    ],
+    "Occipitalsetae": [
+      "stout and black"
+    ],
+    "Occipitalsetaebehindinnerverticalseta": [
+      "a single seta."
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Bodycolor": [
+      "coppery brown",
+      "reddish-orange brown",
+      "orangish green"
+    ],
+    "Setulaeonposteriorpostpronotum": [
+      "small and number 2-3"
+    ],
+    "Setulaeonposteriornotopleuron": [
+      "small and number 2-3"
+    ],
+    "acrostichalspostsutural": [
+      "three"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_magnicornis_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia magnicornis"
+    ],
+    "distribution": [
+      "AK",
+      "AB",
+      "BC",
+      "NT",
+      "NU",
+      "SK",
+      "YT",
+      "MB",
+      "ON",
+      "QB",
+      "NL"
+    ],
+    "species": "Lucilia magnicornis",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, more than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "at least partially dark brown to black"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "three"
+    ],
+    "intraalarsetaepresutural": [
+      "not present"
+    ],
+    "intraalarsetaePostsutural": [
+      "three"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_magnicornis_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia magnicornis"
+    ],
+    "distribution": [
+      "AK",
+      "AB",
+      "BC",
+      "NT",
+      "NU",
+      "SK",
+      "YT",
+      "MB",
+      "ON",
+      "QB",
+      "NL"
+    ],
+    "species": "Lucilia magnicornis",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, more than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "at least partially dark brown to black"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "three"
+    ],
+    "intraalarsetaepresutural": [
+      "not present"
+    ],
+    "intraalarsetaePostsutural": [
+      "three"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_cluvia_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia cluvia"
+    ],
+    "distribution": [
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "KS",
+      "LA",
+      "MS",
+      "MO",
+      "NC",
+      "OK",
+      "SC",
+      "TX"
+    ],
+    "species": "Lucilia cluvia",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width",
+      "at most about 10% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialcolor": [
+      "orange (Whitworth 2014)"
+    ],
+    "Genae": [
+      "posterior third with many pale setae"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "more or less entirely polished"
+    ]
+  },
+  {
+    "id": "l_cluvia_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia cluvia"
+    ],
+    "distribution": [
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "KS",
+      "LA",
+      "MS",
+      "MO",
+      "NC",
+      "OK",
+      "SC",
+      "TX"
+    ],
+    "species": "Lucilia cluvia",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialcolor": [
+      "orange (Whitworth 2014)"
+    ],
+    "Genae": [
+      "posterior third with many pale setae"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tergitepubescence": [
+      "more or less entirely polished"
+    ]
+  },
+  {
+    "id": "l_sericata_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "L. sericata complex",
+      "Lucilia sericata"
+    ],
+    "distribution": [
+      "AB",
+      "BC",
+      "MB",
+      "NB",
+      "NL",
+      "NT",
+      "NS",
+      "NU",
+      "ON",
+      "PE",
+      "QC",
+      "SK",
+      "YT",
+      "AL",
+      "AK",
+      "AZ",
+      "AR",
+      "CA",
+      "CO",
+      "CT",
+      "DE",
+      "DC",
+      "FL",
+      "GA",
+      "HI",
+      "ID",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "LA",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "MS",
+      "MO",
+      "MT",
+      "NE",
+      "NV",
+      "NH",
+      "NJ",
+      "NM",
+      "NY",
+      "NC",
+      "ND",
+      "OH",
+      "OK",
+      "OR",
+      "PA",
+      "RI",
+      "SC",
+      "SD",
+      "TN",
+      "TX",
+      "UT",
+      "VT",
+      "VA",
+      "WA",
+      "WV",
+      "WI",
+      "WY",
+      "HI"
+    ],
+    "species": "Lucilia sericata",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)",
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialcolor": [
+      "silvery (Whitworth 2014)"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "Occipitalsetae": [
+      "stout and black"
+    ],
+    "Occipitalsetaebehindinnerverticalseta": [
+      "two to five setae"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "Setulaeonposteriorpostpronotum": [
+      "larger and number 6-8"
+    ],
+    "Setulaeonposteriornotopleuron": [
+      "larger and number 6-8"
+    ],
+    "acrostichalspostsutural": [
+      "three"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_sericata_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "L. sericata complex",
+      "Lucilia sericata"
+    ],
+    "distribution": [
+      "AB",
+      "BC",
+      "MB",
+      "NB",
+      "NL",
+      "NT",
+      "NS",
+      "NU",
+      "ON",
+      "PE",
+      "QC",
+      "SK",
+      "YT",
+      "AL",
+      "AK",
+      "AZ",
+      "AR",
+      "CA",
+      "CO",
+      "CT",
+      "DE",
+      "DC",
+      "FL",
+      "GA",
+      "HI",
+      "ID",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "LA",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "MS",
+      "MO",
+      "MT",
+      "NE",
+      "NV",
+      "NH",
+      "NJ",
+      "NM",
+      "NY",
+      "NC",
+      "ND",
+      "OH",
+      "OK",
+      "OR",
+      "PA",
+      "RI",
+      "SC",
+      "SD",
+      "TN",
+      "TX",
+      "UT",
+      "VT",
+      "VA",
+      "WA",
+      "WV",
+      "WI",
+      "WY",
+      "HI"
+    ],
+    "species": "Lucilia sericata",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)",
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "at least 35% of head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "IVSorientation": [
+      "convergent in dorsal view"
+    ],
+    "Parafacialwidthatleveloflunule": [
+      "broader than the width of the first flagellomere"
+    ],
+    "Parafacialcolor": [
+      "silvery (Whitworth 2014)"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "Angleformedbyverticalsetae": [
+      "an obtuse angle"
+    ],
+    "Occipitalsetae": [
+      "stout and black"
+    ],
+    "Occipitalsetaebehindinnerverticalseta": [
+      "two to five setae"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "Setulaeonposteriorpostpronotum": [
+      "larger and number 6-8"
+    ],
+    "Setulaeonposteriornotopleuron": [
+      "larger and number 6-8"
+    ],
+    "acrostichalspostsutural": [
+      "three"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_silvarum_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "L. bufonivora complex",
+      "Lucilia silvarum"
+    ],
+    "distribution": [
+      "AB",
+      "BC",
+      "MB",
+      "NB",
+      "NL",
+      "NT",
+      "NS",
+      "NU",
+      "ON",
+      "PE",
+      "QC",
+      "SK",
+      "YT",
+      "AL",
+      "AK",
+      "AZ",
+      "AR",
+      "CA",
+      "CO",
+      "CT",
+      "DE",
+      "DC",
+      "FL",
+      "GA",
+      "ID",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "LA",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "MS",
+      "MO",
+      "MT",
+      "NE",
+      "NV",
+      "NH",
+      "NJ",
+      "NM",
+      "NY",
+      "NC",
+      "ND",
+      "OH",
+      "OK",
+      "OR",
+      "PA",
+      "RI",
+      "SC",
+      "SD",
+      "TN",
+      "TX",
+      "UT",
+      "VT",
+      "VA",
+      "WA",
+      "WV",
+      "WI",
+      "WY"
+    ],
+    "species": "Lucilia silvarum",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width",
+      "less than 7% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at most about 10% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "at least partially dark brown to black"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "presuturalacrostichalsetaeposteriorpairfirst": [
+      "The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae"
+    ],
+    "presuturalacrostichalsetaeposteriorpairsecond": [
+      "The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance",
+      "The distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance"
+    ],
+    "acrostichalspostsutural": [
+      "two",
+      "three"
+    ],
+    "intraalarsetaepresutural": [
+      "present"
+    ],
+    "intraalarsetaePostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "light brown, somewhat darker than upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ],
+    "Malecercusinlateralview": [
+      "with apical hook"
+    ]
+  },
+  {
+    "id": "l_silvarum_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "L. bufonivora complex",
+      "Lucilia silvarum"
+    ],
+    "distribution": [
+      "AB",
+      "BC",
+      "MB",
+      "NB",
+      "NL",
+      "NT",
+      "NS",
+      "NU",
+      "ON",
+      "PE",
+      "QC",
+      "SK",
+      "YT",
+      "AL",
+      "AK",
+      "AZ",
+      "AR",
+      "CA",
+      "CO",
+      "CT",
+      "DE",
+      "DC",
+      "FL",
+      "GA",
+      "ID",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "LA",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "MS",
+      "MO",
+      "MT",
+      "NE",
+      "NV",
+      "NH",
+      "NJ",
+      "NM",
+      "NY",
+      "NC",
+      "ND",
+      "OH",
+      "OK",
+      "OR",
+      "PA",
+      "RI",
+      "SC",
+      "SD",
+      "TN",
+      "TX",
+      "UT",
+      "VT",
+      "VA",
+      "WA",
+      "WV",
+      "WI",
+      "WY"
+    ],
+    "species": "Lucilia silvarum",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "at least partially dark brown to black"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "presuturalacrostichalsetaeposteriorpairfirst": [
+      "The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae"
+    ],
+    "presuturalacrostichalsetaeposteriorpairsecond": [
+      "The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance",
+      "The distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance"
+    ],
+    "acrostichalspostsutural": [
+      "two",
+      "three"
+    ],
+    "intraalarsetaepresutural": [
+      "present"
+    ],
+    "intraalarsetaePostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ],
+    "Femaleovipositorinventralview": [
+      "with ST7 narrowing posteriorly, and ST8 elongate and parallel-sided"
+    ]
+  },
+  {
+    "id": "l_bufonivora_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "L. bufonivora complex",
+      "Lucilia bufonivora"
+    ],
+    "distribution": [
+      "AK",
+      "AB",
+      "BC",
+      "NT",
+      "NU",
+      "SK",
+      "YT",
+      "ON",
+      "MB",
+      "WA",
+      "ID",
+      "MT",
+      "ND",
+      "MN",
+      "MI",
+      "NY"
+    ],
+    "species": "Lucilia bufonivora",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at most about 10% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "at least partially dark brown to black"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "presuturalacrostichalsetaeposteriorpairfirst": [
+      "The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae",
+      "The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae"
+    ],
+    "presuturalacrostichalsetaeposteriorpairsecond": [
+      "The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance"
+    ],
+    "acrostichalspostsutural": [
+      "two",
+      "three"
+    ],
+    "intraalarsetaepresutural": [
+      "present"
+    ],
+    "intraalarsetaePostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ],
+    "Malecercusinlateralview": [
+      "without apical hook"
+    ],
+    "Malesurstylus": [
+      "bufonivora has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)"
+    ],
+    "Morphometricsbufonivoraelongata": [
+      "bufonivora has distinct morphometrics of the antennae and frons that distinguish it from elongata. See Jones et al. 2019"
+    ]
+  },
+  {
+    "id": "l_bufonivora_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "L. bufonivora complex",
+      "Lucilia bufonivora"
+    ],
+    "distribution": [
+      "AK",
+      "AB",
+      "BC",
+      "NT",
+      "NU",
+      "SK",
+      "YT",
+      "ON",
+      "MB",
+      "WA",
+      "ID",
+      "MT",
+      "ND",
+      "MN",
+      "MI",
+      "NY"
+    ],
+    "species": "Lucilia bufonivora",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "at least partially dark brown to black"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "presuturalacrostichalsetaeposteriorpairfirst": [
+      "The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae",
+      "The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae"
+    ],
+    "presuturalacrostichalsetaeposteriorpairsecond": [
+      "The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance"
+    ],
+    "acrostichalspostsutural": [
+      "two",
+      "three"
+    ],
+    "intraalarsetaepresutural": [
+      "present"
+    ],
+    "intraalarsetaePostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ],
+    "Femaleovipositorinventralview": [
+      "with ST7 and ST8 gradually widened posteriorly"
+    ]
+  },
+  {
+    "id": "l_elongata_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "L. bufonivora complex",
+      "Lucilia elongata"
+    ],
+    "distribution": [
+      "AB",
+      "BC",
+      "ID",
+      "MT",
+      "OR",
+      "WA",
+      "CA",
+      "NV"
+    ],
+    "species": "Lucilia elongata",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "at least partially dark brown to black"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "presuturalacrostichalsetaeposteriorpairfirst": [
+      "The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae",
+      "The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae"
+    ],
+    "presuturalacrostichalsetaeposteriorpairsecond": [
+      "The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance"
+    ],
+    "acrostichalspostsutural": [
+      "two",
+      "three"
+    ],
+    "intraalarsetaepresutural": [
+      "present"
+    ],
+    "intraalarsetaePostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ],
+    "Malecercusinlateralview": [
+      "without apical hook"
+    ],
+    "Malesurstylus": [
+      "elongata has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)"
+    ],
+    "Morphometricsbufonivoraelongata": [
+      "elongata has distinct morphometrics of the antennae and frons that distinguish it from bufonivora. See Jones et al. 2019"
+    ]
+  },
+  {
+    "id": "l_elongata_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "L. bufonivora complex",
+      "Lucilia elongata"
+    ],
+    "distribution": [
+      "AB",
+      "BC",
+      "ID",
+      "MT",
+      "OR",
+      "WA",
+      "CA",
+      "NV"
+    ],
+    "species": "Lucilia elongata",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "at least partially dark brown to black"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "presuturalacrostichalsetaeposteriorpairfirst": [
+      "The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae",
+      "The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae"
+    ],
+    "presuturalacrostichalsetaeposteriorpairsecond": [
+      "The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance"
+    ],
+    "acrostichalspostsutural": [
+      "two",
+      "three"
+    ],
+    "intraalarsetaepresutural": [
+      "present"
+    ],
+    "intraalarsetaePostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ],
+    "Femaleovipositorinventralview": [
+      "with ST7 and ST8 widened posteriorly after a sudden subapical constriction"
+    ]
+  },
+  {
+    "id": "l_thatuna_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia thatuna"
+    ],
+    "distribution": [
+      "AZ",
+      "CA",
+      "CO",
+      "NV",
+      "NM",
+      "UT",
+      "ID",
+      "MT",
+      "OR",
+      "WA",
+      "WY",
+      "BC",
+      "AB"
+    ],
+    "species": "Lucilia thatuna",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "less than 7% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "almost touching. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at most about 10% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "three"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_thatuna_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia thatuna"
+    ],
+    "distribution": [
+      "AZ",
+      "CA",
+      "CO",
+      "NV",
+      "NM",
+      "UT",
+      "ID",
+      "MT",
+      "OR",
+      "WA",
+      "WY",
+      "BC",
+      "AB"
+    ],
+    "species": "Lucilia thatuna",
+    "Headlength": [
+      "Head longer; length of head at level of lunule more than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialwidthatleveloflunule": [
+      "narrower than the width of the first flagellomere"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "three"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_coeruleivirids_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia coeruleiviridis"
+    ],
+    "distribution": [
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "KS",
+      "LA",
+      "MS",
+      "MO",
+      "NC",
+      "OK",
+      "SC",
+      "TN",
+      "TX",
+      "MB",
+      "NB",
+      "NL",
+      "NS",
+      "ON",
+      "PE",
+      "QC",
+      "CT",
+      "DE",
+      "DC",
+      "IL",
+      "IN",
+      "IA",
+      "KY",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "NE",
+      "NH",
+      "NJ",
+      "NY",
+      "ND",
+      "OH",
+      "PA",
+      "RI",
+      "SD",
+      "VT",
+      "VA",
+      "WV",
+      "WI",
+      "AZ",
+      "CA",
+      "CO",
+      "NV",
+      "NM",
+      "UT"
+    ],
+    "species": "Lucilia coeruleiviridis",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "less than 7% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "almost touching. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at most about 10% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish",
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "light brown, somewhat darker than upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "more or less entirely polished"
+    ]
+  },
+  {
+    "id": "l_coeruleivirids_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia coeruleiviridis"
+    ],
+    "distribution": [
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "KS",
+      "LA",
+      "MS",
+      "MO",
+      "NC",
+      "OK",
+      "SC",
+      "TN",
+      "TX",
+      "MB",
+      "NB",
+      "NL",
+      "NS",
+      "ON",
+      "PE",
+      "QC",
+      "CT",
+      "DE",
+      "DC",
+      "IL",
+      "IN",
+      "IA",
+      "KY",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "NE",
+      "NH",
+      "NJ",
+      "NY",
+      "ND",
+      "OH",
+      "PA",
+      "RI",
+      "SD",
+      "VT",
+      "VA",
+      "WV",
+      "WI",
+      "AZ",
+      "CA",
+      "CO",
+      "NV",
+      "NM",
+      "UT"
+    ],
+    "species": "Lucilia coeruleiviridis",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width",
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "orange, yellow, or whitish"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "appressed"
+    ],
+    "Tergitepubescence": [
+      "more or less entirely polished"
+    ]
+  },
+  {
+    "id": "l_illustris_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia illustris"
+    ],
+    "distribution": [
+      "AB",
+      "BC",
+      "NL",
+      "MB",
+      "NB",
+      "NL",
+      "NT",
+      "NS",
+      "NU",
+      "ON",
+      "PE",
+      "QC",
+      "SK",
+      "YT",
+      "AL",
+      "AK",
+      "AZ",
+      "AR",
+      "CA",
+      "CO",
+      "CT",
+      "DE",
+      "DC",
+      "GA",
+      "ID",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "MO",
+      "MT",
+      "NE",
+      "NV",
+      "NH",
+      "NJ",
+      "NM",
+      "NY",
+      "NC",
+      "ND",
+      "OH",
+      "OK",
+      "OR",
+      "PA",
+      "RI",
+      "SC",
+      "SD",
+      "TN",
+      "TX",
+      "UT",
+      "VT",
+      "VA",
+      "WA",
+      "WV",
+      "WI",
+      "WY"
+    ],
+    "species": "Lucilia illustris",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "less than 7% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at most about 10% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "1-5 black setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "light brown, somewhat darker than upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_illustris_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia illustris"
+    ],
+    "distribution": [
+      "AB",
+      "BC",
+      "NL",
+      "MB",
+      "NB",
+      "NL",
+      "NT",
+      "NS",
+      "NU",
+      "ON",
+      "PE",
+      "QC",
+      "SK",
+      "YT",
+      "AL",
+      "AK",
+      "AZ",
+      "AR",
+      "CA",
+      "CO",
+      "CT",
+      "DE",
+      "DC",
+      "GA",
+      "ID",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "ME",
+      "MD",
+      "MA",
+      "MI",
+      "MN",
+      "MO",
+      "MT",
+      "NE",
+      "NV",
+      "NH",
+      "NJ",
+      "NM",
+      "NY",
+      "NC",
+      "ND",
+      "OH",
+      "OK",
+      "OR",
+      "PA",
+      "RI",
+      "SC",
+      "SD",
+      "TN",
+      "TX",
+      "UT",
+      "VT",
+      "VA",
+      "WA",
+      "WV",
+      "WI",
+      "WY"
+    ],
+    "species": "Lucilia illustris",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "large, with base extending more than halfway to lunule"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "reddish-orange brown",
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "1-5 black setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ]
+  },
+  {
+    "id": "l_mexicana_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia mexicana"
+    ],
+    "distribution": [
+      "AZ",
+      "CA",
+      "NV",
+      "NM",
+      "UT",
+      "OK",
+      "TX",
+      "KS"
+    ],
+    "species": "Lucilia mexicana",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "less than 7% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at most about 10% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialcolor": [
+      "silvery (Whitworth 2014)"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "Genaldilation": [
+      "greyish-white (with dark setae)"
+    ],
+    "Occipitalsetae": [
+      "stout and black"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "light brown, somewhat darker than upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "extensively pubescent"
+    ],
+    "Maleterminalia": [
+      "posteriorly divergent; see Jones et al. 2019"
+    ]
+  },
+  {
+    "id": "l_mexicana_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia mexicana"
+    ],
+    "distribution": [
+      "AZ",
+      "CA",
+      "NV",
+      "NM",
+      "UT",
+      "OK",
+      "TX",
+      "KS"
+    ],
+    "species": "Lucilia mexicana",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialcolor": [
+      "silvery (Whitworth 2014)"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "Genaldilation": [
+      "greyish-white (with dark setae)"
+    ],
+    "Occipitalsetae": [
+      "stout and black"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "appressed"
+    ],
+    "Tergitepubescence": [
+      "more or less entirely polished"
+    ]
+  },
+  {
+    "id": "l_eximia_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia eximia"
+    ],
+    "distribution": [
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "KS",
+      "LA",
+      "MS",
+      "OK",
+      "TX"
+    ],
+    "species": "Lucilia eximia",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "conspicuously narrowed above antennal bases"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "less than 7% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "almost touching. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at most about 10% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at most about 15% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialcolor": [
+      "orange (Whitworth 2014)"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "Genaldilation": [
+      "orangeish-white (with lighter brown setae)"
+    ],
+    "Occipitalsetae": [
+      "pale and weak"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "light brown, somewhat darker than upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tposteriorsetae": [
+      "erect"
+    ],
+    "Tergitepubescence": [
+      "more or less entirely polished"
+    ],
+    "Maleterminalia": [
+      "posteriorly parallel; see Jones et al. 2019"
+    ]
+  },
+  {
+    "id": "l_eximia_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia eximia"
+    ],
+    "distribution": [
+      "AL",
+      "AR",
+      "FL",
+      "GA",
+      "KS",
+      "LA",
+      "MS",
+      "OK",
+      "TX"
+    ],
+    "species": "Lucilia eximia",
+    "Headlength": [
+      "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)"
+    ],
+    "Fronsnarrowing": [
+      "more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point"
+    ],
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width",
+      "at least 25% of head width"
+    ],
+    "Frontoorbitalplatesformaleswithnarrowfrons": [
+      "separated. See figures in Jones et al. 2019, p.167, 174, 180"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "fronswidthvscuprinamale": [
+      "at least about 20% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Parafacialcolor": [
+      "orange (Whitworth 2014)"
+    ],
+    "Genae": [
+      "with dark setae only"
+    ],
+    "Genaldilation": [
+      "orangeish-white (with lighter brown setae)"
+    ],
+    "Occipitalsetae": [
+      "pale and weak"
+    ],
+    "stflagellomerelengthrelativetoeyelength": [
+      "in length, less than half of the height of eye in lateral view"
+    ],
+    "Palpscolor": [
+      "entirely yellow-orange"
+    ],
+    "Bodycolor": [
+      "orangish green",
+      "yellowish green",
+      "emerald green",
+      "bluish"
+    ],
+    "acrostichalspostsutural": [
+      "two"
+    ],
+    "Subcostalscleritesetae": [
+      "no setae"
+    ],
+    "Basicostacolor": [
+      "brown or black"
+    ],
+    "Lowercalyptercolor": [
+      "pale, similar to upper calypter"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Tsetae": [
+      "without especially strong or erect median marginal setae (Whitworth 2006)"
+    ],
+    "Tergitepubescence": [
+      "more or less entirely polished"
+    ]
+  },
+  {
+    "id": "l_graphita_male",
+    "m_or_f": "male",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia graphita"
+    ],
+    "distribution": [
+      "HI"
+    ],
+    "species": "Lucilia graphita",
+    "FronswidthatnarrowesttohelpIDmales": [
+      "less than 7% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "Fronswidthatnarrowestabout": [
+      "less than 25% head width"
+    ],
+    "fronswidthvssericatamale": [
+      "at most about 10% head width"
+    ],
+    "Ocellartriangle": [
+      "relatively small, with basal swelling extending less than halfway to lunule"
+    ],
+    "Bodycolor": [
+      "shining black"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ]
+  },
+  {
+    "id": "l_graphita_female",
+    "m_or_f": "female",
+    "taxonomy": [
+      "Lucilia",
+      "Lucilia graphita"
+    ],
+    "distribution": [
+      "HI"
+    ],
+    "species": "Lucilia graphita",
+    "FronswidthatnarrowesttohelpIDmales": [
+      "at least 7% of the head width"
+    ],
+    "fronswidthvssericatamale": [
+      "at least about 12% head width"
+    ],
+    "Bodycolor": [
+      "shining black"
+    ],
+    "Abdominalpubescence": [
+      "without extensive areas of abdominal pubescence that appear white-dusted"
+    ]
+  }
 ];
