@@ -12,7 +12,7 @@
 <div id="modal-filters" class="modal">
     <div class="modal-content">
         <h3>Add Extra URL Filters</h3>
-        <p style="font-size: 0.8rem; color: #666;">Enter additional iNaturalist API parameters (e.g., <code>user_id=username</code>,<code>order=asc</code>, or <code>lrank=complex</code>).</p>
+        <p style="font-size: 0.8rem; color: #666;">Enter additional iNaturalist API parameters (e.g., <code>user_id=username</code>, <code>order=asc</code>, <code>disagreements=true</code>, or <code>lrank=complex</code>).</p>
         <input type="text" id="new-other-filters" placeholder="e.g. user_id=edanko">
         <div style="display:flex; gap:10px;">
             <button onclick="updateOtherFilters()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Update & Refresh</button>
@@ -103,7 +103,7 @@
     </div>
 
     <div class="token-section-center">
-        Interactive field-character key to <i>Lucilia</i> of the USA and Canada
+        <div id="main-title">Loading title...</div>
     </div>
 
 <button id="toggle-viewer-btn" onclick="toggleViewerPanel()" class="btn-toggle">Hide iNat interface</button>
@@ -115,23 +115,22 @@
     <div class="modal-content">
         <h3>iNaturalist API Token</h3>
         <p style="font-size: 0.8rem; color: #666;">
-            To submit identifications, you need to link your iNaturalist account. 
-
-		<button onclick="loginWithINat()" style="background:#74ac00; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">
+            To submit identifications, you need to link your iNaturalist account. <br><br>
+		<button onclick="loginWithINat()" style="background:#74ac00; color:white; border:none; padding:14px 28px; border-radius:4px; cursor:pointer; font-weight:bold; font-size: 1rem;">
         Log in with iNaturalist
     </button>
 
         </p>
-	<p style="font-size: 0.8rem; color: #666;"> 
+	<span style="font-size: 0.8rem; color: #666;"> <br><br>
 	If that doesn't work (e.g. if you are running a copy of this page on your computer), you can also link your account manually. Log in and copy the 'api_token' to your clipboard by visiting <br> <a href="https://www.inaturalist.org/users/api_token" target="_blank" class="token-link" style="color: var(--primary); font-weight: bold; font-size: 0.8rem;">https://www.inaturalist.org/users/api_token</a>
-	</p>
-        <input type="text" id="token-input-modal" placeholder="Paste api_token here..." style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+	</span>
+        <input type="text" id="token-input-modal" placeholder="Paste api_token here..." style="width: 100%; padding: 10px; margin-bottom: 1px; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
         <div style="display:flex; gap:10px;">
-            <button onclick="updateTokenFromModal()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Save Token</button>
-            <button onclick="closeModals()" class="btn-skip" style="cursor: pointer; flex:1; padding:10px;">Cancel</button>
+            <button onclick="updateTokenFromModal()" style="cursor: pointer; flex:1; padding:5px;">Save Token</button>
+            <button onclick="closeModals()" style="cursor: pointer; flex:1; padding:5px;">Cancel</button>
         </div>
     </div>
-    </div>
+    </div>	
 </div>
 
 <div class="workspace-grid">
@@ -172,6 +171,8 @@
 <script src="traits.js"></script>
 <script src="flydata.js"></script>
 <script src="taxa.js"></script>
+<script src="header.js"></script>
+
 
 <script>
     /* --- SHARED STATE --- */
@@ -183,13 +184,13 @@
     let CURRENT_OBS_ID = null;
 	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
-    let CURRENT_PLACE_ID = "6712,1"; // Default: USA & Canada
+    let CURRENT_PLACE_ID = window.DEFAULT_PLACE_ID; // Default from header.js
     let OTHER_FILTERS = ""; // Default other filters
-    let API_BASE = "https://api.inaturalist.org/v1/observations?taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id";
+    let API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${window.DEFAULT_TAXON}&only_id=false&fields=all&quality_grade=needs_id`;
 
 let isPinned = false; 
 
-let CURRENT_TAXON_ID = "61858"; // Default Lucilia ID
+let CURRENT_TAXON_ID = window.DEFAULT_TAXON; // Default taxon ID
 
 function openFiltersModal() {
     document.getElementById('modal-filters').style.display = 'flex';
@@ -476,8 +477,8 @@ function copyNarrativeToClipboard() {
 	const toggleLocBtn = document.getElementById('change-loc-btn');
 	const queueCountEl = document.getElementById('queue-count'); // Get the counter element
         if (!isTokenValid(MY_TOKEN)) {
-            statusEl.innerText = "";<!--versus "EXPIRED/MISSING" -->
-            statusEl.className = "";<!-- versus "status-bad" -->
+            statusEl.innerText = "";//<!--versus "EXPIRED/MISSING" -->
+            statusEl.className = "";//<!-- versus "status-bad" -->
 	    queueCountEl.innerText = ""; // Clear the count
             controls.classList.remove('hidden');
 	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide if not valid
@@ -585,6 +586,9 @@ function autoSetRegionFromLocality(terms) {
         if (!answerOrder.includes('region')) {
             answerOrder.push('region');
         }
+
+
+
         // Update the UI to reflect the automatically selected region
         updateUI();
         console.log(`Auto-detected region: ${match.name}`);
@@ -792,8 +796,12 @@ async function postImmediateID() {
         
         if (taxonInfo && taxonInfo.taxonId) {
             // --- WHAT DO IF NOT A SPECIES LEVEL ID --
-                setCommunityTaxonStatus(taxonInfo);
-           
+		// Only vote on community ID if the user didn't hit any generic convenience skips
+	            if (beginnerSkips.length === 0) {
+	                setCommunityTaxonStatus(taxonInfo);
+	            } else {
+	                console.log("Convenience skips detected. Skipping community verification vote adjustments.");
+	            }           
 
             // 3. Submit immediately to iNat
             sendIdentification(CURRENT_OBS_ID, taxonInfo.taxonId);
@@ -812,8 +820,14 @@ async function postImmediateID() {
 
 			// append "special text" ONLY if it's NOT the placeholder AND user is edanko
 			const isPlaceholder = (narrativeText === "Select traits to generate description." || !narrativeText);
-			if (!isPlaceholder && document.getElementById('token-status').innerText==="ACTIVE: edanko") {
- 			   narrativeText += "\n\n--------------------------\n\nI made an interactive web page recently to help identify green bottle-flies at https://edankow.github.io/identify/. I’m improving it gradually, and I’d like to know what more people think. If you take a look, would you like to let me know the first thing that challenges or confuses you?";
+			if (!isPlaceholder) {
+			    if (document.getElementById('token-status').innerText === "ACTIVE: edanko") {
+			        // Text for edanko
+			        narrativeText += "\n\n--------------------------\n\nI’ve been building an interactive tool to help with IDs at https://edankow.github.io/identify/. If you take a minute to look at it, what’s your first impression? I’m gradually making improvements.";
+			    } else {
+			        // Text for everyone else
+			        narrativeText += "\n\n--------------------------\n\nThis identification was made and posted using @edanko’s interactive key at https://edankow.github.io/identify/.";
+			    }
 			}
 		  
             if (narrativeText && narrativeText !== placeholder) {
@@ -852,7 +866,8 @@ async function postImmediateID() {
     /* --- MATRIX CORE LOGIC --- */
     let currentFilters = { region: null }; 
     let answerOrder = []; 
-    let skippedQuestions = []; 
+    let skippedQuestions = []; // For "not visible / not present"
+    let beginnerSkips = [];    // For beginners getting started
     let activeId = null;
 
     function initMatrix() {
@@ -905,8 +920,8 @@ async function postImmediateID() {
         });
 
         const allQuestions = [{ id: 'region', title: 'Region', weight: 10}, ...traits];
-        const answered = allQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id));
-        const unanswered = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id));
+	const answered = allQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id) || beginnerSkips.includes(q.id));
+        const unanswered = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id) && !beginnerSkips.includes(q.id));
 
         answered.sort((a, b) => answerOrder.indexOf(a.id) - answerOrder.indexOf(b.id));
         const sortedUnanswered = unanswered.map(q => {
@@ -969,8 +984,8 @@ async function postImmediateID() {
         area.innerHTML = `
             <h4>Select Region</h4>
             <div style="display: flex; gap: 5px; margin-bottom:10px;">
-                <input list="regions-list" placeholder="Type region..." 
-                       value="${currentRegionObj ? currentRegionObj.name : ''}" oninput="handleRegionChange(this.value)" style="flex:1; padding:8px;">
+                <input list="regions-list" id="region-manual-input" placeholder="Type region..." 
+                       value="${currentRegionObj ? currentRegionObj.name : ''}" onchange="handleRegionChange(this.value)" style="flex:1; padding:8px;">
             </div>
             <datalist id="regions-list">${regions.map(r => `<option value="${r.name}">${r.code}</option>`).join('')}</datalist>
             <button class="reset-btn" style="background:#95a5a6" onclick="skipQuestion('region')">Skip</button>
@@ -978,8 +993,26 @@ async function postImmediateID() {
     } else {
         const trait = traits.find(t => t.id === id);
         
-	const linkHtml = trait.link 
-            ? `<a href="${trait.link}" target="_blank" style="text-decoration:none; margin-left:auto; font-size:0.8rem; color:#2980b9; line-height:1;" title="View trait details">&#9432; Click here for illustrations and more explanation about this trait</a>` 
+	// Help Drawer Button and Expandable Frame Setup split into two parts
+        const helpButtonHtml = trait.link 
+            ? `
+            <div style="margin: 6px 0 12px 0; width: 100%; display: flex; flex-direction: column;">
+                <button onclick="toggleDrawer('${trait.id}')" style="align-self: flex-end; display: inline-flex; align-items: center; gap: 6px; background: #eef9ff; border: 1px solid #b3e0ff; padding: 6px 12px; border-radius: 4px; cursor: pointer; color: #1c6394; font-size: 0.85rem; font-weight: 500; transition: background 0.2s;">
+                    📖 View Reference Images <span id="chevron-${trait.id}" style="font-size: 0.75rem; margin-left: 2px;">▼</span>
+                </button>
+            </div>` 
+            : "";
+
+        const drawerPanelHtml = trait.link
+            ? `
+            <div id="drawer-${trait.id}" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fafafa; border-radius: 4px; margin-top: 12px; width: 100%;">
+                <div style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <iframe src="${trait.link}" style="width: 100%; height: 400px; border: none; background: white;"></iframe>
+                    <div style="margin-top: 8px; text-align: right;">
+                        <a href="${trait.link}" target="_blank" style="font-size: 0.8rem; color: #2980b9; text-decoration: none; font-weight: bold;">➡️ Open in new tab</a>
+                    </div>
+                </div>
+            </div>`
             : "";
 
         // 3. Determine which button to show
@@ -989,20 +1022,26 @@ async function postImmediateID() {
             actionButtonHtml = `<button class="btn-post" style="width:100%; margin-top:10px;" onclick="postImmediateID()">Post Results & Next</button>`;
         } else if (!isConfirmationMode) {
             // Show "Skip" if there are still useful questions to answer
-            actionButtonHtml = `<button class="reset-btn" style="background:#95a5a6" onclick="skipQuestion('${id}')">Skip</button>`;
+            actionButtonHtml = `
+                <div style="display: flex; gap: 10px; margin-top: 12px;">
+                    <button class="reset-btn" style="background:#95a5a6; flex: 1; font-size: 0.8rem; padding: 8px 4px;" onclick="skipQuestion('${id}', 'not_visible')">Trait not visible / not present</button>
+                    <button class="reset-btn" style="background:#bdc3c7; color: #333; flex: 1; font-size: 0.8rem; padding: 8px 4px;" onclick="skipQuestion('${id}', 'beginner')">Skip for now (convenience)</button>
+                </div>
+            `;
         }
         // If it's confirmation mode but NO token, we show nothing (as requested)
 
         area.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-      		  <h4 style="margin: 0; padding-bottom: 10px;">${trait.title}</h4>
-       		 ${linkHtml}
-    		</div>
+            <div style="display: block; margin-bottom: 5px;">
+                <h4 style="margin: 0; padding-bottom: 2px;">${trait.title}</h4>
+            </div>
+            ${helpButtonHtml}
             ${trait.options.map(opt => `
                 <button class="option ${currentFilters[id] === opt.label ? 'active' : ''}" 
                         onclick="handleTraitSelection('${id}', '${opt.label}')">${opt.label}</button>
             `).join('')}
             ${actionButtonHtml}
+            ${drawerPanelHtml}
         `;
     }
 
@@ -1013,6 +1052,20 @@ async function postImmediateID() {
     }, 50);
 }
 
+
+function toggleDrawer(id) {
+    const drawer = document.getElementById(`drawer-${id}`);
+    const chevron = document.getElementById(`chevron-${id}`);
+    if (!drawer) return;
+
+    if (drawer.style.maxHeight === '0px' || drawer.style.maxHeight === '0' || !drawer.style.maxHeight) {
+        drawer.style.maxHeight = drawer.scrollHeight + 'px';
+        if (chevron) chevron.innerText = '▲';
+    } else {
+        drawer.style.maxHeight = '0px';
+        if (chevron) chevron.innerText = '▼';
+    }
+}
 
 function getFilteredFlies() {
     return flyData.filter(fly => {
@@ -1031,6 +1084,7 @@ function getFilteredFlies() {
             currentFilters.region = foundRegion.code; 
             if (!answerOrder.includes('region')) answerOrder.push('region');
             skippedQuestions = skippedQuestions.filter(sid => sid !== 'region');
+	    beginnerSkips = beginnerSkips.filter(sid => sid !== 'region');
             setTimeout(jumpToNextQuestion, 300);
         } else { currentFilters.region = null; }
         updateUI();
@@ -1043,6 +1097,7 @@ function getFilteredFlies() {
         } else {
             currentFilters[traitId] = value;
             skippedQuestions = skippedQuestions.filter(sid => sid !== traitId);
+	    beginnerSkips = beginnerSkips.filter(sid => sid !== traitId);
             if (!answerOrder.includes(traitId)) answerOrder.push(traitId);
             setTimeout(jumpToNextQuestion, 300);
         }
@@ -1050,10 +1105,20 @@ function getFilteredFlies() {
         updateUI();
     }
 
-    function skipQuestion(id) {
+    function skipQuestion(id, type = 'not_visible') {
         if (!answerOrder.includes(id)) answerOrder.push(id);
-        if (!skippedQuestions.includes(id)) skippedQuestions.push(id);
+        
+        // Clean out previous states for this question first
+        skippedQuestions = skippedQuestions.filter(sid => sid !== id);
+        beginnerSkips = beginnerSkips.filter(sid => sid !== id);
         currentFilters[id] = null;
+
+        if (type === 'beginner') {
+            if (!beginnerSkips.includes(id)) beginnerSkips.push(id);
+        } else {
+            if (!skippedQuestions.includes(id)) skippedQuestions.push(id);
+        }
+
         if (activeId === id) selectQuestion(id); 
         setTimeout(jumpToNextQuestion, 200);
         updateUI();
@@ -1194,13 +1259,24 @@ function getFilteredFlies() {
     function resetMatrix() {
         currentFilters = { region: null };
         traits.forEach(t => { currentFilters[t.id] = null; });
-        answerOrder = []; skippedQuestions = []; activeId = null;
+        answerOrder = []; skippedQuestions = []; beginnerSkips = []; activeId = null;
         document.getElementById('active-question-area').innerHTML = '<div style="color:#999; text-align:center; padding-top:50px;">Select a trait to begin.</div>';
         updateUI();
     }
 
     window.onload = () => {
-        // 1. Check if we are returning from iNat with a login code
+        
+	// update the title text and about content on the page:
+	const titleDiv = document.getElementById("main-title");
+  	  if (titleDiv) {
+ 	       titleDiv.innerHTML = window.PAGE_TITLE;
+ 	   }
+
+	const aboutdiv = document.getElementById("about-content");
+  	  if (aboutdiv) {
+ 	       aboutdiv.innerHTML = window.ABOUT_CONTENT;
+ 	   }
+	// Check if we are returning from iNat with a login code
         checkLogin().then(() => {
             // 2. Initialize the matrix
             initMatrix();
@@ -1327,7 +1403,7 @@ function jumpToNextQuestion() {
     const allQuestions = [{ id: 'region', title: 'Region', weight: 10}, ...traits];
     
     // 2. Filter for only unanswered and unskipped questions
-    const remaining = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id));
+    const remaining = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id) && !beginnerSkips.includes(q.id));
 
     // 3. Sort them by score (matches your renderMenu logic)
     const sortedRemaining = remaining.map(q => {
@@ -1508,7 +1584,7 @@ async function generateCodeChallenge(verifier) {
 <div class="about-section">
     <h3>About this Tool</h3>
     <p>
-        Built by Even Dankowicz, this workspace is designed to streamline the identification of <i>Lucilia</i> flies 
+        Built by Even Dankowicz, this workspace is designed to streamline the identification of observations
         by combining a character-based matrix with the iNaturalist verification queue. 
         Select traits from the menu to filter matching species and generate a diagnostic narrative.
 		<p>A few important functions that may not be obvious:
@@ -1520,21 +1596,9 @@ async function generateCodeChallenge(verifier) {
 			<li>Clicking on your username in the top left will open your 'identifications' page on iNaturalist, in case you want to go back to an observation you've recently IDed.</li>
 			</ul>
 		</p>
-	<p>Most of the features used in this key are explained in my <a href="lucilia_us_canada.pdf">illustrated guide to Greenbottle Flies (Calliphoridae: <i>Lucilia</i>) of the USA and Canada</a>. Many features are also shown in <a href="https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf">Jones et al (2019)</a>, which is the best resource to start identifying specimens under a microscope. For my other fly ID resources, visit <a href="https://sites.google.com/view/flyguide/">https://sites.google.com/view/flyguide/</a>.
-	<br><br>
-	<p>I refined this dataset by studying preserved specimens, live flies, and photos.
-	A lot of the trait and distribution records were initially derived from the following references:
-	<p>
-	Falk, 2016. British Blowflies (Calliphoridae) and Woodlouse Flies (Rhinophoridae). Draft Key March 2016. https://quelestcetanimal-lagalerie.com/wp-content/uploads/2017/01/testkeytobritishblowflies132016.pdf 
-	<p>Hall, Townsend, 1977. The Blow Flies of Virginia (Diptera: Calliphoridae). Virginia Tech Research Division Bulletin 123.
-	<p>Jones, Whitworth, Marshall, 2019. Blow flies of North America: Keys to the subfamilies and genera of Calliphoridae, and to the species of the subfamilies Calliphorinae, Luciliinae and Chrysomyinae. Canadian Journal of Arthropod Identification. 39. https://cjai.biologicalsurvey.ca/jwm_39/jwm_39.html 
-	<p>Marshall, Whitworth, Roscoe, 2011. Blow flies (Diptera: Calliphoridae) of eastern Canada with a key to Calliphoridae subfamilies and genera of eastern North America, and a key to the eastern Canadian species of Calliphorinae, Luciliinae and Chrysomyiinae. Canadian Journal of Arthropod Identification. 11.
-	<p>Tantawi, Whitworth, 2014. First record of Lucilia bufonivora Moniez, 1876 (Diptera: Calliphoridae) from North America and key to North American species of the L. bufonivora species group. Zootaxa. 3881(2): 101-124
-	<p>Whitworth, 2006. Keys to the Genera and Species of Blow Flies (Diptera: Calliphoridae) of North America north of Mexico. Proceedings of the Entomological Society of Washington. 108(3): 689-725.
-	<p>Whitworth, 2010. Keys to the genera and species of blow flies (Diptera: Calliphoridae) of the WestIndies and description of a new species of Lucilia Robineau-Desvoidy. Zootaxa.
-	<p>Whitworth, 2014. A revision of the Neotropical species of Lucilia Robineau-Desvoidy (Diptera: Calliphoridae). Zootaxa.	<p>Williams, Villet, 2014. Morphological identification of Lucilia sericata, Lucilia cuprina and their hybrids (Diptera, Calliphoridae). ZooKeys 420. https://zookeys.pensoft.net/article/3908/
+        <div id="about-content">Loading about content...</div>
 
-    </p>
+	
 </div>
 
 
