@@ -1,7 +1,7 @@
 <!-- 
     Lucilia Database Pro Editor
     This editor was created by Manus AI by significantly modifying and enhancing 
-    an earlier version originally developed in Gemini.
+    an earlier version originally developed in Gemini. Further edits in Gemini and Manus.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +29,28 @@
         .resizer:hover, .resizing { background: #3b82f6; width: 2px; }
         td { vertical-align: top; overflow: hidden; }
         .trait-pill { display: inline-block; padding: 2px 8px; background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; border-radius: 999px; font-size: 11px; margin: 2px; }
+
+        /* taxonID info popover */
+        .taxon-info-btn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: #2563eb; color: #fff; font-size: 11px; font-weight: 900; cursor: pointer; border: 2px solid #fff; line-height: 1; margin-left: 8px; flex-shrink: 0; vertical-align: middle; font-style: normal; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .taxon-info-btn:hover { background: #1e40af; transform: scale(1.1); }
+        .taxon-popover { display: none; position: absolute; top: calc(100% + 12px); left: 0; z-index: 100; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 10px; padding: 14px 18px; width: 300px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1); font-size: 13px; color: #92400e; font-weight: 400; white-space: normal; line-height: 1.6; }
+        .taxon-popover.open { display: block; }
+        .taxon-popover::before { content: ''; position: absolute; top: -6px; left: 18px; width: 10px; height: 10px; background: #fffbeb; border-left: 1px solid #fbbf24; border-top: 1px solid #fbbf24; transform: rotate(45deg); }
+
+        /* Distribution modal tabs */
+        .dist-tab-btn { padding: 8px 18px; font-size: 13px; font-weight: 600; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: all 0.15s; color: #64748b; background: #f1f5f9; }
+        .dist-tab-btn.active { background: #fff; color: #1e40af; border-color: #e2e8f0; position: relative; bottom: -1px; }
+        .dist-tab-btn:not(.active):hover { background: #e2e8f0; }
+        .dist-tab-panel { display: none; }
+        .dist-tab-panel.active { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+        /* Map Zoom/Pan Styles */
+        #map-container { overflow: hidden; cursor: grab; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; position: relative; flex: 1; display: flex; align-items: center; justify-content: center; }
+        #map-container:active { cursor: grabbing; }
+        #map-svg { transition: transform 0.1s ease-out; transform-origin: center center; }
+        .zoom-controls { position: absolute; bottom: 16px; right: 16px; display: flex; flex-direction: column; gap: 4px; z-index: 10; }
+        .zoom-btn { width: 32px; height: 32px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #475569; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.2s; }
+        .zoom-btn:hover { background: #f8fafc; color: #1e40af; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans">
@@ -66,8 +88,8 @@
                     <input type="file" multiple onchange="loadFiles(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                 </div>
                 <div id="export-container" class="hidden space-y-2">
-                    <button onclick="exportCurrent()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-file-export"></i> Export Current
+                    <button onclick="exportAll()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-file-export"></i> Export All Files
                     </button>
                 </div>
             </div>
@@ -94,20 +116,12 @@
 
             <!-- Table Area -->
             <div class="flex-1 p-8 overflow-hidden flex flex-col">
-                <div id="inat-note" class="hidden mb-6 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-info-circle text-amber-500 text-lg"></i>
-                        <p class="text-sm text-amber-800 font-medium">
-                            <span class="font-bold">Note:</span> The <code class="bg-amber-100 px-1.5 py-0.5 rounded">taxonID</code> must be retrieved from the <span class="font-bold">iNaturalist database</span> to ensure compatibility with the iNat integration features.
-                        </p>
-                    </div>
-                </div>
                 <div id="welcome-screen" class="h-full flex flex-col items-center justify-center text-center space-y-4">
                     <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-3xl">
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">Upload your <b>taxa.js</b>, <b>traits.js</b>, and <b>flydata.js</b> files using the sidebar to begin managing your database.</p>
+                    <p class="text-slate-500 max-w-md">Upload your <b>taxa.js</b>, <b>traits.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b> files using the sidebar to begin managing your database, or click <b>Add New</b> to start from scratch.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -149,7 +163,7 @@
             </div>
             <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
                 <button onclick="closeModal()" class="px-4 py-2 text-slate-600 font-semibold hover:bg-slate-200 rounded-lg transition-all">Cancel</button>
-                <button id="modal-save-btn" onclick="saveModal()" class="px-6 py-2 bg-blue-600 text-white font-bold hover:bg-blue-700 rounded-lg shadow-md transition-all">Save Changes</button>
+                <button id="modal-save-btn" onclick="saveModal()" class="px-6 py-2 bg-blue-600 text-white font-bold hover:bg-blue-700 rounded-lg shadow-md transition-all">OK</button>
             </div>
         </div>
     </div>
@@ -157,7 +171,6 @@
     <script>
         let db = { taxa: null, traits: null, flyData: null, regions: null };
         let distributionClipboard = null;
-        // Map data placeholder - will be populated by map_paths.js content
         let mapData = { viewBox: "0 0 1000 1000", paths: {} };
         let currentTab = null;
         let activeEdit = { type: null, index: null, key: null };
@@ -169,6 +182,13 @@
             traits: { title: "Character Traits", desc: "Define the physical traits and their possible options for identification." },
             flyData: { title: "Fly Database", desc: "The core database mapping traits to specific fly species." },
             regions: { title: "Regions", desc: "Manage US States and Canadian Provinces for distribution mapping." }
+        };
+
+        const defaultTemplates = {
+            taxa: { taxonId: null, name: "New Species", rank: "species", parent: null },
+            traits: { id: "new_trait", title: "New Trait", weight: 1, link: "", options: [] },
+            flyData: { id: "new_fly", m_or_f: "M", species: "New Fly", distribution: [] },
+            regions: { name: "New Region", code: "XX" }
         };
 
         function printLog(msg, isError = false) {
@@ -197,22 +217,6 @@
                     try {
                         const cleanText = text.replace(/const\s+\w+\s*=\s*(?:Object\.freeze\()?(.*?)(?:\);?|;)\s*$/s, '$1');
                         const data = eval(`(${cleanText})`);
-                        
-                        // Import Validation
-                        const pkMap = { taxa: 'name', traits: 'id', flyData: 'id' };
-                        const pk = pkMap[type];
-                        if (pk) {
-                            const seen = new Set();
-                            const dups = [];
-                            data.forEach(row => {
-                                if (seen.has(row[pk])) dups.push(row[pk]);
-                                seen.add(row[pk]);
-                            });
-                            if (dups.length > 0) {
-                                printLog(`WARNING: Found ${dups.length} duplicate ${pk}s in ${file.name}: ${dups.slice(0, 3).join(', ')}...`, true);
-                            }
-                        }
-
                         db[type] = data;
                         loadedCount++;
                         printLog(`Successfully loaded ${file.name}`);
@@ -231,10 +235,10 @@
             ['taxa', 'traits', 'flyData', 'regions'].forEach(t => {
                 const btn = document.getElementById(`btn-${t}`);
                 if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
-                else { btn.classList.add('opacity-50', 'cursor-not-allowed'); btn.disabled = true; }
+                else { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; }
             });
             document.getElementById('file-counts').innerText = `Files: ${count}/3`;
-            if (count > 0) {
+            if (count > 0 || currentTab) {
                 document.getElementById('welcome-screen').classList.add('hidden');
                 document.getElementById('data-view').classList.remove('hidden');
                 document.getElementById('export-container').classList.remove('hidden');
@@ -242,27 +246,68 @@
         }
 
         function switchTab(tab) {
-            if (!db[tab]) return;
             currentTab = tab;
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab'));
             document.getElementById(`btn-${tab}`).classList.add('active-tab');
             document.getElementById('current-tab-title').innerText = tabConfigs[tab].title;
             document.getElementById('current-tab-desc').innerText = tabConfigs[tab].desc;
             
-            // Show/Hide iNat Note for Taxonomy
-            const inatNote = document.getElementById('inat-note');
-            if (tab === 'taxa') inatNote.classList.remove('hidden');
-            else inatNote.classList.add('hidden');
+            if (!db[tab] && tab !== 'flyData') {
+                document.getElementById('welcome-screen').classList.remove('hidden');
+                document.getElementById('data-view').classList.add('hidden');
+            } else {
+                document.getElementById('welcome-screen').classList.add('hidden');
+                document.getElementById('data-view').classList.remove('hidden');
+                renderTable();
+            }
+        }
 
-            renderTable();
+        // ── taxonID info popover ─────────────────────────────────────────────
+        function toggleTaxonPopover(btn) {
+            const pop = btn.nextElementSibling;
+            const isOpen = pop.classList.contains('open');
+            document.querySelectorAll('.taxon-popover.open').forEach(p => p.classList.remove('open'));
+            if (!isOpen) {
+                pop.classList.add('open');
+                setTimeout(() => { document.addEventListener('click', closeTaxonPopover, { once: true }); }, 0);
+            }
+        }
+
+        function closeTaxonPopover(e) {
+            if (!e.target.closest('.taxon-info-btn') && !e.target.closest('.taxon-popover')) {
+                document.querySelectorAll('.taxon-popover.open').forEach(p => p.classList.remove('open'));
+            }
         }
 
         function renderTable() {
             const data = db[currentTab];
-            if (!data || data.length === 0) return;
+            
+            // Special handling for flyData columns
+            let keys = [];
+            if (currentTab === 'flyData') {
+                keys = ['id', 'm_or_f', 'species', 'distribution'];
+                if (db.traits) {
+                    db.traits.forEach(t => { if (!keys.includes(t.id)) keys.push(t.id); });
+                }
+                if (data && data.length > 0) {
+                    Object.keys(data[0]).forEach(k => {
+                        if (!keys.includes(k) && k !== 'taxonomy') keys.push(k);
+                    });
+                }
+            } else if (data && data.length > 0) {
+                keys = Object.keys(data[0]);
+            }
 
-            let keys = Object.keys(data[0]);
-            if (currentTab === 'flyData') keys = keys.filter(k => k !== 'taxonomy');
+            if (!data || data.length === 0) {
+                if (currentTab === 'flyData') {
+                    renderHeader(keys);
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" class="p-12 text-center text-slate-400 italic">No data found. Click "Add New" to start.</td></tr>';
+                } else {
+                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" class="p-12 text-center text-slate-400 italic">No data found. Click "Add New" to start.</td></tr>';
+                }
+                return;
+            }
+
             if (currentTab === 'regions') { renderRegionsTable(); return; }
 
             const filteredData = data.filter(row => {
@@ -273,32 +318,22 @@
             const traitMap = {};
             if (db.traits) db.traits.forEach(t => { traitMap[t.id] = t.title; });
 
-            // Header
-            let headHtml = '<tr><th class="px-4 py-3 text-left font-bold text-slate-600" style="width: 60px">#</th>';
-            keys.forEach(k => {
-                const width = columnWidths[currentTab]?.[k] || (k === 'title' ? 300 : (k === 'id' ? 150 : 200));
-                let displayHeader = (currentTab === 'flyData' && traitMap[k]) ? traitMap[k] : k;
-                let quickAddBtn = (currentTab === 'flyData' && traitMap[k]) ? `<button onclick="quickAddTraitOption('${k}')" class="ml-2 text-blue-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all" title="Add new option to this trait"><i class="fas fa-plus-circle"></i></button>` : '';
-                
-                headHtml += `
-                    <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top" style="width: ${width}px" data-key="${k}" title="${k}">
-                        <div class="flex items-start">
-                            <div class="break-words whitespace-normal leading-tight flex-1">${displayHeader}</div>
-                            ${quickAddBtn}
-                        </div>
-                        <div class="text-[10px] text-slate-400 font-mono mt-1 opacity-0 group-hover:opacity-100 transition-opacity">${k}</div>
-                        <div class="resizer" onmousedown="initResize(event)"></div>
-                    </th>`;
-            });
-            headHtml += '<th class="px-4 py-3 text-right font-bold text-slate-600" style="width: 100px">Actions</th></tr>';
-            document.getElementById('table-head').innerHTML = headHtml;
+            renderHeader(keys, traitMap);
 
             // Body
             let bodyHtml = '';
             filteredData.forEach((row, idx) => {
                 const originalIdx = data.indexOf(row);
-                bodyHtml += `<tr class="hover:bg-slate-50 transition-all">`;
-                bodyHtml += `<td class="px-4 py-3 text-slate-400 font-mono text-xs">#${originalIdx + 1}</td>`;
+                bodyHtml += `<tr class="hover:bg-slate-50 transition-all group/row">`;
+                
+                // Index column with hover duplicate button
+                bodyHtml += `
+                    <td class="px-4 py-3 text-slate-400 font-mono text-xs relative overflow-visible" style="width: 80px">
+                        <span class="group-hover/row:opacity-0 transition-opacity">#${originalIdx + 1}</span>
+                        <button onclick="duplicateRow(${originalIdx})" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover/row:opacity-100 bg-blue-600 text-white w-7 h-7 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:bg-blue-700" title="Duplicate Row">
+                            <i class="fas fa-copy text-[10px]"></i>
+                        </button>
+                    </td>`;
                 
                 keys.forEach(k => {
                     let val = row[k];
@@ -307,7 +342,7 @@
                     let isComplex = Array.isArray(val) || (typeof val === 'object' && val !== null);
 
                     if (isTrait) {
-                        display = Array.isArray(val) ? val.map(v => `<span class="trait-pill">${v}</span>`).join('') : `<span class="trait-pill">${val}</span>`;
+                        display = Array.isArray(val) ? val.map(v => `<span class="trait-pill">${v}</span>`).join('') : (val ? `<span class="trait-pill">${val}</span>` : '');
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openTraitPicker(${originalIdx}, '${k}')">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
                     } else if (currentTab === 'flyData' && k === 'distribution') {
                         display = Array.isArray(val) ? val.map(v => `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] mr-1">${v}</span>`).join('') : val;
@@ -316,19 +351,53 @@
                         display = Array.isArray(val) ? `<span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium">${val.length} items</span>` : `<span class="px-2 py-1 bg-purple-50 text-purple-600 rounded text-xs font-medium">Object</span>`;
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openComplexEditor('${currentTab}', ${originalIdx}, '${k}')">${display}</td>`;
                     } else {
-                        display = val === null ? '<span class="text-slate-300 italic">null</span>' : val;
+                        display = (val === null || val === undefined) ? '<span class="text-slate-300 italic">null</span>' : val;
                         bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal" contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText)">${display}</td>`;
                     }
                 });
 
                 bodyHtml += `
                     <td class="px-4 py-3 text-right space-x-2">
-                        <button onclick="duplicateRow(${originalIdx})" class="text-slate-400 hover:text-blue-600 transition-all"><i class="fas fa-copy"></i></button>
-                        <button onclick="deleteRow(${originalIdx})" class="text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash"></i></button>
+                        <button onclick="duplicateRow(${originalIdx})" class="text-slate-400 hover:text-blue-600 transition-all" title="Duplicate"><i class="fas fa-copy"></i></button>
+                        <button onclick="deleteRow(${originalIdx})" class="text-slate-400 hover:text-red-600 transition-all" title="Delete"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>`;
             });
             document.getElementById('table-body').innerHTML = bodyHtml;
+        }
+
+        function renderHeader(keys, traitMap = {}) {
+            let headHtml = '<tr><th class="px-4 py-3 text-left font-bold text-slate-600" style="width: 80px">#</th>';
+            keys.forEach(k => {
+                const width = columnWidths[currentTab]?.[k] || (k === 'title' || k === 'species' ? 300 : (k === 'id' || k === 'taxonId' || k === 'taxonID' || k === 'm_or_f' ? 120 : 200));
+                let displayHeader = (currentTab === 'flyData' && traitMap[k]) ? traitMap[k] : k;
+                let quickAddBtn = (currentTab === 'flyData' && traitMap[k]) ? `<button onclick="quickAddTraitOption('${k}')" class="ml-2 text-blue-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all" title="Add new option to this trait"><i class="fas fa-plus-circle"></i></button>` : '';
+
+                let taxonInfoWidget = '';
+                if (currentTab === 'taxa' && k.toLowerCase() === 'taxonid') {
+                    taxonInfoWidget = `
+                        <span style="position:relative; display:inline-flex; align-items:center;">
+                            <button class="taxon-info-btn" onclick="event.stopPropagation(); toggleTaxonPopover(this);">i</button>
+                            <span class="taxon-popover">
+                                <strong>${k}</strong> must be retrieved from the
+                                <strong>iNaturalist database</strong> to ensure compatibility
+                                with the iNat integration features.
+                            </span>
+                        </span>`;
+                }
+                
+                headHtml += `
+                    <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top" style="width: ${width}px" data-key="${k}">
+                        <div class="flex items-center">
+                            <div class="break-words whitespace-normal leading-tight flex-1">${displayHeader}${taxonInfoWidget}</div>
+                            ${quickAddBtn}
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-mono mt-1 opacity-0 group-hover:opacity-100 transition-opacity">${k}</div>
+                        <div class="resizer" onmousedown="initResize(event)"></div>
+                    </th>`;
+            });
+            headHtml += '<th class="px-4 py-3 text-right font-bold text-slate-600" style="width: 100px">Actions</th></tr>';
+            document.getElementById('table-head').innerHTML = headHtml;
         }
 
         // --- Resizing ---
@@ -344,67 +413,37 @@
             let newVal = val;
             if (typeof oldVal === 'number') newVal = parseFloat(val);
             if (val === 'null') newVal = null;
-
-            // Primary Key and Uniqueness Validation
-            const pkMap = { taxa: ['name', 'taxonID'], traits: 'id', flyData: 'id', regions: ['name', 'code'] };
-            const checks = Array.isArray(pkMap[type]) ? pkMap[type] : [pkMap[type]];
-            
-            if (checks.includes(key) && newVal !== oldVal) {
-                const exists = db[type].some((row, i) => i !== idx && row[key] === newVal);
-                if (exists) {
-                    alert(`DUPLICATE VALUE ERROR: The ${key} "${newVal}" is already in use in the ${type} table. Each ${key} must be unique.`);
-                    renderTable(); // Revert UI
-                    return;
-                }
-            }
-
-            if (oldVal !== newVal) { 
-                // Weight Validation for Traits
-                if (type === 'traits' && key === 'weight') {
-                    const weight = parseInt(newVal);
-                    if (isNaN(weight) || weight < 1 || weight > 10) {
-                        alert("WEIGHT ERROR: Trait weight must be a whole number between 1 and 10.");
-                        renderTable();
-                        return;
-                    }
-                    newVal = weight; // Ensure it's stored as a number
-                }
-
-                db[type][idx][key] = newVal; 
-                if (type === 'taxa' && key === 'name') syncTaxonomyReferences(oldVal, newVal); 
-                if (type === 'traits' && key === 'id') syncTraitIdReferences(oldVal, newVal);
-            }
+            if (oldVal !== newVal) { db[type][idx][key] = newVal; }
         }
 
-        function syncTaxonomyReferences(oldName, newName) {
-            db.taxa.forEach(t => { if (t.parent === oldName) t.parent = newName; });
-            if (db.flyData) db.flyData.forEach(f => { if (f.species === oldName) f.species = newName; });
-            renderTable();
-        }
-
-        function syncTraitIdReferences(oldId, newId) {
-            if (db.flyData) {
-                db.flyData.forEach(f => {
-                    if (f.hasOwnProperty(oldId)) {
-                        f[newId] = f[oldId];
-                        delete f[oldId];
-                    }
-                });
-            }
-            renderTable();
-        }
-
-        // --- Trait Picker (Enforce Strict Selection) ---
+        // --- Regions Table ---
         function renderRegionsTable() {
             const data = db.regions;
             let headHtml = '<tr><th class="px-4 py-3 text-left font-bold text-slate-600 w-12">#</th><th class="px-4 py-3 text-left font-bold text-slate-600">Name</th><th class="px-4 py-3 text-left font-bold text-slate-600">Code</th><th class="px-4 py-3 text-right font-bold text-slate-600 w-24">Actions</th></tr>';
             document.getElementById('table-head').innerHTML = headHtml;
             let bodyHtml = '';
             data.forEach((row, idx) => {
-                bodyHtml += `<tr class="hover:bg-slate-50 transition-all"><td class="px-4 py-3 text-slate-400 font-mono text-xs">#${idx + 1}</td><td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'name', this.innerText)">${row.name}</td><td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'code', this.innerText)">${row.code}</td><td class="px-4 py-3 text-right"><button onclick="deleteRow(${idx})" class="text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash"></i></button></td></tr>`;
+                bodyHtml += `<tr class="hover:bg-slate-50 transition-all group/row">
+                    <td class="px-4 py-3 text-slate-400 font-mono text-xs relative overflow-visible">
+                        <span class="group-hover/row:opacity-0">#${idx + 1}</span>
+                        <button onclick="duplicateRow(${idx})" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover/row:opacity-100 bg-blue-600 text-white w-7 h-7 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:bg-blue-700" title="Duplicate Row">
+                            <i class="fas fa-copy text-[10px]"></i>
+                        </button>
+                    </td>
+                    <td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'name', this.innerText)">${row.name}</td>
+                    <td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'code', this.innerText)">${row.code}</td>
+                    <td class="px-4 py-3 text-right"><button onclick="deleteRow(${idx})" class="text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('table-body').innerHTML = bodyHtml;
         }
+
+        // ── Distribution editor (tabbed: Map | Checklist) ───────────────────
+        let activeDistTab = 'map'; 
+        let mapZoom = 1.3; 
+        let mapPanX = 0;
+        let mapPanY = 0;
+        let isDragging = false;
+        let startPanX, startPanY;
 
         function openRegionPicker(idx) {
             if (!db.regions) { alert("Please upload regions.js first!"); return; }
@@ -414,83 +453,106 @@
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             const title = document.getElementById('modal-title');
+            const saveBtn = document.getElementById('modal-save-btn');
             
-            // Expand modal for map
             container.classList.remove('max-w-2xl');
-            container.classList.add('max-w-6xl');
+            container.classList.add('max-w-4xl');
             
             title.innerText = `Distribution for: ${db.flyData[idx].species || 'New Fly'}`;
             modal.classList.remove('hidden');
+            saveBtn.classList.remove('hidden');
 
-            let html = `
-                <div class="flex gap-8">
-                    <div class="flex-1 space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-bold text-slate-700 flex items-center gap-2">
-                                <i class="fas fa-map text-blue-500"></i> Interactive Map
-                            </h4>
-                            <div class="flex gap-2">
-                                <button onclick="copyDistribution()" class="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-                                    <i class="fas fa-copy"></i> Copy Range
-                                </button>
-                                <button onclick="pasteDistribution()" class="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-                                    <i class="fas fa-paste"></i> Paste Range
-                                </button>
-                            </div>
+            const checklistItems = db.regions.map(reg => {
+                const isSelected = currentValues.includes(reg.code);
+                return `
+                    <label class="flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-50 hover:border-slate-200'}">
+                        <input type="checkbox" id="check-${reg.code}" class="h-4 w-4 text-blue-600 rounded border-slate-300" value="${reg.code}" ${isSelected ? 'checked' : ''} onchange="toggleRegionOption(this)">
+                        <div class="flex flex-col">
+                            <span class="text-[11px] font-bold text-slate-800">${reg.name}</span>
+                            <span class="text-[9px] text-slate-400 font-mono">${reg.code}</span>
                         </div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex items-center justify-center shadow-inner">
-                            <svg viewBox="${mapData.viewBox}" class="w-full h-auto max-h-[600px] drop-shadow-sm">
-                                ${Object.entries(mapData.paths).map(([code, d]) => `
-                                    <path id="map-${code}" d="${d}" class="map-region ${currentValues.includes(code) ? 'selected' : ''}" 
-                                          onclick="toggleRegionCode('${code}')">
-                                        <title>${db.regions.find(r => r.code === code)?.name || code}</title>
-                                    </path>
-                                `).join('')}
-                            </svg>
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] text-slate-400">
-                            <span>Tip: Click regions on the map to toggle selection</span>
-                            <span class="italic">Map data: SimpleMaps.com (Open Source)</span>
+                    </label>`;
+            }).join('');
+
+            const html = `
+                <div class="flex justify-between items-center mb-3 flex-shrink-0">
+                    <div class="flex gap-1 border-b border-slate-200 w-full pb-0">
+                        <button id="dist-tab-map" class="dist-tab-btn ${activeDistTab === 'map' ? 'active' : ''}" onclick="switchDistTab('map')">
+                            <i class="fas fa-map mr-1.5"></i>Interactive Map
+                        </button>
+                        <button id="dist-tab-checklist" class="dist-tab-btn ${activeDistTab === 'checklist' ? 'active' : ''}" onclick="switchDistTab('checklist')">
+                            <i class="fas fa-list-ul mr-1.5"></i>Checklist
+                        </button>
+                        <div class="flex-1"></div>
+                        <div class="flex gap-2 items-end pb-1">
+                            <button onclick="copyDistribution()" class="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button onclick="pasteDistribution()" class="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+                                <i class="fas fa-paste"></i> Paste
+                            </button>
                         </div>
                     </div>
-                    <div class="w-80 flex flex-col border-l border-slate-100 pl-8 overflow-hidden">
-                        <h4 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                            <i class="fas fa-list-ul text-slate-400"></i> Checklist
-                        </h4>
-                        <div class="grid grid-cols-1 gap-1.5 overflow-y-auto custom-scrollbar pr-4 flex-1">
-                            ${db.regions.map(reg => {
-                                const isSelected = currentValues.includes(reg.code);
-                                return `
-                                    <label class="flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-50 hover:border-slate-200'}">
-                                        <input type="checkbox" id="check-${reg.code}" class="h-4 w-4 text-blue-600 rounded border-slate-300" value="${reg.code}" ${isSelected ? 'checked' : ''} onchange="toggleRegionOption(this)">
-                                        <div class="flex flex-col">
-                                            <span class="text-[11px] font-bold text-slate-800">${reg.name}</span>
-                                            <span class="text-[9px] text-slate-400 font-mono">${reg.code}</span>
-                                        </div>
-                                    </label>`;
-                            }).join('')}
+                </div>
+
+                <div id="dist-panel-map" class="dist-tab-panel ${activeDistTab === 'map' ? 'active' : ''}">
+                    <div id="map-container" onmousedown="startMapPan(event)" onmousemove="doMapPan(event)" onmouseup="stopMapPan()" onmouseleave="stopMapPan()" onwheel="handleMapWheel(event)">
+                        <svg id="map-svg" viewBox="${mapData.viewBox}" class="w-full h-auto drop-shadow-sm" style="transform: translate(${mapPanX}px, ${mapPanY}px) scale(${mapZoom})">
+                            ${Object.entries(mapData.paths).map(([code, d]) => `
+                                <path id="map-${code}" d="${d}" class="map-region ${currentValues.includes(code) ? 'selected' : ''}" 
+                                      onclick="event.stopPropagation(); toggleRegionCode('${code}')">
+                                    <title>${db.regions.find(r => r.code === code)?.name || code}</title>
+                                </path>
+                            `).join('')}
+                        </svg>
+                        <div class="zoom-controls">
+                            <button class="zoom-btn" onclick="adjustZoom(0.2)" title="Zoom In"><i class="fas fa-plus"></i></button>
+                            <button class="zoom-btn" onclick="adjustZoom(-0.2)" title="Zoom Out"><i class="fas fa-minus"></i></button>
+                            <button class="zoom-btn" onclick="resetMap()" title="Reset View"><i class="fas fa-compress-arrows-alt"></i></button>
                         </div>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] text-slate-400 mt-2 flex-shrink-0">
+                        <span>Tip: Click regions to select. Scroll to zoom, drag to pan.</span>
+                        <span class="italic">Map data: SimpleMaps.com</span>
+                    </div>
+                </div>
+
+                <div id="dist-panel-checklist" class="dist-tab-panel ${activeDistTab === 'checklist' ? 'active' : ''}">
+                    <div class="grid grid-cols-2 gap-1.5 overflow-y-auto custom-scrollbar flex-1" style="max-height: 520px; padding-right: 4px;">
+                        ${checklistItems}
                     </div>
                 </div>`;
+
             content.innerHTML = html;
-            document.getElementById('modal-save-btn').classList.add('hidden');
         }
+
+        function switchDistTab(tab) {
+            activeDistTab = tab;
+            document.querySelectorAll('.dist-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`dist-tab-${tab}`).classList.add('active');
+            document.querySelectorAll('.dist-tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(`dist-panel-${tab}`).classList.add('active');
+        }
+
+        function updateMapTransform() {
+            const svg = document.getElementById('map-svg');
+            if (svg) svg.style.transform = `translate(${mapPanX}px, ${mapPanY}px) scale(${mapZoom})`;
+        }
+        function adjustZoom(delta) { mapZoom = Math.max(0.5, Math.min(5, mapZoom + delta)); updateMapTransform(); }
+        function resetMap() { mapZoom = 1.3; mapPanX = 0; mapPanY = 0; updateMapTransform(); }
+        function handleMapWheel(e) { e.preventDefault(); adjustZoom(e.deltaY < 0 ? 0.1 : -0.1); }
+        function startMapPan(e) { isDragging = true; startPanX = e.clientX - mapPanX; startPanY = e.clientY - mapPanY; }
+        function doMapPan(e) { if (!isDragging) return; mapPanX = e.clientX - startPanX; mapPanY = e.clientY - startPanY; updateMapTransform(); }
+        function stopMapPan() { isDragging = false; }
 
         function toggleRegionCode(code) {
             const checkbox = document.getElementById(`check-${code}`);
             if (checkbox) {
                 checkbox.checked = !checkbox.checked;
-                
-                // If map click on MD, also toggle DC
                 if (code === 'MD') {
                     const dcCheck = document.getElementById('check-DC');
-                    if (dcCheck) {
-                        dcCheck.checked = checkbox.checked;
-                        // We trigger the standard option toggle for DC too
-                        toggleRegionOption(dcCheck, false); 
-                    }
+                    if (dcCheck) { dcCheck.checked = checkbox.checked; toggleRegionOption(dcCheck, false); }
                 }
-                
                 toggleRegionOption(checkbox, false);
             }
         }
@@ -503,7 +565,7 @@
         function pasteDistribution() {
             if (!distributionClipboard) { alert("Clipboard is empty! Copy a distribution first."); return; }
             db.flyData[activeEdit.idx].distribution = [...distributionClipboard];
-            openRegionPicker(activeEdit.idx); // Refresh modal
+            openRegionPicker(activeEdit.idx);
             renderTable();
             printLog("Distribution pasted from clipboard.");
         }
@@ -511,27 +573,19 @@
         function toggleRegionOption(checkbox, skipSync = true) {
             const val = checkbox.value;
             let current = db.flyData[activeEdit.idx].distribution || [];
-            
             const updateVisual = (code, isSelected) => {
                 const path = document.getElementById(`map-${code}`);
                 if (path) path.classList.toggle('selected', isSelected);
-                const check = document.getElementById(`check-${code}`);
-                if (check) check.checked = isSelected;
-                const label = check?.parentElement;
+                const checkEl = document.getElementById(`check-${code}`);
+                if (checkEl) checkEl.checked = isSelected;
+                const label = checkEl?.parentElement;
                 if (label) {
                     if (isSelected) { label.classList.add('border-blue-500', 'bg-blue-50'); label.classList.remove('border-slate-50'); }
                     else { label.classList.remove('border-blue-500', 'bg-blue-50'); label.classList.add('border-slate-50'); }
                 }
             };
-
-            if (checkbox.checked) {
-                if (!current.includes(val)) current.push(val);
-                updateVisual(val, true);
-            } else {
-                current = current.filter(v => v !== val);
-                updateVisual(val, false);
-            }
-            
+            if (checkbox.checked) { if (!current.includes(val)) current.push(val); updateVisual(val, true); }
+            else { current = current.filter(v => v !== val); updateVisual(val, false); }
             db.flyData[activeEdit.idx].distribution = current;
             renderTable();
         }
@@ -539,15 +593,16 @@
         function openTraitPicker(idx, traitId) {
             activeEdit = { type: 'flyData', idx, key: traitId };
             const traitDef = db.traits.find(t => t.id === traitId);
-            if (!traitDef) { alert("Trait definition not found! Add it to the Traits tab first."); return; }
-
+            if (!traitDef) return;
             const currentValues = db.flyData[idx][traitId] || [];
             const modal = document.getElementById('modal');
             const content = document.getElementById('modal-content');
             const title = document.getElementById('modal-title');
-
+            const saveBtn = document.getElementById('modal-save-btn');
+            
             title.innerText = `Select values for: ${traitDef.title}`;
             modal.classList.remove('hidden');
+            saveBtn.classList.remove('hidden');
 
             let html = `<div class="space-y-3">`;
             traitDef.options.forEach((opt, i) => {
@@ -555,34 +610,19 @@
                 html += `
                     <label class="flex items-start gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-100 hover:border-slate-200'}">
                         <input type="checkbox" class="mt-1 h-4 w-4 text-blue-600 rounded focus:ring-blue-500" value="${opt.label}" ${isSelected ? 'checked' : ''} onchange="toggleTraitOption(this)">
-                        <div>
-                            <div class="font-bold text-slate-800">${opt.label}</div>
-                            <div class="text-sm text-slate-500 mt-1">${opt.description}</div>
-                        </div>
+                        <div><div class="font-bold text-slate-800">${opt.label}</div><div class="text-sm text-slate-500 mt-1">${opt.description}</div></div>
                     </label>`;
             });
-            html += `</div>
-                <button onclick="quickAddTraitOption('${traitId}')" class="mt-6 w-full py-3 border-2 border-dashed border-blue-200 rounded-xl text-blue-500 hover:bg-blue-50 transition-all font-bold flex items-center justify-center gap-2">
-                    <i class="fas fa-plus"></i> Define New Option for this Trait
-                </button>`;
+            html += `</div>`;
             content.innerHTML = html;
-            document.getElementById('modal-save-btn').classList.add('hidden'); // Selection is live
-        }
-
-        function quickAddTraitOption(traitId) {
-            const traitIdx = db.traits.findIndex(t => t.id === traitId);
-            if (traitIdx === -1) return;
-            openComplexEditor('traits', traitIdx, 'options');
         }
 
         function toggleTraitOption(checkbox) {
             const val = checkbox.value;
             let current = db.flyData[activeEdit.idx][activeEdit.key];
             if (!Array.isArray(current)) current = current ? [current] : [];
-            
             if (checkbox.checked) { if (!current.includes(val)) current.push(val); }
             else { current = current.filter(v => v !== val); }
-            
             db.flyData[activeEdit.idx][activeEdit.key] = current;
             renderTable();
         }
@@ -593,11 +633,11 @@
             const modal = document.getElementById('modal');
             const content = document.getElementById('modal-content');
             const title = document.getElementById('modal-title');
-            document.getElementById('modal-save-btn').classList.remove('hidden');
-
+            const saveBtn = document.getElementById('modal-save-btn');
+            
+            saveBtn.classList.remove('hidden');
             title.innerText = `Editing ${key}`;
             modal.classList.remove('hidden');
-
             let html = "";
             if (key === 'options') {
                 html = `<div class="space-y-4" id="options-list">`;
@@ -635,66 +675,52 @@
         function closeModal() { 
             document.getElementById('modal').classList.add('hidden'); 
             const container = document.getElementById('modal-container');
-            container.classList.remove('max-w-6xl');
+            container.classList.remove('max-w-6xl', 'max-w-4xl');
             container.classList.add('max-w-2xl');
         }
-        function generateUniqueId(type, baseId, field) {
-            const pkMap = { taxa: 'name', traits: 'id', flyData: 'id', regions: 'code' };
-            const pk = field || pkMap[type];
-            let newId = baseId;
-            let counter = 1;
-            
-            // For taxonID, try to keep it numeric if it looks numeric
-            let isNumeric = !isNaN(baseId) && !isNaN(parseFloat(baseId));
-            
-            while (db[type].some(row => row[pk] === (isNumeric ? parseFloat(newId) : newId))) {
-                newId = `${baseId}_${counter++}`;
+
+        // Global Key Listener for ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('modal');
+                if (!modal.classList.contains('hidden')) closeModal();
+                document.querySelectorAll('.taxon-popover.open').forEach(p => p.classList.remove('open'));
             }
-            return isNumeric ? parseFloat(newId) : newId;
-        }
+        });
 
         function addNewRow() { 
-            if (!currentTab) return; 
-            const template = JSON.parse(JSON.stringify(db[currentTab][0])); 
-            const pkMap = { taxa: 'name', traits: 'id', flyData: 'id', regions: 'code' };
-            const pk = pkMap[currentTab];
+            if (!currentTab) switchTab('taxa');
             
-            Object.keys(template).forEach(k => { 
-                if (currentTab === 'taxa' && (k === 'name' || k === 'taxonID')) {
-                    template[k] = generateUniqueId('taxa', k === 'name' ? "New Taxon" : "9999", k);
-                } else if (currentTab === 'regions' && (k === 'name' || k === 'code')) {
-                    template[k] = generateUniqueId('regions', k === 'name' ? "New Region" : "NR", k);
-                } else if (k === pk) {
-                    template[k] = generateUniqueId(currentTab, "new_entry");
-                } else if (Array.isArray(template[k])) {
-                    template[k] = []; 
-                } else if (typeof template[k] === 'number') {
-                    template[k] = 0; 
-                } else {
-                    template[k] = ""; 
+            if (!db[currentTab]) db[currentTab] = [];
+
+            let template = {};
+            if (db[currentTab].length > 0) {
+                template = JSON.parse(JSON.stringify(db[currentTab][0]));
+            } else {
+                template = JSON.parse(JSON.stringify(defaultTemplates[currentTab]));
+                if (currentTab === 'flyData' && db.traits) {
+                    db.traits.forEach(t => { template[t.id] = []; });
                 }
+            }
+
+            Object.keys(template).forEach(k => { 
+                if (Array.isArray(template[k])) template[k] = []; 
+                else if (typeof template[k] === 'number') template[k] = (k === 'weight' ? 1 : null); 
+                else if (template[k] === null) template[k] = null;
+                else template[k] = ""; 
             }); 
+            
             db[currentTab].unshift(template); 
+            updateUIState();
             renderTable(); 
         }
 
         function duplicateRow(idx) { 
             const copy = JSON.parse(JSON.stringify(db[currentTab][idx])); 
-            const pkMap = { taxa: 'name', traits: 'id', flyData: 'id', regions: 'code' };
-            const pk = pkMap[currentTab];
-            
-            if (currentTab === 'taxa') {
-                copy.name = generateUniqueId('taxa', copy.name, 'name');
-                copy.taxonID = generateUniqueId('taxa', copy.taxonID, 'taxonID');
-            } else if (currentTab === 'regions') {
-                copy.name = generateUniqueId('regions', copy.name, 'name');
-                copy.code = generateUniqueId('regions', copy.code, 'code');
-            } else {
-                copy[pk] = generateUniqueId(currentTab, copy[pk]);
-            }
             db[currentTab].splice(idx + 1, 0, copy); 
             renderTable(); 
         }
+
         function deleteRow(idx) { if (confirm("Delete this row?")) { db[currentTab].splice(idx, 1); renderTable(); } }
 
         function getTaxonomyHierarchy(speciesName) {
@@ -704,13 +730,19 @@
             return hierarchy;
         }
 
-        function exportCurrent() {
-            if (!currentTab) return;
-            let dataToExport = JSON.parse(JSON.stringify(db[currentTab]));
-            if (currentTab === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
-            const text = (currentTab === 'taxa' || currentTab === 'regions') ? `const ${currentTab} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${currentTab} = ${JSON.stringify(dataToExport, null, 2)};\n`;
+        function exportFile(type) {
+            if (!db[type]) return;
+            let dataToExport = JSON.parse(JSON.stringify(db[type]));
+            if (type === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
+            const text = (type === 'taxa' || type === 'regions') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
             const blob = new Blob([text], { type: 'text/javascript' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${currentTab === 'flyData' ? 'flydata' : currentTab}.js`; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${type === 'flyData' ? 'flydata' : type}.js`; a.click();
+        }
+
+        function exportAll() {
+            const types = ['taxa', 'traits', 'flyData', 'regions'];
+            types.forEach(type => { if (db[type]) exportFile(type); });
+            printLog("All available files exported.");
         }
     </script>
 </body>
