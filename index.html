@@ -558,6 +558,7 @@ function copyNarrativeToClipboard() {
 async function showNextFromQueue() {
     if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
     const obs = OBSERVATION_QUEUE.shift();
+    CURRENT_OBSERVATION = obs; // saved and checked when posting comment to see if all IDs are CV
     CURRENT_OBS_ID = obs.id;
     document.getElementById('queue-count').innerText = `  (${1+TOTAL_API_RESULTS + OBSERVATION_QUEUE.length - Math.min(BATCH_SIZE, TOTAL_API_RESULTS)} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
     //Capture the community taxon ID from the queue data	
@@ -835,8 +836,17 @@ async function postImmediateID() {
     } else {
         alert("No match found in the matrix to post!");
     }
-      //only post comment if new ID is not agreeing or it's stuck above genus
-      if (taxonInfo && CURRENT_COMMUNITY_ID !== taxonInfo.taxonId || taxonInfo && taxonInfo.rank !== "species") {
+      //only post comment if new ID is not agreeing or it's stuck above genus or all IDs are CV
+	const allIDsAreCV = CURRENT_OBSERVATION.identifications.every(id => id.vision); // check if all IDs are CV
+	const shouldPostNarrative =
+    		taxonInfo &&
+    		(
+       			CURRENT_COMMUNITY_ID !== taxonInfo.taxonId ||
+        		taxonInfo.rank !== "species" ||
+			allIDsAreCV
+    		);
+
+      if (shouldPostNarrative) {
 	// 3. POST THE NARRATIVE COMMENT AT THE END
             let narrativeText = document.getElementById('summary-content').innerHTML;
             const placeholder = "Select traits to generate description.";
