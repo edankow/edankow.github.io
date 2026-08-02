@@ -219,6 +219,7 @@ body.wide-layout .identification-area {
     display: grid;
     grid-template-columns: 1fr 320px;
     grid-template-areas: 
+	 "about results"
         "question results"
         "summary results";
     align-items: start;
@@ -302,7 +303,7 @@ body.wide-layout .summary-box { grid-area: summary; margin-top: 0 !important; }
 .active-question-section { 
     max-width: 800px; 
 
-background: white; padding: 25px; border-radius: 12px; min-height: 250px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+background: white; padding: 25px; border-radius: 12px; min-height: 0px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
 
 
 }
@@ -453,4 +454,68 @@ body.wide-layout .summary-box {
 .dropdown:active .dropdown-content,
 .dropdown:focus-within .dropdown-content {
     display: block;
+}
+
+@media (max-width: 768px) {
+    .matrix-panel {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .question-menu {
+        position: static;
+        max-height: none;
+        order: 3;
+    }
+
+    body.wide-layout .identification-area,
+    .identification-area {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .active-question-section {
+        order: 1;
+    }
+
+    .results-sidebar {
+        order: 2;
+        width: 100%;
+        max-width: none;
+    }
+
+    .summary-box {
+        order: 4;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .workspace-grid,
+    .matrix-container,
+    .matrix-panel,
+    .identification-area,
+    .question-menu,
+    .active-question-section,
+    .results-sidebar,
+    .summary-box {
+        width: 100%;
+        max-width: none;
+        box-sizing: border-box;
+    }
+
+    .workspace-grid,
+    .matrix-panel,
+    .identification-area {
+        gap: 12px;
+    }
+}
+
+.about-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 0px;
+    font-size: 0.9rem;
 }
