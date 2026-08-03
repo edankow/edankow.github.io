@@ -93,6 +93,7 @@
 	<div class="dropdown hidden" tabindex="0" id="filter-dropdown-container">
 	    <button class="btn-toggle" style="font-size: 0.7rem;">Change Filters ▼</button>
 	    <div class="dropdown-content">
+		<a href="#"  onclick="searchBoundaryObservation()">Jump to Boundary</a>
 	        <a href="#" onclick="event.preventDefault(); openTaxonFilterModal()">🪰 Change Taxon</a>
 	        <a href="#" onclick="event.preventDefault(); openLocationModal()">📍 Change Location</a>
 	        <a href="#" onclick="event.preventDefault(); openFiltersModal()">⚙️ URL Parameters</a>
@@ -100,7 +101,9 @@
 	    </div>
 	</div>
         <span id="queue-count" style="font-size: 0.8em; opacity: 0.8;"></span>
+			
     </div>
+
 
     <div class="token-section-center">
         <div id="main-title">Loading title...</div>
@@ -1858,6 +1861,110 @@ async function generateCodeChallenge(verifier) {
         .replace(/\//g, '_')
         .replace(/=+$/, '');
 }
+
+
+
+
+
+
+//finds the oldest observation that is needs ID and returns a series of observations with that ID and locality:
+async function searchBoundaryObservation() {
+    try {
+        const excludedIds = FINISHED_OBS_IDS.length
+            ? `&not_id=${FINISHED_OBS_IDS.join(",")}`
+            : "";
+
+        // Remove any existing order parameter before adding order=asc
+        const filtersWithoutOrder = OTHER_FILTERS
+            .replace(/&?order=(asc|desc)/gi, "")
+            .replace(/^&+/, "");
+
+        const cleanedFilters = filtersWithoutOrder
+            ? `&${filtersWithoutOrder}`
+            : "";
+
+        const ascURL =
+            `${API_BASE}` +
+            `&per_page=1` +
+            `&order=asc` +
+            `&place_id=6217,1` +
+            `${cleanedFilters}` +
+            `&viewer_id=${MY_USER_ID}` +
+            `&reviewed=false` +
+            `&without_ident_user_id=${MY_USER_ID}` +
+            `${excludedIds}`;
+
+        const response = await fetch(ascURL, {
+            headers: {
+                Authorization: `Bearer ${MY_TOKEN}`
+            }
+        });
+
+        const data = await response.json();
+        const obs = data.results?.[0];
+
+        if (!obs) {
+            alert("No observations found.");
+            return;
+        }
+
+        const taxonID = obs.taxon.id;
+	
+	const taxonRank = obs.taxon?.rank;
+
+        if (!taxonID) {
+            alert("The first observation has no taxonomic ID.");
+            return;
+        }
+
+        if (!obs.place_ids?.length) {
+            alert("The first observation has no place IDs.");
+            return;
+        }
+
+        // Fetch the full place records
+        const placesResponse = await fetch(
+            `https://api.inaturalist.org/v1/places/${obs.place_ids.join(",")}`
+        );
+
+        const placesData = await placesResponse.json();
+
+        // admin_level 10 = state/province
+        const statePlace = placesData.results?.find(
+            place => place.admin_level === 10
+        );
+
+        if (!statePlace) {
+            alert("Couldn't determine the state or province.");
+            return;
+        }
+
+        CURRENT_TAXON_ID = taxonID;
+        CURRENT_PLACE_ID = statePlace.id;
+
+        API_BASE =
+            `https://api.inaturalist.org/v1/observations` +
+            `?taxon_id=${taxonID}` +
+	    `&rank=${encodeURIComponent(taxonRank)}` +
+            `&only_id=false` +
+            `&fields=all` +
+            `&quality_grade=needs_id`;
+
+        // Make the subsequent normal search newest-first
+        OTHER_FILTERS = cleanedFilters + "&order=desc";
+
+        OBSERVATION_QUEUE = [];
+        FINISHED_OBS_IDS = [];
+
+        fetchObservations();
+
+    } catch (error) {
+        console.error("Boundary search failed:", error);
+        alert("Boundary search failed. Check the console.");
+    }
+}
+
+
 
 
 
