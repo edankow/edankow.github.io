@@ -107,7 +107,10 @@
 
 
     <div class="token-section-center">
-        <div id="main-title">Loading title...</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
+            <div id="main-title">Loading title...</div>
+            <button type="button" onclick="openWelcomeModal()" title="About this key" aria-label="About this key" style="width:22px; height:22px; border-radius:50%; border:1px solid #aaa; background:#555; color:white; font-weight:bold; cursor:pointer; line-height:1; padding:0;">i</button>
+        </div>
     </div>
 
 <button id="toggle-viewer-btn" onclick="toggleViewerPanel()" class="btn-toggle">Hide iNat interface</button>
@@ -137,6 +140,19 @@
     </div>	
 </div>
 
+<div id="modal-welcome" class="modal">
+    <div class="modal-content" style="text-align:left;">
+        <h3 style="margin:0;">About this key</h3>
+        <p style="margin:0; color:#444;">
+            Hi, I’m <a href="https://www.inaturalist.org/people/165078">@edanko</a>. I built this interactive key to help identify <i>Lucilia</i> (greenbottle) flies of the USA and Canada using visible traits. You can use the key on its own, or <button class="inline-link-button" onclick="closeModals(); openTokenModal()">link your iNaturalist account</button> to work through observations from your Identify queue and submit identifications directly.
+        </p>
+        <p style="margin:0; color:#444;">
+            Only score characters you can confidently see. If you’re unsure, use the <strong>Skip button</strong>—the key is designed to work with partial information.
+        </p>
+        <button type="button" onclick="closeModals()" class="btn-id" style="cursor:pointer; padding:10px;">Start identifying</button>
+    </div>
+</div>
+
 <div class="workspace-grid">
     <div class="viewer-panel">
         <div id="observation-grid">
@@ -149,9 +165,6 @@
             <div class="question-menu" id="question-menu">
             </div>
             <div class="identification-area">
-		<div id="logged-out-about" class="about-panel hidden">
-		        Hi there, this is <a href="https://www.inaturalist.org/people/165078">@edanko</a>! I made this interactive key to identify flies by selecting visible traits. You can use it on its own, or <button class="inline-link-button" onclick="openTokenModal()">link your iNaturalist account</button> to load observations from your 'Identify' queue and post IDs directly to iNaturalist.
-		</div>
                 <div class="active-question-section" id="active-question-area">
 
                     <div style="color:#999; text-align:center; padding-top:50px;">Select a trait to begin identification.</div>
@@ -190,6 +203,7 @@
     let FINISHED_OBS_IDS = [];
     let OBSERVATION_QUEUE = [];
     let CURRENT_OBS_ID = null;
+	let HAS_SHOWN_WELCOME_MODAL = false;
 	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
     let CURRENT_PLACE_ID = window.DEFAULT_PLACE_ID; // Default from header.js
@@ -483,6 +497,19 @@ function closeModals() {
 
     const tokenModal = document.getElementById('modal-token');
     if (tokenModal) tokenModal.style.display = 'none';
+
+    const welcomeModal = document.getElementById('modal-welcome');
+    if (welcomeModal) welcomeModal.style.display = 'none';
+}
+
+function openWelcomeModal() {
+    document.getElementById('modal-welcome').style.display = 'flex';
+}
+
+function showWelcomeModalOnce() {
+    if (HAS_SHOWN_WELCOME_MODAL) return;
+    HAS_SHOWN_WELCOME_MODAL = true;
+    openWelcomeModal();
 }
 
     async function submitManualID() {
@@ -561,7 +588,6 @@ function copyNarrativeToClipboard() {
     }
 
     async function updateStatusUI() {
-	const loggedOutAbout = document.getElementById('logged-out-about');
         const statusEl = document.getElementById('token-status');
         const controls = document.getElementById('token-controls');
 	const filterDropdown = document.getElementById('filter-dropdown-container'); // Get the container
@@ -580,10 +606,8 @@ function copyNarrativeToClipboard() {
             if (viewerPanel) viewerPanel.style.display = 'none';
             if (toggleBtn) toggleBtn.classList.add('hidden');
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
-            document.body.classList.add('wide-layout'); 
-		if (loggedOutAbout) {
-		    loggedOutAbout.classList.remove('hidden');
-		}
+            document.body.classList.add('wide-layout');
+            showWelcomeModalOnce();
             return;
         }
         try {
@@ -605,9 +629,6 @@ function copyNarrativeToClipboard() {
                 if (toggleBtn) toggleBtn.classList.remove('hidden');
                 if (viewerPanel) viewerPanel.style.display = 'block';
                 document.body.classList.remove('wide-layout');
-		if (loggedOutAbout) {
-		    loggedOutAbout.classList.add('hidden');
-		}
             } else { throw new Error(); }
         } catch (e) {
 	    MY_USER_ID = null;
@@ -620,9 +641,7 @@ function copyNarrativeToClipboard() {
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
             if (viewerPanel) viewerPanel.style.display = 'none';
             document.body.classList.add('wide-layout');
-		if (loggedOutAbout) {
-		    loggedOutAbout.classList.remove('hidden');
-		}
+            showWelcomeModalOnce();
         }
     }
 
