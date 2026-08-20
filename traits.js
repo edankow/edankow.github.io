@@ -533,12 +533,12 @@ const traits = [
   },
   {
     "id": "Tsetae",
-    "title": "Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)?",
+    "title": "Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)? Note that if there are no long, erect median setae on tergite 4, then there are definitely not any on tergite 3 either.",
     "weight": 2,
     "link": "https://www.birdblowfly.com/images/Publications/Keys.pdf#page=6",
     "options": [
       {
-        "label": "without especially strong or erect median marginal setae (Whitworth 2006) -- note  that if there aren't especially strong or erect median marginal setae on tergite 4, then there are *never* especially strong or erect median marginal setae on tergite 3",
+        "label": "without especially strong or erect median marginal setae (Whitworth 2006)",
         "description": "The posterior margin of tergite 3 without especially strong or erect median marginal setae (Whitworth 2006)."
       },
       {
