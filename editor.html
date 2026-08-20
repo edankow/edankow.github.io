@@ -54,6 +54,21 @@
 
         /* Distribution modal tabs */
         .dist-tab-btn { padding: 8px 18px; font-size: 13px; font-weight: 600; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: all 0.15s; color: #64748b; background: #f1f5f9; }
+        .taxonomy-cycle-error {
+            background: #fef2f2 !important;
+            color: #991b1b;
+            box-shadow: inset 0 0 0 2px #ef4444;
+        }
+        .taxonomy-cycle-error::after {
+            content: attr(data-cycle-error);
+            display: block;
+            margin-top: 4px;
+            color: #dc2626;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.25;
+            pointer-events: none;
+        }
         .dist-tab-btn.active { background: #fff; color: #1e40af; border-color: #e2e8f0; position: relative; bottom: -1px; }
         .dist-tab-btn:not(.active):hover { background: #e2e8f0; }
         .dist-tab-panel { display: none; }
@@ -401,8 +416,47 @@
             }
         }
 
+        function getTaxonomyCycleIssues() {
+            if (!db.taxa) return [];
+
+            const nameToIndex = new Map();
+            db.taxa.forEach((taxon, idx) => {
+                const name = String(taxon.name || '').trim();
+                if (name && !nameToIndex.has(name)) nameToIndex.set(name, idx);
+            });
+
+            const state = new Array(db.taxa.length).fill(0); // 0 = unseen, 1 = visiting, 2 = done
+            const issues = [];
+
+            function visit(idx) {
+                state[idx] = 1;
+                const parentName = String(db.taxa[idx].parent || '').trim();
+                const parentIdx = nameToIndex.get(parentName);
+
+                if (parentIdx !== undefined) {
+                    if (state[parentIdx] === 1) {
+                        issues.push({
+                            rowIdx: idx,
+                            taxonName: db.taxa[parentIdx].name,
+                            message: `Circular reference detected at "${db.taxa[parentIdx].name}".`
+                        });
+                    } else if (state[parentIdx] === 0) {
+                        visit(parentIdx);
+                    }
+                }
+                state[idx] = 2;
+            }
+
+            db.taxa.forEach((taxon, idx) => {
+                if (state[idx] === 0) visit(idx);
+            });
+            return issues;
+        }
+
         function renderTable() {
             const data = db[currentTab];
+            const taxonomyCycleIssues = currentTab === 'taxa' ? getTaxonomyCycleIssues() : [];
+            const taxonomyCycleIssuesByRow = new Map(taxonomyCycleIssues.map(issue => [issue.rowIdx, issue]));
 
             const tableWrapper = document.getElementById('table-wrapper');
             const headerSettingsView = document.getElementById('header-settings-view');
@@ -498,7 +552,12 @@
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openComplexEditor('${currentTab}', ${originalIdx}, '${k}')">${display}</td>`;
                     } else {
                         display = (val === null || val === undefined) ? '<span class="text-slate-300 italic">null</span>' : val;
-                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal" contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText, this)">${display}</td>`;
+                        const cycleIssue = currentTab === 'taxa' && k === 'parent'
+                            ? taxonomyCycleIssuesByRow.get(originalIdx)
+                            : null;
+                        const cycleClass = cycleIssue ? ' taxonomy-cycle-error' : '';
+                        const cycleAttribute = cycleIssue ? ` data-cycle-error="${escapeHtml(cycleIssue.message)}"` : '';
+                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal${cycleClass}"${cycleAttribute} contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText, this)">${display}</td>`;
                     }
                 });
 
@@ -721,6 +780,11 @@
                 if (type === 'header' && key === 'SHORT_TITLE') {
                     document.getElementById('dataset-short-title').innerText = newVal || 'Identification Dataset';
                 }
+            }
+            if (type === 'taxa' && (key === 'name' || key === 'parent')) {
+                const cycleIssues = getTaxonomyCycleIssues();
+                renderTable();
+                if (cycleIssues.length > 0) printLog(cycleIssues[0].message, true);
             }
             return true;
         }
@@ -1066,12 +1130,28 @@
         function getTaxonomyHierarchy(speciesName) {
             if (!db.taxa) return [];
             let hierarchy = [], current = db.taxa.find(t => t.name === speciesName), visited = new Set();
-            while (current) { if (visited.has(current.name)) break; visited.add(current.name); hierarchy.unshift(current.name); current = db.taxa.find(t => t.name === current.parent); }
+            while (current) {
+                if (visited.has(current.name)) throw new Error(`Circular reference detected at "${current.name}".`);
+                visited.add(current.name);
+                hierarchy.unshift(current.name);
+                current = db.taxa.find(t => t.name === current.parent);
+            }
             return hierarchy;
         }
 
         function exportFile(type) {
             if (!db[type]) return;
+            if (type === 'taxa' || type === 'flyData') {
+                const cycleIssues = getTaxonomyCycleIssues();
+                if (cycleIssues.length > 0) {
+                    const message = cycleIssues[0].message;
+                    printLog(`Cannot export ${type}: ${message}`, true);
+                    alert(`Cannot export ${type}. ${message}`);
+                    if (currentTab !== 'taxa') switchTab('taxa');
+                    else renderTable();
+                    return false;
+                }
+            }
             const duplicateColumns = getColumnsWithClass(type, 'unique')
                 .map(key => ({ key, values: getDuplicateValues(type, key) }))
                 .filter(result => result.values.length > 0);
@@ -1098,6 +1178,15 @@
         }
 
         function exportAll() {
+            const cycleIssues = getTaxonomyCycleIssues();
+            if (cycleIssues.length > 0) {
+                const message = cycleIssues[0].message;
+                printLog(`Cannot export files: ${message}`, true);
+                alert(`Cannot export files. ${message}`);
+                if (currentTab !== 'taxa') switchTab('taxa');
+                else renderTable();
+                return false;
+            }
             const types = ['header', 'taxa', 'traits', 'flyData', 'regions'];
             const results = types.filter(type => db[type]).map(type => exportFile(type));
             if (results.every(Boolean)) printLog("All available files exported.");
