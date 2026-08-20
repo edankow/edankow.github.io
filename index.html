@@ -94,6 +94,7 @@
 	    <button class="btn-toggle" style="font-size: 0.7rem;">Change Filters ▼</button>
 	    <div class="dropdown-content">
 		<a href="#"  onclick="searchBoundaryObservation()">🔍 Start with a Focused Group</a>
+	        <a href="#" id="identify-own-observations-link" onclick="event.preventDefault(); toggleIdentifyOwnObservations()">👤 Go Thru My Observations</a>
 	        <a href="#" onclick="event.preventDefault(); openTaxonFilterModal()">🪰 Change Taxon</a>
 	        <a href="#" onclick="event.preventDefault(); openLocationModal()">📍 Change Location</a>
 	        <a href="#" onclick="event.preventDefault(); openFiltersModal()">⚙️ URL Parameters</a>
@@ -198,6 +199,7 @@
 let isPinned = false; 
 
 let CURRENT_TAXON_ID = window.DEFAULT_TAXON; // Default taxon ID
+let IDENTIFY_OWN_OBSERVATIONS = false;
 
 // Keep queue settings in the page URL so configured searches can be bookmarked.
 const NON_FILTER_URL_PARAMS = new Set([
@@ -210,12 +212,14 @@ function loadFiltersFromURL() {
         ? sessionStorage.getItem('inat_return_search')
         : '';
     const filterParams = savedSearch ? new URLSearchParams(savedSearch) : params;
+    IDENTIFY_OWN_OBSERVATIONS = filterParams.get('own_observations') === 'true';
     CURRENT_TAXON_ID = filterParams.get('taxon_id') || window.DEFAULT_TAXON;
     CURRENT_PLACE_ID = filterParams.get('place_id') || window.DEFAULT_PLACE_ID;
 
     const extraFilters = new URLSearchParams();
     filterParams.forEach((value, key) => {
-        if (key !== 'taxon_id' && key !== 'place_id' && !NON_FILTER_URL_PARAMS.has(key)) {
+        if (key !== 'taxon_id' && key !== 'place_id' && key !== 'own_observations' &&
+            !(IDENTIFY_OWN_OBSERVATIONS && key === 'user_id') && !NON_FILTER_URL_PARAMS.has(key)) {
             extraFilters.append(key, value);
         }
     });
@@ -229,10 +233,15 @@ function updateBookmarkURL() {
     const params = new URLSearchParams();
     params.set('taxon_id', CURRENT_TAXON_ID);
     params.set('place_id', CURRENT_PLACE_ID);
+    if (IDENTIFY_OWN_OBSERVATIONS) {
+        params.set('own_observations', 'true');
+        if (MY_USER_LOGIN) params.set('user_id', MY_USER_LOGIN);
+    }
 
     const extraFilters = new URLSearchParams(OTHER_FILTERS.replace(/^&/, ''));
     extraFilters.forEach((value, key) => {
-        if (key !== 'taxon_id' && key !== 'place_id' && !NON_FILTER_URL_PARAMS.has(key)) {
+        if (key !== 'taxon_id' && key !== 'place_id' && key !== 'own_observations' &&
+            !(IDENTIFY_OWN_OBSERVATIONS && key === 'user_id') && !NON_FILTER_URL_PARAMS.has(key)) {
             params.append(key, value);
         }
     });
@@ -243,6 +252,35 @@ function updateBookmarkURL() {
 }
 
 loadFiltersFromURL();
+
+function updateIdentifyOwnObservationsLink() {
+    const link = document.getElementById('identify-own-observations-link');
+    if (!link) return;
+    link.textContent = IDENTIFY_OWN_OBSERVATIONS
+        ? '↩️ Return to Unreviewed Observations'
+        : '👤 Go Thru My Observations';
+}
+
+function toggleIdentifyOwnObservations() {
+    if (!MY_USER_LOGIN) {
+        alert('Link your iNaturalist account before identifying your own observations.');
+        return;
+    }
+
+    IDENTIFY_OWN_OBSERVATIONS = !IDENTIFY_OWN_OBSERVATIONS;
+    updateIdentifyOwnObservationsLink();
+    updateBookmarkURL();
+    OBSERVATION_QUEUE = [];
+    FINISHED_OBS_IDS = [];
+    fetchObservations();
+}
+
+function getAccountQueueFilters() {
+    if (IDENTIFY_OWN_OBSERVATIONS) {
+        return `&user_id=${encodeURIComponent(MY_USER_LOGIN)}&viewer_id=${MY_USER_ID}`;
+    }
+    return `&reviewed=false&viewer_id=${MY_USER_ID}&without_ident_user_id=${MY_USER_ID}`;
+}
 
 function openFiltersModal() {
     document.getElementById('modal-filters').style.display = 'flex';
@@ -557,6 +595,8 @@ function copyNarrativeToClipboard() {
                 const user = userData.results[0];
                 MY_USER_ID = user.id;
                 MY_USER_LOGIN = user.login;
+                updateIdentifyOwnObservationsLink();
+                if (IDENTIFY_OWN_OBSERVATIONS) updateBookmarkURL();
                 statusEl.innerHTML = `<a href="https://www.inaturalist.org/identifications/${user.login}" target="_blank" class="account-history-link" title="Open your recent iNaturalist identifications">@${user.login} <span>Identification history &#8599;</span></a>`;
                 statusEl.className = "status-good";
                 controls.classList.add('hidden');
@@ -593,7 +633,7 @@ function copyNarrativeToClipboard() {
         queueCountEl.innerText = " (Refilling buffer...)";
         try {
             const excludedIds = FINISHED_OBS_IDS.length > 0 ? `&not_id=${FINISHED_OBS_IDS.join(',')}` : '';
-            const filteredURL = `${API_BASE}&per_page=${BATCH_SIZE}&place_id=${CURRENT_PLACE_ID}${OTHER_FILTERS}&viewer_id=${MY_USER_ID}&reviewed=false&without_ident_user_id=${MY_USER_ID}${excludedIds}`;
+            const filteredURL = `${API_BASE}&per_page=${BATCH_SIZE}&place_id=${CURRENT_PLACE_ID}${OTHER_FILTERS}${getAccountQueueFilters()}${excludedIds}`;
             const response = await fetch(filteredURL, { headers: { "Authorization": `Bearer ${MY_TOKEN}` } });
             const data = await response.json();
             TOTAL_API_RESULTS = data.total_results || 0;
@@ -1945,9 +1985,7 @@ async function searchBoundaryObservation() {
             `&order=asc` +
             `&place_id=6217,1` +
             `${cleanedFilters}` +
-            `&viewer_id=${MY_USER_ID}` +
-            `&reviewed=false` +
-            `&without_ident_user_id=${MY_USER_ID}` +
+            `${getAccountQueueFilters()}` +
             `${excludedIds}`;
 
         const response = await fetch(ascURL, {
