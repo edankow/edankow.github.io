@@ -121,6 +121,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -255,6 +258,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width"
     ]
   },
   {
@@ -341,6 +347,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -427,6 +436,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width"
     ]
   },
   {
@@ -521,6 +533,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "more or less entirely polished"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -611,6 +626,10 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "more or less entirely polished"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width",
+      "less than 30% head width"
     ]
   },
   {
@@ -771,6 +790,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -940,6 +962,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width"
     ]
   },
   {
@@ -1097,6 +1122,9 @@ const flyData = [
     ],
     "Malecercusinlateralview": [
       "with apical hook"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -1253,6 +1281,9 @@ const flyData = [
     ],
     "Femaleovipositorinventralview": [
       "with ST7 narrowing posteriorly, and ST8 elongate and parallel-sided"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width"
     ]
   },
   {
@@ -1368,6 +1399,9 @@ const flyData = [
     ],
     "Morphometricsbufonivoraelongata": [
       "bufonivora has distinct morphometrics of the antennae and frons that distinguish it from elongata. See Jones et al. 2019"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -1474,6 +1508,9 @@ const flyData = [
     ],
     "Femaleovipositorinventralview": [
       "with ST7 and ST8 gradually widened posteriorly"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width"
     ]
   },
   {
@@ -1581,6 +1618,9 @@ const flyData = [
     ],
     "Morphometricsbufonivoraelongata": [
       "elongata has distinct morphometrics of the antennae and frons that distinguish it from bufonivora. See Jones et al. 2019"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -1679,6 +1719,9 @@ const flyData = [
     ],
     "Femaleovipositorinventralview": [
       "with ST7 and ST8 widened posteriorly after a sudden subapical constriction"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width"
     ]
   },
   {
@@ -1764,6 +1807,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -1852,6 +1898,10 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width",
+      "less than 30% head width"
     ]
   },
   {
@@ -1982,6 +2032,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "more or less entirely polished"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -2112,6 +2165,10 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "more or less entirely polished"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width",
+      "at least 30% head width"
     ]
   },
   {
@@ -2248,6 +2305,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -2384,6 +2444,10 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "extensively pubescent"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width",
+      "at least 30% head width"
     ]
   },
   {
@@ -2481,6 +2545,9 @@ const flyData = [
     ],
     "Maleterminalia": [
       "posteriorly divergent; see Jones et al. 2019"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -2575,6 +2642,10 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "more or less entirely polished"
+    ],
+    "Fronswidthversusthirty": [
+      "at least 30% head width",
+      "less than 30% head width"
     ]
   },
   {
@@ -2675,6 +2746,9 @@ const flyData = [
     ],
     "Maleterminalia": [
       "posteriorly parallel; see Jones et al. 2019"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -2770,6 +2844,9 @@ const flyData = [
     ],
     "Tergitepubescence": [
       "more or less entirely polished"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {
@@ -2803,6 +2880,9 @@ const flyData = [
     ],
     "Abdominalpubescence": [
       "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Fronswidthversusthirty": [
+      "less than 30% head width"
     ]
   },
   {

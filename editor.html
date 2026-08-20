@@ -170,7 +170,10 @@
     <div id="modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div id="modal-container" class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transition-all duration-300">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                <h3 id="modal-title" class="text-lg font-bold text-slate-800">Edit Details</h3>
+                <div>
+                    <div id="modal-record-id" class="hidden text-[11px] font-mono font-bold uppercase tracking-wider text-blue-600 mb-0.5"></div>
+                    <h3 id="modal-title" class="text-lg font-bold text-slate-800">Edit Details</h3>
+                </div>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-all"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div id="modal-content" class="p-6 overflow-y-auto flex-1 flex flex-col">
@@ -249,6 +252,18 @@
         function printLog(msg, isError = false) {
             const log = document.getElementById('status-log');
             log.innerHTML = `<span class="${isError ? 'text-red-400' : 'text-blue-400'}">></span> ${msg}`;
+        }
+
+        function setModalHeading(title, type = null, idx = null) {
+            document.getElementById('modal-title').innerText = title;
+            const recordId = document.getElementById('modal-record-id');
+            if (type === 'flyData' && idx !== null && db.flyData?.[idx]) {
+                recordId.innerText = `Fly record ID: ${db.flyData[idx].id || 'Not set'}`;
+                recordId.classList.remove('hidden');
+            } else {
+                recordId.innerText = '';
+                recordId.classList.add('hidden');
+            }
         }
 
         function parseDataFile(name, text) {
@@ -652,13 +667,12 @@
             const modal = document.getElementById('modal');
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
-            const title = document.getElementById('modal-title');
             const saveBtn = document.getElementById('modal-save-btn');
             
             container.classList.remove('max-w-2xl');
             container.classList.add('max-w-4xl');
             
-            title.innerText = `Distribution for: ${db.flyData[idx].species || 'New Fly'}`;
+            setModalHeading(`Distribution for: ${db.flyData[idx].species || 'New Fly'}`, 'flyData', idx);
             modal.classList.remove('hidden');
             saveBtn.classList.remove('hidden');
 
@@ -797,10 +811,9 @@
             const currentValues = db.flyData[idx][traitId] || [];
             const modal = document.getElementById('modal');
             const content = document.getElementById('modal-content');
-            const title = document.getElementById('modal-title');
             const saveBtn = document.getElementById('modal-save-btn');
             
-            title.innerText = `Select values for: ${traitDef.title}`;
+            setModalHeading(`Select values for: ${traitDef.title}`, 'flyData', idx);
             modal.classList.remove('hidden');
             saveBtn.classList.remove('hidden');
 
@@ -832,11 +845,10 @@
             const data = db[type][idx][key];
             const modal = document.getElementById('modal');
             const content = document.getElementById('modal-content');
-            const title = document.getElementById('modal-title');
             const saveBtn = document.getElementById('modal-save-btn');
             
             saveBtn.classList.remove('hidden');
-            title.innerText = `Editing ${key}`;
+            setModalHeading(`Editing ${key}`, type, idx);
             modal.classList.remove('hidden');
             let html = "";
             if (key === 'options') {
@@ -874,6 +886,7 @@
 
         function closeModal() { 
             document.getElementById('modal').classList.add('hidden'); 
+            setModalHeading('Edit Details');
             const container = document.getElementById('modal-container');
             container.classList.remove('max-w-6xl', 'max-w-4xl');
             container.classList.add('max-w-2xl');

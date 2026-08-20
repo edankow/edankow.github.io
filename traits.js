@@ -64,6 +64,22 @@ const traits = [
     ]
   },
   {
+    "id": "Fronswidthversusthirty",
+    "title": "Frons at narrowest point more than 30% of head width?",
+    "weight": 2,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
+    "options": [
+      {
+        "label": "less than 30% head width",
+        "description": "The frons at narrowest is less than 30% head width."
+      },
+      {
+        "label": "at least 30% head width",
+        "description": "The frons at narrowest is at least 30% head width."
+      }
+    ]
+  },
+  {
     "id": "Fronswidthatnarrowestabout",
     "title": "Frons at narrowest point more than 25% of head width?",
     "weight": 4,
