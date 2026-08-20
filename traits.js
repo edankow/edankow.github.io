@@ -306,7 +306,7 @@ const traits = [
   {
     "id": "Bodycolorreddish",
     "title": "Color of thorax or abdomen",
-    "weight": 5,
+    "weight": 9,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
     "options": [
       {
@@ -326,7 +326,7 @@ const traits = [
   {
     "id": "Bodycolorcopper",
     "title": "Thorax or abdomen coppery?",
-    "weight": 3,
+    "weight": 6,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
     "options": [
       {
@@ -342,7 +342,7 @@ const traits = [
   {
     "id": "Bodycolorblack",
     "title": "Thorax and abdomen entirely black?",
-    "weight": 5,
+    "weight": 9,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=37",
     "options": [
       {
