@@ -124,6 +124,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen both have orangish/reddish/brown coloration"
+    ],
+    "Bodycolorcopper": [
+      "extensively and rather uniformly coppery brown (unique to Lucilia cuprina)",
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
     ]
   },
   {
@@ -261,6 +271,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "extensively and rather uniformly coppery brown (unique to Lucilia cuprina)",
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -350,6 +370,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -439,6 +469,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -536,6 +576,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -630,6 +680,16 @@ const flyData = [
     "Fronswidthversusthirty": [
       "at least 30% head width",
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -793,6 +853,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -965,6 +1035,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -1125,6 +1205,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -1284,6 +1374,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -1402,6 +1502,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -1511,6 +1621,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen both have orangish/reddish/brown coloration",
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen"
     ]
   },
   {
@@ -1621,6 +1741,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -1722,6 +1852,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -1810,6 +1950,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -1902,6 +2052,16 @@ const flyData = [
     "Fronswidthversusthirty": [
       "at least 30% head width",
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2035,6 +2195,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2169,6 +2339,16 @@ const flyData = [
     "Fronswidthversusthirty": [
       "less than 30% head width",
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2308,6 +2488,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2448,6 +2638,16 @@ const flyData = [
     "Fronswidthversusthirty": [
       "less than 30% head width",
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2548,6 +2748,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2646,6 +2856,16 @@ const flyData = [
     "Fronswidthversusthirty": [
       "at least 30% head width",
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2749,6 +2969,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2847,6 +3077,16 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+      "thorax and abdomen both have orangish/reddish/brown coloration"
     ]
   },
   {
@@ -2883,6 +3123,15 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "shining black"
     ]
   },
   {
@@ -2907,6 +3156,15 @@ const flyData = [
     ],
     "Abdominalpubescence": [
       "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Bodycolorblack": [
+      "shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "shining black"
     ]
   }
 ];

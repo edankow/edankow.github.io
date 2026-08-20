@@ -304,38 +304,54 @@ const traits = [
     ]
   },
   {
-    "id": "Bodycolor",
-    "title": "Color of thorax or abdomen? (unreliable for dead flies; it's always okay to guess orangish green or yellowish green if somewhat unclear)",
+    "id": "Bodycolorreddish",
+    "title": "Thorax and abdomen orangish, reddish, or brownish?",
     "weight": 5,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
     "options": [
       {
-        "label": "coppery brown",
-        "description": "Thorax and abdomen are coppery brown."
+        "label": "thorax and abdomen both have orangish/reddish/brown coloration",
+        "description": "Thorax and abdomen are both orangish green, reddish-orange brown, or coppery brown."
       },
       {
-        "label": "reddish-orange brown",
-        "description": "Thorax and abdomen are reddish-orange brown."
-      },
-      {
-        "label": "orangish green",
-        "description": "Thorax and abdomen are orangish green."
-      },
-      {
-        "label": "yellowish green",
-        "description": "Thorax and abdomen are yellowish green."
-      },
-      {
-        "label": "emerald green",
-        "description": "Thorax and abdomen are emerald green."
-      },
-      {
-        "label": "bluish",
-        "description": "Thorax and abdomen are bluish."
+        "label": "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
+        "description": "Thorax or abdomen are yellowish green, emerald green, or bluish, without orange/red/brown coloration on both thorax and abdomen"
       },
       {
         "label": "shining black",
         "description": "Thorax and abdomen are shining black."
+      }
+    ]
+  },
+  {
+    "id": "Bodycolorcopper",
+    "title": "Thorax and abdomen coppery?",
+    "weight": 3,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
+    "options": [
+      {
+        "label": "extensively and rather uniformly coppery brown (unique to Lucilia cuprina)",
+        "description": "Thorax and abdomen are extensively and rather uniformly coppery brown."
+      },
+      {
+        "label": "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)",
+        "description": "Thorax and abdomen not extensively and rather uniformly coppery brown."
+      }
+    ]
+  },
+  {
+    "id": "Bodycolorblack",
+    "title": "Thorax and abdomen entirely black?",
+    "weight": 5,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=37",
+    "options": [
+      {
+        "label": "shining black",
+        "description": "Thorax and abdomen are shining black."
+      },
+      {
+        "label": "not shining black",
+        "description": "Thorax and abdomen are not shining black."
       }
     ]
   },

@@ -480,7 +480,15 @@
                     let isComplex = Array.isArray(val) || (typeof val === 'object' && val !== null) || (currentTab === 'header' && typeof val === 'string' && val.length > 160);
 
                     if (isTrait) {
-                        display = Array.isArray(val) ? val.map(v => `<span class="trait-pill">${v}</span>`).join('') : (val ? `<span class="trait-pill">${val}</span>` : '');
+                        const traitDef = db.traits.find(t => t.id === k);
+                        const validLabels = new Set((traitDef?.options || []).map(opt => opt.label));
+                        const values = Array.isArray(val) ? val : (val ? [val] : []);
+                        display = values.map(v => {
+                            const escapedValue = escapeHtml(v);
+                            return validLabels.has(v)
+                                ? `<span class="trait-pill">${escapedValue}</span>`
+                                : `<span class="trait-pill bg-red-50 text-red-700 ring-1 ring-red-200" title="This value is no longer defined in the Traits tab">${escapedValue} ⚠</span>`;
+                        }).join('');
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openTraitPicker(${originalIdx}, '${k}')">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
                     } else if (currentTab === 'flyData' && k === 'distribution') {
                         display = Array.isArray(val) ? val.map(v => `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] mr-1">${v}</span>`).join('') : val;
@@ -899,7 +907,8 @@
             activeEdit = { type: 'flyData', idx, key: traitId };
             const traitDef = db.traits.find(t => t.id === traitId);
             if (!traitDef) return;
-            const currentValues = db.flyData[idx][traitId] || [];
+            const storedValues = db.flyData[idx][traitId] || [];
+            const currentValues = Array.isArray(storedValues) ? storedValues : [storedValues];
             const modal = document.getElementById('modal');
             const content = document.getElementById('modal-content');
             const saveBtn = document.getElementById('modal-save-btn');
@@ -908,7 +917,17 @@
             modal.classList.remove('hidden');
             saveBtn.classList.remove('hidden');
 
+            const validLabels = new Set(traitDef.options.map(opt => opt.label));
+            const invalidValues = currentValues.filter(value => !validLabels.has(value));
             let html = `<div class="space-y-3">`;
+            invalidValues.forEach(value => {
+                const escapedValue = escapeHtml(value);
+                html += `
+                    <label class="flex items-start gap-3 p-4 rounded-xl border-2 border-red-300 bg-red-50 transition-all cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-red-600 rounded focus:ring-red-500" value="${escapedValue}" checked onchange="toggleTraitOption(this)">
+                        <div><div class="font-bold text-red-800">${escapedValue}</div><div class="text-sm text-red-600 mt-1">This selected value is no longer an option in the Traits tab. It has been preserved; uncheck it to remove it from this fly.</div></div>
+                    </label>`;
+            });
             traitDef.options.forEach((opt, i) => {
                 const isSelected = currentValues.includes(opt.label);
                 html += `
