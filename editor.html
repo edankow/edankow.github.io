@@ -131,12 +131,17 @@
         <!-- Main Content -->
         <main class="flex-1 flex flex-col overflow-hidden">
             <!-- Header -->
-            <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center shadow-sm z-10">
+            <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center shadow-sm z-30">
                 <div>
                     <h2 id="current-tab-title" class="text-lg font-bold text-slate-800 uppercase tracking-wider">Welcome</h2>
                     <p id="current-tab-desc" class="text-sm text-slate-500">Looking for database files beside editor.html...</p>
                 </div>
                 <div class="flex items-center gap-4">
+                    <div id="inat-taxon-search-container" class="relative hidden">
+                        <i class="fas fa-leaf absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500"></i>
+                        <input type="text" id="inat-taxon-search-input" oninput="searchINatTaxa(this.value)" placeholder="Add taxon from iNaturalist..." autocomplete="off" class="pl-10 pr-4 py-2 bg-emerald-50 border border-emerald-200 rounded-full text-sm focus:ring-2 focus:ring-emerald-500 w-72 transition-all">
+                        <div id="inat-taxon-search-results" class="hidden absolute right-0 top-full mt-2 w-96 max-h-80 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-50"></div>
+                    </div>
                     <div class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search data..." class="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 w-64 transition-all">
@@ -229,6 +234,8 @@
         let activeEdit = { type: null, index: null, key: null };
         let searchQuery = "";
         let columnWidths = {};
+        let inatTaxonSearchTimeout = null;
+        let inatTaxonSearchResults = new Map();
 
         const tabConfigs = {
             header: { title: "Workspace Settings", desc: "Manage the titles, defaults, and About content for this identification dataset." },
@@ -388,6 +395,8 @@
             document.getElementById('current-tab-title').innerText = tabConfigs[tab].title;
             document.getElementById('current-tab-desc').innerText = tabConfigs[tab].desc;
             document.getElementById('add-new-btn').classList.toggle('hidden', tab === 'header');
+            document.getElementById('inat-taxon-search-container').classList.toggle('hidden', tab !== 'taxa');
+            if (tab !== 'taxa') document.getElementById('inat-taxon-search-results').classList.add('hidden');
             
             if (!db[tab] && tab !== 'flyData') {
                 document.getElementById('welcome-screen').classList.remove('hidden');
@@ -396,6 +405,94 @@
                 document.getElementById('welcome-screen').classList.add('hidden');
                 document.getElementById('data-view').classList.remove('hidden');
                 renderTable();
+            }
+        }
+
+        async function searchINatTaxa(query) {
+            const dropdown = document.getElementById('inat-taxon-search-results');
+            const trimmedQuery = query.trim();
+            clearTimeout(inatTaxonSearchTimeout);
+
+            if (trimmedQuery.length < 3) {
+                dropdown.classList.add('hidden');
+                dropdown.innerHTML = '';
+                return;
+            }
+
+            inatTaxonSearchTimeout = setTimeout(async () => {
+                dropdown.innerHTML = '<div class="p-4 text-sm text-slate-400">Searching iNaturalist…</div>';
+                dropdown.classList.remove('hidden');
+                try {
+                    const response = await fetch(`https://api.inaturalist.org/v1/taxa/autocomplete?q=${encodeURIComponent(trimmedQuery)}`);
+                    if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
+                    const data = await response.json();
+                    const results = data.results || [];
+                    inatTaxonSearchResults = new Map(results.map(taxon => [String(taxon.id), taxon]));
+
+                    if (results.length === 0) {
+                        dropdown.innerHTML = '<div class="p-4 text-sm text-slate-400">No matching taxa found.</div>';
+                        return;
+                    }
+
+                    dropdown.innerHTML = results.map(taxon => `
+                        <button type="button" onclick="selectINatTaxon('${taxon.id}')" class="block w-full text-left px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-emerald-50 transition-colors">
+                            <strong class="text-slate-800">${escapeHtml(taxon.name)}</strong>
+                            <small class="text-slate-500">(${escapeHtml(taxon.rank || '')})</small>
+                        </button>`).join('');
+                } catch (error) {
+                    dropdown.innerHTML = '<div class="p-4 text-sm text-red-600">Could not search iNaturalist. Check your connection and try again.</div>';
+                    printLog(`iNaturalist taxon search failed: ${error.message}`, true);
+                }
+            }, 300);
+        }
+
+        async function selectINatTaxon(taxonId) {
+            const dropdown = document.getElementById('inat-taxon-search-results');
+            const input = document.getElementById('inat-taxon-search-input');
+            const selected = inatTaxonSearchResults.get(String(taxonId));
+            if (!selected) return;
+
+            dropdown.classList.add('hidden');
+            input.value = selected.name;
+            try {
+                const response = await fetch(`https://api.inaturalist.org/v1/taxa/${encodeURIComponent(taxonId)}`);
+                if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
+                const data = await response.json();
+                const taxon = data.results?.[0] || selected;
+                const ancestors = taxon.ancestors || selected.ancestors || [];
+                let immediateParent = ancestors.length > 0 ? ancestors[ancestors.length - 1].name : null;
+                const parentId = taxon.parent_id || selected.parent_id;
+                if (!immediateParent && parentId) {
+                    const parentResponse = await fetch(`https://api.inaturalist.org/v1/taxa/${encodeURIComponent(parentId)}`);
+                    if (parentResponse.ok) {
+                        const parentData = await parentResponse.json();
+                        immediateParent = parentData.results?.[0]?.name || null;
+                    }
+                }
+
+                if (!db.taxa) db.taxa = [];
+                const existingIdx = db.taxa.findIndex(record => String(record.taxonId) === String(taxon.id));
+                const importedRecord = {
+                    taxonId: taxon.id,
+                    name: taxon.name,
+                    rank: taxon.rank,
+                    parent: immediateParent || null
+                };
+
+                if (existingIdx === -1) {
+                    db.taxa.unshift(importedRecord);
+                    printLog(`Added ${taxon.name} from iNaturalist.`);
+                } else {
+                    db.taxa[existingIdx] = { ...db.taxa[existingIdx], ...importedRecord };
+                    printLog(`Updated existing taxon ${taxon.name} from iNaturalist.`);
+                }
+
+                input.value = '';
+                updateUIState();
+                renderTable();
+            } catch (error) {
+                printLog(`Could not import taxon from iNaturalist: ${error.message}`, true);
+                alert('Could not import that taxon from iNaturalist. Check your connection and try again.');
             }
         }
 
