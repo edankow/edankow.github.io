@@ -1559,7 +1559,7 @@ function escapeRegionString(value) {
 	// update the title text and about content on the page:
 	const titleDiv = document.getElementById("main-title");
   	  if (titleDiv) {
- 	       titleDiv.innerHTML = window.PAGE_TITLE;
+	       titleDiv.innerHTML = window.LONG_TITLE || window.PAGE_TITLE || "Species Identification Workspace";
  	   }
 
 	const aboutdiv = document.getElementById("about-content");

@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucilia Editor — Identification Database Editor</title>
+    <title>Lucilia — Identification Database Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -75,12 +75,15 @@
         <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm">
             <div class="p-6 border-b border-slate-100">
                 <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fas fa-bug text-blue-600"></i> Lucilia Editor
+                    <i class="fas fa-bug text-blue-600"></i> <span id="dataset-short-title">Identification Dataset</span>
                 </h1>
                 <p class="text-xs text-slate-500 mt-1">Identification Database Editor</p>
             </div>
             
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <button onclick="switchTab('header')" id="btn-header" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-sliders w-5"></i> Workspace
+                </button>
                 <button onclick="switchTab('taxa')" id="btn-taxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-sitemap w-5"></i> Taxonomy
                 </button>
@@ -136,7 +139,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>taxa.js</b>, <b>traits.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
+                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>header.js</b>, <b>taxa.js</b>, <b>traits.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -160,7 +163,7 @@
                 <div id="status-log">Looking for database files...</div>
                 <div class="flex gap-4">
                     <span><i class="fas fa-circle text-emerald-500 text-[8px] mr-1"></i> Connected</span>
-                    <span id="file-counts">Data files: 0/4</span>
+                    <span id="file-counts">Data files: 0/5</span>
                 </div>
             </footer>
         </main>
@@ -192,9 +195,11 @@
     <script src="flydata.js"></script>
     <script src="regions.js"></script>
     <script src="map_paths.js"></script>
+    <script src="header.js"></script>
     <script>
         const cloneLoadedData = value => JSON.parse(JSON.stringify(value));
         let db = {
+            header: typeof HEADER_DATA !== 'undefined' ? [cloneLoadedData(HEADER_DATA)] : null,
             taxa: typeof taxa !== 'undefined' ? cloneLoadedData(taxa) : null,
             traits: typeof traits !== 'undefined' ? cloneLoadedData(traits) : null,
             flyData: typeof flyData !== 'undefined' ? cloneLoadedData(flyData) : null,
@@ -210,6 +215,7 @@
         let columnWidths = {};
 
         const tabConfigs = {
+            header: { title: "Workspace Settings", desc: "Manage the titles, defaults, and About content for this identification dataset." },
             taxa: { title: "Taxonomy Hierarchy", desc: "Manage species, complexes, and their parent relationships." },
             traits: { title: "Character Traits", desc: "Define the physical traits and their possible options for identification." },
             flyData: { title: "Fly Database", desc: "The core database mapping traits to specific fly species." },
@@ -217,6 +223,7 @@
         };
 
         const defaultTemplates = {
+            header: { SHORT_TITLE: "Identification Dataset", LONG_TITLE: "Identification Workspace", DEFAULT_PLACE_ID: "", DEFAULT_TAXON: "", ABOUT_CONTENT: "" },
             taxa: { taxonId: null, name: "New Species", rank: "species", parent: null },
             traits: { id: "new_trait", title: "New Trait", weight: 1, link: "", options: [] },
             flyData: { id: "new_fly", m_or_f: "M", species: "New Fly", distribution: [] },
@@ -268,6 +275,12 @@
 
         function parseDataFile(name, text) {
             const normalizedName = name.toLowerCase();
+            if (normalizedName === 'header.js') {
+                const match = text.match(/window\.HEADER_DATA\s*=\s*(?:Object\.freeze\()?\s*({[\s\S]*?})\s*\)?\s*;/);
+                if (!match) throw new Error('HEADER_DATA object not found');
+                db.header = [eval(`(${match[1]})`)];
+                return 'header';
+            }
             const cleanText = text.replace(/const\s+\w+\s*=\s*(?:Object\.freeze\()?(.*?)(?:\);?|;)\s*$/s, '$1');
 
             if (normalizedName === 'map_paths.js') {
@@ -290,7 +303,7 @@
             updateUIState();
             const hasData = Object.values(db).some(Boolean);
             if (!currentTab && hasData) {
-                const firstAvailable = ['taxa', 'traits', 'flyData', 'regions'].find(type => db[type]);
+                const firstAvailable = ['header', 'taxa', 'traits', 'flyData', 'regions'].find(type => db[type]);
                 switchTab(firstAvailable);
             }
         }
@@ -314,8 +327,9 @@
         }
 
         function initializeAutoLoadedFiles() {
-            const expectedFiles = ['taxa.js', 'traits.js', 'flydata.js', 'regions.js', 'map_paths.js'];
+            const expectedFiles = ['header.js', 'taxa.js', 'traits.js', 'flydata.js', 'regions.js', 'map_paths.js'];
             const loadedFiles = [
+                db.header && 'header.js',
                 db.taxa && 'taxa.js',
                 db.traits && 'traits.js',
                 db.flyData && 'flydata.js',
@@ -335,12 +349,15 @@
 
         function updateUIState() {
             let count = 0;
-            ['taxa', 'traits', 'flyData', 'regions'].forEach(t => {
+            ['header', 'taxa', 'traits', 'flyData', 'regions'].forEach(t => {
                 const btn = document.getElementById(`btn-${t}`);
                 if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
                 else { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; }
             });
-            document.getElementById('file-counts').innerText = `Data files: ${count}/4`;
+            document.getElementById('file-counts').innerText = `Data files: ${count}/5`;
+            const shortTitle = db.header?.[0]?.SHORT_TITLE || 'Identification Dataset';
+            document.getElementById('dataset-short-title').innerText = shortTitle;
+            document.title = `${shortTitle} — Identification Database Editor`;
             if (count > 0 || currentTab) {
                 document.getElementById('welcome-screen').classList.add('hidden');
                 document.getElementById('data-view').classList.remove('hidden');
@@ -447,7 +464,7 @@
                     let val = row[k];
                     let display = "";
                     let isTrait = (currentTab === 'flyData' && traitMap[k]);
-                    let isComplex = Array.isArray(val) || (typeof val === 'object' && val !== null);
+                    let isComplex = Array.isArray(val) || (typeof val === 'object' && val !== null) || (currentTab === 'header' && typeof val === 'string' && val.length > 160);
 
                     if (isTrait) {
                         display = Array.isArray(val) ? val.map(v => `<span class="trait-pill">${v}</span>`).join('') : (val ? `<span class="trait-pill">${val}</span>` : '');
@@ -622,7 +639,12 @@
                 return false;
             }
 
-            if (oldVal !== newVal) { db[type][idx][key] = newVal; }
+            if (oldVal !== newVal) {
+                db[type][idx][key] = newVal;
+                if (type === 'header' && key === 'SHORT_TITLE') {
+                    document.getElementById('dataset-short-title').innerText = newVal || 'Identification Dataset';
+                }
+            }
             return true;
         }
 
@@ -866,10 +888,14 @@
                 html += `</div><button onclick="addOption()" class="mt-4 w-full py-2 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:text-blue-500 transition-all font-medium">+ Add Option</button>`;
             } else if (Array.isArray(data)) {
                 html = `<textarea id="list-editor" class="w-full h-64 p-4 border border-slate-200 rounded-xl font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none">${data.join('\n')}</textarea>`;
+            } else if (type === 'header' && typeof data === 'string') {
+                html = `<textarea id="text-editor" class="w-full h-96 p-4 border border-slate-200 rounded-xl font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>`;
             } else {
                 html = `<textarea id="json-editor" class="w-full h-64 p-4 border border-slate-200 rounded-xl font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none">${JSON.stringify(data, null, 2)}</textarea>`;
             }
             content.innerHTML = html;
+            const textEditor = document.getElementById('text-editor');
+            if (textEditor) textEditor.value = data;
         }
 
         function updateOption(i, key, val) { db[activeEdit.type][activeEdit.idx][activeEdit.key][i][key] = val; }
@@ -879,7 +905,9 @@
         function saveModal() {
             const listEditor = document.getElementById('list-editor');
             const jsonEditor = document.getElementById('json-editor');
+            const textEditor = document.getElementById('text-editor');
             if (listEditor) db[activeEdit.type][activeEdit.idx][activeEdit.key] = listEditor.value.split('\n').filter(s => s.trim() !== "");
+            else if (textEditor) db[activeEdit.type][activeEdit.idx][activeEdit.key] = textEditor.value;
             else if (jsonEditor) try { db[activeEdit.type][activeEdit.idx][activeEdit.key] = JSON.parse(jsonEditor.value); } catch (e) { alert("Invalid JSON!"); return; }
             closeModal(); renderTable();
         }
@@ -965,6 +993,14 @@
                 alert(`Cannot export ${type} until every column marked unique contains unique values.`);
                 return false;
             }
+            if (type === 'header') {
+                const headerData = db.header[0] || {};
+                const text = `// Configuration for this identification dataset\nwindow.HEADER_DATA = Object.freeze(${JSON.stringify(headerData, null, 2)});\n\nwindow.SHORT_TITLE = window.HEADER_DATA.SHORT_TITLE;\nwindow.LONG_TITLE = window.HEADER_DATA.LONG_TITLE;\nwindow.DEFAULT_PLACE_ID = window.HEADER_DATA.DEFAULT_PLACE_ID;\nwindow.DEFAULT_TAXON = window.HEADER_DATA.DEFAULT_TAXON;\nwindow.ABOUT_CONTENT = window.HEADER_DATA.ABOUT_CONTENT;\n`;
+                const blob = new Blob([text], { type: 'text/javascript' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'header.js'; a.click();
+                return true;
+            }
+
             let dataToExport = JSON.parse(JSON.stringify(db[type]));
             if (type === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
             const text = (type === 'taxa' || type === 'regions') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
@@ -974,7 +1010,7 @@
         }
 
         function exportAll() {
-            const types = ['taxa', 'traits', 'flyData', 'regions'];
+            const types = ['header', 'taxa', 'traits', 'flyData', 'regions'];
             const results = types.filter(type => db[type]).map(type => exportFile(type));
             if (results.every(Boolean)) printLog("All available files exported.");
         }

@@ -1,8 +1,10 @@
-// The header variables for this particular key set
- window.DEFAULT_PLACE_ID = "6712,1"; // Default: USA & Canada
- window.DEFAULT_TAXON = "61858"; // Lucilia
-window.PAGE_TITLE = "Interactive field-character key to <i>Lucilia</i> of the USA and Canada";
-window.ABOUT_CONTENT = `
+// Configuration for this identification dataset
+window.HEADER_DATA = Object.freeze({
+SHORT_TITLE: "Lucilia — USA & Canada",
+LONG_TITLE: "Interactive field-character key to <i>Lucilia</i> of the USA and Canada",
+DEFAULT_PLACE_ID: "6712,1",
+DEFAULT_TAXON: "61858",
+ABOUT_CONTENT: `
 
 <p>Most of the features used in this key are explained in my <a href="lucilia_us_canada.pdf">illustrated guide to Greenbottle Flies (Calliphoridae: <i>Lucilia</i>) of the USA and Canada</a>. Many features are also shown in <a href="https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf">Jones et al (2019)</a>, which is the best resource to start identifying specimens under a microscope. For my other fly ID resources, visit <a href="https://sites.google.com/view/flyguide/">https://sites.google.com/view/flyguide/</a>.
 	<br><br>
@@ -19,4 +21,11 @@ window.ABOUT_CONTENT = `
 	<p>Whitworth, 2014. A revision of the Neotropical species of Lucilia Robineau-Desvoidy (Diptera: Calliphoridae). Zootaxa.	<p>Williams, Villet, 2014. Morphological identification of Lucilia sericata, Lucilia cuprina and their hybrids (Diptera, Calliphoridae). ZooKeys 420. https://zookeys.pensoft.net/article/3908/
     </p>
 
-`;
+`
+});
+
+window.SHORT_TITLE = window.HEADER_DATA.SHORT_TITLE;
+window.LONG_TITLE = window.HEADER_DATA.LONG_TITLE;
+window.DEFAULT_PLACE_ID = window.HEADER_DATA.DEFAULT_PLACE_ID;
+window.DEFAULT_TAXON = window.HEADER_DATA.DEFAULT_TAXON;
+window.ABOUT_CONTENT = window.HEADER_DATA.ABOUT_CONTENT;
