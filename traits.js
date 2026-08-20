@@ -305,17 +305,17 @@ const traits = [
   },
   {
     "id": "Bodycolorreddish",
-    "title": "Thorax and abdomen orangish, reddish, or brownish?",
+    "title": "Color of thorax or abdomen",
     "weight": 5,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
     "options": [
       {
-        "label": "thorax and abdomen both have orangish/reddish/brown coloration",
-        "description": "Thorax and abdomen are both orangish green, reddish-orange brown, or coppery brown."
+        "label": "orangish green, reddish-orange brown, or coppery brown",
+        "description": "Thorax or abdomen are orangish green, reddish-orange brown, or coppery brown."
       },
       {
-        "label": "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-        "description": "Thorax or abdomen are yellowish green, emerald green, or bluish, without orange/red/brown coloration on both thorax and abdomen"
+        "label": "yellowish green, emerald green, or bluish",
+        "description": "Thorax or abdomen are yellowish green, emerald green, or bluish, without orange/red/brown coloration on both thorax and abdomen."
       },
       {
         "label": "shining black",
@@ -325,17 +325,17 @@ const traits = [
   },
   {
     "id": "Bodycolorcopper",
-    "title": "Thorax and abdomen coppery?",
+    "title": "Thorax or abdomen coppery?",
     "weight": 3,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
     "options": [
       {
         "label": "extensively and rather uniformly coppery brown (unique to Lucilia cuprina)",
-        "description": "Thorax and abdomen are extensively and rather uniformly coppery brown."
+        "description": "Thorax or abdomen are extensively and rather uniformly coppery brown."
       },
       {
         "label": "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)",
-        "description": "Thorax and abdomen not extensively and rather uniformly coppery brown."
+        "description": "Thorax and abdomen are not both extensively and rather uniformly coppery brown."
       }
     ]
   },

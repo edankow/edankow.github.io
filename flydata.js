@@ -126,7 +126,7 @@ const flyData = [
       "less than 30% head width"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown"
     ],
     "Bodycolorcopper": [
       "extensively and rather uniformly coppery brown (unique to Lucilia cuprina)",
@@ -280,7 +280,7 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown"
     ]
   },
   {
@@ -378,8 +378,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -477,8 +477,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "yellowish green, emerald green, or bluish",
+      "orangish green, reddish-orange brown, or coppery brown"
     ]
   },
   {
@@ -584,8 +584,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -688,8 +688,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -861,8 +861,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -1043,8 +1043,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -1213,8 +1213,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -1382,8 +1382,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -1510,8 +1510,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -1629,8 +1629,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen both have orangish/reddish/brown coloration",
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -1749,8 +1749,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -1860,8 +1860,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -1958,8 +1958,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -2060,8 +2060,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -2203,8 +2203,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -2347,8 +2347,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -2496,8 +2496,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -2646,8 +2646,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -2756,8 +2756,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -2864,8 +2864,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -2977,8 +2977,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
@@ -3085,8 +3085,8 @@ const flyData = [
       "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
     ],
     "Bodycolorreddish": [
-      "thorax and abdomen yellowish/greenish/bluish, without orange/red/brown coloration on both thorax and abdomen",
-      "thorax and abdomen both have orangish/reddish/brown coloration"
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
     ]
   },
   {
