@@ -45,6 +45,12 @@
         tr.row-dragging { opacity: 0.35; }
         tr.row-drop-before { box-shadow: inset 0 3px 0 #2563eb; }
         tr.row-drop-after { box-shadow: inset 0 -3px 0 #2563eb; }
+        .insert-row-button { position: absolute; left: -13px; z-index: 20; display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 2px solid #fff; border-radius: 999px; background: #2563eb; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2); font-size: 11px; opacity: 0; transform: scale(0.8); transition: opacity 0.15s, transform 0.15s, background 0.15s; cursor: pointer; }
+        tr:hover .insert-row-button, .insert-row-button:focus { opacity: 1; transform: scale(1); }
+        .insert-row-button:hover { background: #1d4ed8; }
+        .insert-row-before { top: -11px; }
+        .insert-row-after { bottom: -11px; }
+        #table-wrapper { padding-left: 14px; }
 
         /* Distribution modal tabs */
         .dist-tab-btn { padding: 8px 18px; font-size: 13px; font-weight: 600; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: all 0.15s; color: #64748b; background: #f1f5f9; }
@@ -404,13 +410,16 @@
 
             // Body
             let bodyHtml = '';
-            filteredData.forEach((row, idx) => {
+            filteredData.forEach((row, visibleIdx) => {
                 const originalIdx = data.indexOf(row);
+                const isLastVisibleRow = visibleIdx === filteredData.length - 1;
                 bodyHtml += `<tr class="hover:bg-slate-50 transition-all group/row" ondragover="handleRowDragOver(event)" ondragleave="handleRowDragLeave(event)" ondrop="handleRowDrop(event, '${currentTab}', ${originalIdx})">`;
                 
                 // Index column with hover duplicate button
                 bodyHtml += `
                     <td class="px-4 py-3 text-slate-400 font-mono text-xs relative overflow-visible" style="width: 80px">
+                        <button onclick="event.stopPropagation(); insertNewRowAt('${currentTab}', ${originalIdx})" class="insert-row-button insert-row-before" title="Insert row above"><i class="fas fa-plus"></i></button>
+                        ${isLastVisibleRow ? `<button onclick="event.stopPropagation(); insertNewRowAt('${currentTab}', ${originalIdx + 1})" class="insert-row-button insert-row-after" title="Insert row below"><i class="fas fa-plus"></i></button>` : ''}
                         <span draggable="true" ondragstart="startRowDrag(event, '${currentTab}', ${originalIdx})" ondragend="finishRowDrag()" class="row-drag-handle inline-flex items-center gap-2 pr-7" title="Drag to reorder">
                             <i class="fas fa-grip-vertical text-slate-300"></i>#${originalIdx + 1}
                         </span>
@@ -609,8 +618,11 @@
             document.getElementById('table-head').innerHTML = headHtml;
             let bodyHtml = '';
             data.forEach((row, idx) => {
+                const isLastRow = idx === data.length - 1;
                 bodyHtml += `<tr class="hover:bg-slate-50 transition-all group/row" ondragover="handleRowDragOver(event)" ondragleave="handleRowDragLeave(event)" ondrop="handleRowDrop(event, 'regions', ${idx})">
                     <td class="px-4 py-3 text-slate-400 font-mono text-xs relative overflow-visible">
+                        <button onclick="event.stopPropagation(); insertNewRowAt('regions', ${idx})" class="insert-row-button insert-row-before" title="Insert row above"><i class="fas fa-plus"></i></button>
+                        ${isLastRow ? `<button onclick="event.stopPropagation(); insertNewRowAt('regions', ${idx + 1})" class="insert-row-button insert-row-after" title="Insert row below"><i class="fas fa-plus"></i></button>` : ''}
                         <span draggable="true" ondragstart="startRowDrag(event, 'regions', ${idx})" ondragend="finishRowDrag()" class="row-drag-handle inline-flex items-center gap-2 pr-7" title="Drag to reorder">
                             <i class="fas fa-grip-vertical text-slate-300"></i>#${idx + 1}
                         </span>
@@ -876,17 +888,14 @@
             }
         });
 
-        function addNewRow() { 
-            if (!currentTab) switchTab('taxa');
-            
-            if (!db[currentTab]) db[currentTab] = [];
-
+        function createBlankRow(type) {
+            if (!db[type]) db[type] = [];
             let template = {};
-            if (db[currentTab].length > 0) {
-                template = JSON.parse(JSON.stringify(db[currentTab][0]));
+            if (db[type].length > 0) {
+                template = JSON.parse(JSON.stringify(db[type][0]));
             } else {
-                template = JSON.parse(JSON.stringify(defaultTemplates[currentTab]));
-                if (currentTab === 'flyData' && db.traits) {
+                template = JSON.parse(JSON.stringify(defaultTemplates[type]));
+                if (type === 'flyData' && db.traits) {
                     db.traits.forEach(t => { template[t.id] = []; });
                 }
             }
@@ -896,11 +905,22 @@
                 else if (typeof template[k] === 'number') template[k] = (k === 'weight' ? 1 : null); 
                 else if (template[k] === null) template[k] = null;
                 else template[k] = ""; 
-            }); 
-            
-            db[currentTab].unshift(template); 
+            });
+            return template;
+        }
+
+        function insertNewRowAt(type, index) {
+            const template = createBlankRow(type);
+            db[type].splice(Math.max(0, Math.min(index, db[type].length)), 0, template);
+            if (currentTab !== type) switchTab(type);
             updateUIState();
-            renderTable(); 
+            renderTable();
+            printLog(`Inserted a new row in ${type}.`);
+        }
+
+        function addNewRow() {
+            if (!currentTab) switchTab('taxa');
+            insertNewRowAt(currentTab, 0);
         }
 
         function duplicateRow(idx) { 
