@@ -126,7 +126,7 @@
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search data..." class="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 w-64 transition-all">
                     </div>
-                    <button onclick="addNewRow()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800 transition-all flex items-center gap-2">
+                    <button id="add-new-btn" onclick="addNewRow()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800 transition-all flex items-center gap-2">
                         <i class="fas fa-plus"></i> Add New
                     </button>
                 </div>
@@ -154,6 +154,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div id="header-settings-view" class="hidden overflow-y-auto custom-scrollbar flex-1 p-8"></div>
                     </div>
                 </div>
             </div>
@@ -371,6 +372,7 @@
             document.getElementById(`btn-${tab}`).classList.add('active-tab');
             document.getElementById('current-tab-title').innerText = tabConfigs[tab].title;
             document.getElementById('current-tab-desc').innerText = tabConfigs[tab].desc;
+            document.getElementById('add-new-btn').classList.toggle('hidden', tab === 'header');
             
             if (!db[tab] && tab !== 'flyData') {
                 document.getElementById('welcome-screen').classList.remove('hidden');
@@ -401,6 +403,17 @@
 
         function renderTable() {
             const data = db[currentTab];
+
+            const tableWrapper = document.getElementById('table-wrapper');
+            const headerSettingsView = document.getElementById('header-settings-view');
+            if (currentTab === 'header') {
+                tableWrapper.classList.add('hidden');
+                headerSettingsView.classList.remove('hidden');
+                renderHeaderSettings();
+                return;
+            }
+            tableWrapper.classList.remove('hidden');
+            headerSettingsView.classList.add('hidden');
             
             // Special handling for flyData columns
             let keys = [];
@@ -489,6 +502,62 @@
                 </tr>`;
             });
             document.getElementById('table-body').innerHTML = bodyHtml;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function renderHeaderSettings() {
+            const settings = db.header?.[0] || {};
+            const preferredOrder = ['SHORT_TITLE', 'LONG_TITLE', 'DEFAULT_TAXON', 'DEFAULT_PLACE_ID', 'ABOUT_CONTENT'];
+            const keys = [...preferredOrder.filter(key => key in settings), ...Object.keys(settings).filter(key => !preferredOrder.includes(key))];
+            const descriptions = {
+                SHORT_TITLE: 'Compact dataset name shown in the editor.',
+                LONG_TITLE: 'Full heading displayed in the identification workspace. HTML formatting is supported.',
+                DEFAULT_TAXON: 'Default iNaturalist taxon ID used by the observation queue.',
+                DEFAULT_PLACE_ID: 'Default comma-separated iNaturalist place IDs.',
+                ABOUT_CONTENT: 'About text and references displayed below the identification workspace. HTML formatting is supported.'
+            };
+
+            const fieldsHtml = keys.map(key => {
+                const value = settings[key] ?? '';
+                const isLargeField = key === 'LONG_TITLE' || key === 'ABOUT_CONTENT' || String(value).length > 160;
+                const control = isLargeField
+                    ? `<textarea class="w-full ${key === 'ABOUT_CONTENT' ? 'h-80' : 'h-24'} p-3 border border-slate-200 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="updateHeaderField('${key}', this.value)">${escapeHtml(value)}</textarea>`
+                    : `<input type="text" value="${escapeHtml(value)}" class="w-full p-3 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="updateHeaderField('${key}', this.value)">`;
+
+                return `<div class="grid grid-cols-[220px_minmax(0,1fr)] gap-6 py-5 border-b border-slate-100 last:border-0">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700">${key.replaceAll('_', ' ')}</label>
+                        <p class="mt-1 text-xs leading-5 text-slate-400">${descriptions[key] || 'Workspace configuration value.'}</p>
+                    </div>
+                    <div>${control}</div>
+                </div>`;
+            }).join('');
+
+            document.getElementById('header-settings-view').innerHTML = `<div class="max-w-5xl mx-auto">
+                <div class="mb-5">
+                    <h3 class="text-lg font-bold text-slate-800">Dataset configuration</h3>
+                    <p class="text-sm text-slate-500 mt-1">Changes are kept in the editor until you export header.js.</p>
+                </div>
+                <div class="border-t border-slate-200">${fieldsHtml}</div>
+            </div>`;
+        }
+
+        function updateHeaderField(key, value) {
+            if (!db.header) db.header = [{}];
+            db.header[0][key] = value;
+            if (key === 'SHORT_TITLE') {
+                const shortTitle = value || 'Identification Dataset';
+                document.getElementById('dataset-short-title').innerText = shortTitle;
+                document.title = `${shortTitle} — Identification Database Editor`;
+            }
         }
 
         function renderHeader(keys, traitMap = {}) {
