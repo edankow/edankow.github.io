@@ -122,7 +122,7 @@
                     <p id="current-tab-desc" class="text-sm text-slate-500">Looking for database files beside editor.html...</p>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="relative">
+                    <div id="search-control" class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search data..." class="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 w-64 transition-all">
                     </div>
@@ -373,6 +373,7 @@
             document.getElementById('current-tab-title').innerText = tabConfigs[tab].title;
             document.getElementById('current-tab-desc').innerText = tabConfigs[tab].desc;
             document.getElementById('add-new-btn').classList.toggle('hidden', tab === 'header');
+            document.getElementById('search-control').classList.toggle('hidden', tab === 'header');
             
             if (!db[tab] && tab !== 'flyData') {
                 document.getElementById('welcome-screen').classList.remove('hidden');

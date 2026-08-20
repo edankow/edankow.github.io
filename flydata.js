@@ -281,7 +281,8 @@ const flyData = [
       "MB",
       "ON",
       "QB",
-      "NL"
+      "NL",
+      "QC"
     ],
     "species": "Lucilia magnicornis",
     "Headlength": [
@@ -370,7 +371,8 @@ const flyData = [
       "MB",
       "ON",
       "QB",
-      "NL"
+      "NL",
+      "QC"
     ],
     "species": "Lucilia magnicornis",
     "Headlength": [
