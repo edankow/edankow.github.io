@@ -399,7 +399,7 @@
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openComplexEditor('${currentTab}', ${originalIdx}, '${k}')">${display}</td>`;
                     } else {
                         display = (val === null || val === undefined) ? '<span class="text-slate-300 italic">null</span>' : val;
-                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal" contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText)">${display}</td>`;
+                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal" contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText, this)">${display}</td>`;
                     }
                 });
 
@@ -455,12 +455,67 @@
 
         function handleSearch() { searchQuery = document.getElementById('search-input').value; renderTable(); }
 
-        function updateCell(type, idx, key, val) {
+        const uniqueIdKeys = {
+            taxa: 'taxonId',
+            traits: 'id',
+            flyData: 'id',
+            regions: 'code'
+        };
+
+        function normalizeId(value) {
+            if (value === null || value === undefined) return '';
+            return String(value).trim().toLowerCase();
+        }
+
+        function findDuplicateId(type, key, value, excludedIdx = -1) {
+            const normalizedValue = normalizeId(value);
+            if (!normalizedValue || uniqueIdKeys[type] !== key || !db[type]) return -1;
+            return db[type].findIndex((row, rowIdx) => rowIdx !== excludedIdx && normalizeId(row[key]) === normalizedValue);
+        }
+
+        function getDuplicateIds(type) {
+            const key = uniqueIdKeys[type];
+            if (!key || !db[type]) return [];
+            const seen = new Set();
+            const duplicates = new Set();
+            db[type].forEach(row => {
+                const value = normalizeId(row[key]);
+                if (!value) return;
+                if (seen.has(value)) duplicates.add(String(row[key]).trim());
+                seen.add(value);
+            });
+            return [...duplicates];
+        }
+
+        function makeUniqueCopyId(type, originalValue) {
+            const key = uniqueIdKeys[type];
+            if (!key || originalValue === null || originalValue === undefined || originalValue === '') return null;
+            if (typeof originalValue === 'number') return null;
+
+            const base = `${String(originalValue).trim()}_copy`;
+            let candidate = base;
+            let suffix = 2;
+            while (findDuplicateId(type, key, candidate) !== -1) candidate = `${base}_${suffix++}`;
+            return candidate;
+        }
+
+        function updateCell(type, idx, key, val, element) {
             const oldVal = db[type][idx][key];
             let newVal = val;
             if (typeof oldVal === 'number') newVal = parseFloat(val);
             if (val === 'null') newVal = null;
+
+            const duplicateIdx = findDuplicateId(type, key, newVal, idx);
+            if (duplicateIdx !== -1) {
+                if (element) element.innerText = oldVal === null || oldVal === undefined ? 'null' : oldVal;
+                const fieldLabel = uniqueIdKeys[type];
+                printLog(`${fieldLabel} must be unique. "${newVal}" is already used in row ${duplicateIdx + 1}.`, true);
+                alert(`That ${fieldLabel} is already in use. Please enter a unique value.`);
+                return false;
+            }
+
             if (oldVal !== newVal) { db[type][idx][key] = newVal; }
+            return true;
         }
 
         // --- Regions Table ---
@@ -477,8 +532,8 @@
                             <i class="fas fa-copy text-[10px]"></i>
                         </button>
                     </td>
-                    <td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'name', this.innerText)">${row.name}</td>
-                    <td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'code', this.innerText)">${row.code}</td>
+                    <td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'name', this.innerText, this)">${row.name}</td>
+                    <td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'code', this.innerText, this)">${row.code}</td>
                     <td class="px-4 py-3 text-right"><button onclick="deleteRow(${idx})" class="text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('table-body').innerHTML = bodyHtml;
@@ -764,6 +819,8 @@
 
         function duplicateRow(idx) { 
             const copy = JSON.parse(JSON.stringify(db[currentTab][idx])); 
+            const idKey = uniqueIdKeys[currentTab];
+            if (idKey) copy[idKey] = makeUniqueCopyId(currentTab, copy[idKey]);
             db[currentTab].splice(idx + 1, 0, copy); 
             renderTable(); 
         }
@@ -779,17 +836,25 @@
 
         function exportFile(type) {
             if (!db[type]) return;
+            const duplicateIds = getDuplicateIds(type);
+            if (duplicateIds.length > 0) {
+                const key = uniqueIdKeys[type];
+                printLog(`Cannot export ${type}: duplicate ${key} value${duplicateIds.length === 1 ? '' : 's'} (${duplicateIds.join(', ')}).`, true);
+                alert(`Cannot export ${type} until every ${key} value is unique.`);
+                return false;
+            }
             let dataToExport = JSON.parse(JSON.stringify(db[type]));
             if (type === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
             const text = (type === 'taxa' || type === 'regions') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
             const blob = new Blob([text], { type: 'text/javascript' });
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${type === 'flyData' ? 'flydata' : type}.js`; a.click();
+            return true;
         }
 
         function exportAll() {
             const types = ['taxa', 'traits', 'flyData', 'regions'];
-            types.forEach(type => { if (db[type]) exportFile(type); });
-            printLog("All available files exported.");
+            const results = types.filter(type => db[type]).map(type => exportFile(type));
+            if (results.every(Boolean)) printLog("All available files exported.");
         }
 
         initializeAutoLoadedFiles();
