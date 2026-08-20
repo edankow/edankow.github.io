@@ -2095,7 +2095,7 @@ async function searchBoundaryObservation() {
             `&quality_grade=needs_id`;
 
         // Make the subsequent normal search newest-first
-        OTHER_FILTERS = cleanedFilters + "&order=desc";
+        OTHER_FILTERS = cleanedFilters + "&order=asc";
         updateBookmarkURL();
 
         OBSERVATION_QUEUE = [];
