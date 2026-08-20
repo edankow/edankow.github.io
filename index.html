@@ -199,6 +199,51 @@ let isPinned = false;
 
 let CURRENT_TAXON_ID = window.DEFAULT_TAXON; // Default taxon ID
 
+// Keep queue settings in the page URL so configured searches can be bookmarked.
+const NON_FILTER_URL_PARAMS = new Set([
+    'code', 'state', 'error', 'error_description', 'error_uri'
+]);
+
+function loadFiltersFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const savedSearch = params.has('code')
+        ? sessionStorage.getItem('inat_return_search')
+        : '';
+    const filterParams = savedSearch ? new URLSearchParams(savedSearch) : params;
+    CURRENT_TAXON_ID = filterParams.get('taxon_id') || window.DEFAULT_TAXON;
+    CURRENT_PLACE_ID = filterParams.get('place_id') || window.DEFAULT_PLACE_ID;
+
+    const extraFilters = new URLSearchParams();
+    filterParams.forEach((value, key) => {
+        if (key !== 'taxon_id' && key !== 'place_id' && !NON_FILTER_URL_PARAMS.has(key)) {
+            extraFilters.append(key, value);
+        }
+    });
+
+    OTHER_FILTERS = extraFilters.toString();
+    if (OTHER_FILTERS) OTHER_FILTERS = '&' + OTHER_FILTERS;
+    API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}&only_id=false&fields=all&quality_grade=needs_id`;
+}
+
+function updateBookmarkURL() {
+    const params = new URLSearchParams();
+    params.set('taxon_id', CURRENT_TAXON_ID);
+    params.set('place_id', CURRENT_PLACE_ID);
+
+    const extraFilters = new URLSearchParams(OTHER_FILTERS.replace(/^&/, ''));
+    extraFilters.forEach((value, key) => {
+        if (key !== 'taxon_id' && key !== 'place_id' && !NON_FILTER_URL_PARAMS.has(key)) {
+            params.append(key, value);
+        }
+    });
+
+    const query = params.toString();
+    window.history.replaceState({}, document.title,
+        `${window.location.pathname}${query ? '?' + query : ''}${window.location.hash}`);
+}
+
+loadFiltersFromURL();
+
 function openFiltersModal() {
     document.getElementById('modal-filters').style.display = 'flex';
     document.getElementById('new-other-filters').value = OTHER_FILTERS;
@@ -208,6 +253,7 @@ function updateOtherFilters() {
     const val = document.getElementById('new-other-filters').value.trim();
     // Ensure it starts with & if not empty
     OTHER_FILTERS = (val && !val.startsWith('&')) ? '&' + val : val;
+    updateBookmarkURL();
     
     // Reset queue and refresh
     OBSERVATION_QUEUE = []; 
@@ -256,6 +302,7 @@ function updateTaxonFilter() {
         CURRENT_TAXON_ID = newId;
         // Update the API_BASE to reflect the new taxon ID
         API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${CURRENT_TAXON_ID}&only_id=false&fields=all&quality_grade=needs_id`;
+        updateBookmarkURL();
         
         OBSERVATION_QUEUE = []; 
         FINISHED_OBS_IDS = [];
@@ -1629,6 +1676,7 @@ function updateLocation() {
     const newId = document.getElementById('new-place-id').value.trim();
     if (newId) {
         CURRENT_PLACE_ID = newId;
+        updateBookmarkURL();
         OBSERVATION_QUEUE = []; // Clear current buffer
         FINISHED_OBS_IDS = [];  // Optional: Reset excluded list if changing regions
         closeModals();
@@ -1781,6 +1829,7 @@ async function loginWithINat() {
 
     // Save verifier for the second half of the handshake
     localStorage.setItem('pkce_code_verifier', verifier);
+    sessionStorage.setItem('inat_return_search', window.location.search);
 
     const params = new URLSearchParams({
         client_id: CONFIG.clientId,
@@ -1827,7 +1876,8 @@ async function checkLogin() {
                 
                 
                 console.log("Step 5: Cleaning URL...");
-                window.history.replaceState({}, document.title, window.location.pathname);
+                updateBookmarkURL();
+                sessionStorage.removeItem('inat_return_search');
                 
 		TEMP_TOKEN = data.access_token;
 		//now need to exchange temp token for a JWT token!
@@ -1958,6 +2008,7 @@ async function searchBoundaryObservation() {
 
         // Make the subsequent normal search newest-first
         OTHER_FILTERS = cleanedFilters + "&order=desc";
+        updateBookmarkURL();
 
         OBSERVATION_QUEUE = [];
         FINISHED_OBS_IDS = [];
