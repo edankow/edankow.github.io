@@ -112,13 +112,13 @@
 <button id="toggle-viewer-btn" onclick="toggleViewerPanel()" class="btn-toggle">Hide iNat interface</button>
 
 	<div id="token-controls" class="hidden">
-	    <button onclick="openTokenModal()" class="btn-toggle" style="background: var(--inat-green); border: none;">	Link iNaturalist account</button>
-	</div>	
+	    <button onclick="openTokenModal()" class="btn-toggle" style="background: var(--inat-green); border: none;" title="Link your account to load the observation queue and post identifications directly.">	Link iNaturalist account</button>
+	</div>
     <div id="modal-token" class="modal">
     <div class="modal-content">
         <h3>iNaturalist API Token</h3>
         <p style="font-size: 0.8rem; color: #666;">
-            To submit identifications, you need to link your iNaturalist account. <br><br>
+            Link your iNaturalist account to load observations from your identification queue and submit IDs directly from this workspace. <br><br>
 		<button onclick="loginWithINat()" style="background:#74ac00; color:white; border:none; padding:14px 28px; border-radius:4px; cursor:pointer; font-weight:bold; font-size: 1rem;">
         Log in with iNaturalist
     </button>
@@ -149,7 +149,7 @@
             </div>
             <div class="identification-area">
 		<div id="logged-out-about" class="about-panel hidden">
-		        Hi there, this is <a href="https://www.inaturalist.org/people/165078">@edanko</a>! I made this interactive key to identify flies by selecting visible traits. You can use it on its own, or link your iNat account to load observations from your 'Identify' queue and post IDs directly to iNat.
+		        Hi there, this is <a href="https://www.inaturalist.org/people/165078">@edanko</a>! I made this interactive key to identify flies by selecting visible traits. You can use it on its own, or <button class="inline-link-button" onclick="openTokenModal()">link your iNaturalist account</button> to load observations from your 'Identify' queue and post IDs directly to iNaturalist.
 		</div>
                 <div class="active-question-section" id="active-question-area">
 
@@ -182,8 +182,9 @@
 
 <script>
     /* --- SHARED STATE --- */
-    let TOTAL_API_RESULTS = 0; 
+    let TOTAL_API_RESULTS = 0;
     let MY_USER_ID = null;
+    let MY_USER_LOGIN = null;
     let MY_TOKEN = localStorage.getItem('inat_token') || "";
     let FINISHED_OBS_IDS = [];
     let OBSERVATION_QUEUE = [];
@@ -485,6 +486,7 @@ function copyNarrativeToClipboard() {
 	const queueCountEl = document.getElementById('queue-count'); // Get the counter element
         if (!isTokenValid(MY_TOKEN)) {
 	    MY_USER_ID = null;
+	    MY_USER_LOGIN = null;
             statusEl.innerText = "";//<!--versus "EXPIRED/MISSING" -->
             statusEl.className = "";//<!-- versus "status-bad" -->
 	    queueCountEl.innerText = ""; // Clear the count
@@ -507,7 +509,8 @@ function copyNarrativeToClipboard() {
             if (res.ok && userData.results?.length > 0) {
                 const user = userData.results[0];
                 MY_USER_ID = user.id;
-                statusEl.innerHTML = `<a href="https://www.inaturalist.org/identifications/${user.login}" target="_blank" style="color: white; text-decoration: none;">ACTIVE: ${user.login}</a>`;
+                MY_USER_LOGIN = user.login;
+                statusEl.innerHTML = `<a href="https://www.inaturalist.org/identifications/${user.login}" target="_blank" class="account-history-link" title="Open your recent iNaturalist identifications">@${user.login} <span>Identification history &#8599;</span></a>`;
                 statusEl.className = "status-good";
                 controls.classList.add('hidden');
 		if (filterDropdown) filterDropdown.classList.remove('hidden'); // Show when linked
@@ -521,6 +524,7 @@ function copyNarrativeToClipboard() {
             } else { throw new Error(); }
         } catch (e) {
 	    MY_USER_ID = null;
+	    MY_USER_LOGIN = null;
             statusEl.innerText = "TOKEN ERROR";
             statusEl.className = "status-bad";
             controls.classList.remove('hidden');
@@ -701,7 +705,7 @@ function autoSetRegionFromLocality(terms) {
 
           <div class="card-content-split">
                     <div class="info">
-                        <a href="https://www.inaturalist.org/observations/${obs.id}" target="_blank" style="text-decoration:none; color:inherit;">
+                        <a href="https://www.inaturalist.org/observations/${obs.id}" target="_blank" class="community-id-link" title="Open this observation on iNaturalist">
                             <h2 style="margin:0; font-size:1.2rem;">
 				    ${obs.taxon?.rank && obs.taxon.rank !== 'species' ? obs.taxon.rank.charAt(0).toUpperCase() + obs.taxon.rank.slice(1) + ' ' : ''}
 				    <i>${obs.taxon?.name || "Unknown"}</i>
@@ -716,7 +720,7 @@ function autoSetRegionFromLocality(terms) {
                         <div class="geo-hierarchy"><span style="font-size:0.7em; font-weight:bold;">LOCALITY:</span><br>${geoHierarchy}</div>
                     </div>
                     <div class="btn-group">
-			<button class="btn-post" onclick="postImmediateID()">POST RESULTS & NEXT</button>
+			<button class="btn-post" onclick="postImmediateID()" title="Post the matrix ID. When needed, this also adds the diagnostic narrative and marks a matching non-species community ID as complete.">POST RESULTS & NEXT</button>
                         <button class="btn-id" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id});excludeAndNext(${obs.id});">AGREE & NEXT</button>
 			<button class="btn-action" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="openIDModal()">ADD OTHER ID & NEXT</button>
                         <button class="btn-skip" onmouseover="this.style.filter='brightness(0.8)'" onmouseout="this.style.filter='brightness(1)'" onclick="excludeAndNext(${obs.id})">SKIP</button>
@@ -857,7 +861,7 @@ async function postImmediateID() {
 			// append "special text" ONLY if it's NOT the placeholder AND user is edanko
 			const isPlaceholder = (narrativeText === "Select traits to generate description." || !narrativeText);
 			if (!isPlaceholder) {
-			    if (document.getElementById('token-status').innerText === "ACTIVE: edanko") {
+			    if (MY_USER_LOGIN?.toLowerCase() === "edanko") {
 			        // Text for edanko
 			        narrativeText += "\n\n--------------------------\n\nI made this identification using my interactive key that you can visit at https://edankow.github.io/identify/.";
 			    } else {
@@ -1098,7 +1102,8 @@ async function postImmediateID() {
 	        actionButtonHtml = `
 	            <button class="btn-post"
 	                    style="width:100%; margin-top:10px;"
-	                    onclick="postImmediateID()">
+	                    onclick="postImmediateID()"
+	                    title="Post the matrix ID. When needed, this also adds the diagnostic narrative and marks a matching non-species community ID as complete.">
 	                Post Results & Next
 	            </button>
 	        `;
@@ -1750,6 +1755,7 @@ function logoutInat() {
     // Reset internal state
     MY_TOKEN = "";
     MY_USER_ID = null;
+    MY_USER_LOGIN = null;
     OBSERVATION_QUEUE = [];
     
     // Update the UI and stop fetching data
@@ -1976,15 +1982,6 @@ async function searchBoundaryObservation() {
         Built by Even Dankowicz, this workspace is designed to streamline the identification of observations
         by combining a character-based matrix with the iNaturalist verification queue. 
         Select traits from the menu to filter matching species and generate a diagnostic narrative.
-		<p>A few important functions that may not be obvious:
-			<ul>
-		  <li>Connect your iNat account to this site to turn on features similar to the 'Identify' tool.</li>
-		  <li>If your ID is above species level and the same as the new community ID, the 'Post Results' button will mark "Based on the evidence, can the Community Taxon still be confirmed or improved?" as "No, it's as good as it can be."</li>
-		  <li>If your ID is not an agreement with an existing species-level community ID, the 'Post Results' button will paste a description of your ID in a comment.</li>
-		  <li>Like in the 'Identify' tool, clicking on the current community ID will open the observation in a new tab.</li>
-			<li>Clicking on your username in the top left will open your 'identifications' page on iNaturalist, in case you want to go back to an observation you've recently IDed.</li>
-			</ul>
-		</p>
         <div id="about-content">Loading about content...</div>
 
 	
