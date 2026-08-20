@@ -204,6 +204,7 @@
     let OBSERVATION_QUEUE = [];
     let CURRENT_OBS_ID = null;
 	let HAS_SHOWN_WELCOME_MODAL = false;
+	const GOATCOUNTER_EVENT_QUEUE = [];
 	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
     let CURRENT_PLACE_ID = window.DEFAULT_PLACE_ID; // Default from header.js
@@ -214,6 +215,27 @@ let isPinned = false;
 
 let CURRENT_TAXON_ID = window.DEFAULT_TAXON; // Default taxon ID
 let IDENTIFY_OWN_OBSERVATIONS = false;
+
+function trackGoatCounterEvent(path, title) {
+    const event = { path, title, event: true, no_session: true };
+    if (window.goatcounter?.count) {
+        window.goatcounter.count(event);
+    } else {
+        GOATCOUNTER_EVENT_QUEUE.push(event);
+    }
+}
+
+function flushGoatCounterEvents() {
+    if (!window.goatcounter?.count) return;
+    while (GOATCOUNTER_EVENT_QUEUE.length > 0) {
+        window.goatcounter.count(GOATCOUNTER_EVENT_QUEUE.shift());
+    }
+}
+
+// Count all bookmark/filter variants as the same page while preserving custom events.
+window.goatcounter = window.goatcounter || {
+    path: () => window.location.pathname || '/'
+};
 
 // Keep queue settings in the page URL so configured searches can be bookmarked.
 const NON_FILTER_URL_PARAMS = new Set([
@@ -858,12 +880,18 @@ function autoSetRegionFromLocality(terms) {
 
     async function sendIdentification(obsId, taxonId) {
         try {
-            await fetch("https://api.inaturalist.org/v1/identifications", {
+            const response = await fetch("https://api.inaturalist.org/v1/identifications", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MY_TOKEN}` },
                 body: JSON.stringify({ identification: { observation_id: obsId, taxon_id: taxonId, disagreement: true } })
             });
-        } catch (e) { console.error("ID Failed", e); }
+            if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
+            trackGoatCounterEvent('identification-submitted', 'Identification submitted');
+            return true;
+        } catch (e) {
+            console.error("ID Failed", e);
+            return false;
+        }
     }
 
 async function setCommunityTaxonStatus(taxonInfo) {
@@ -1378,6 +1406,7 @@ function selectRegion(code) {
 
     // The stored filter remains the abbreviation/code.
     currentFilters.region = region.code;
+    trackGoatCounterEvent('region-entered', 'Region entered');
 
     if (!answerOrder.includes('region')) {
         answerOrder.push('region');
@@ -1477,7 +1506,8 @@ function escapeRegionString(value) {
     function handleRegionChange(val) {
         const foundRegion = regions.find(r => r.name.toUpperCase() === val.trim().toUpperCase() || r.code.toUpperCase() === val.trim().toUpperCase());
         if (foundRegion) {
-            currentFilters.region = foundRegion.code; 
+            currentFilters.region = foundRegion.code;
+            trackGoatCounterEvent('region-entered', 'Region entered');
             if (!answerOrder.includes('region')) answerOrder.push('region');
             skippedQuestions = skippedQuestions.filter(sid => sid !== 'region');
 	    beginnerSkips = beginnerSkips.filter(sid => sid !== 'region');
@@ -1817,6 +1847,7 @@ function jumpToNextQuestion() {
 
 // opens the modal to enter a token
 function openTokenModal() {
+    trackGoatCounterEvent('link-inaturalist-clicked', 'Link iNaturalist account clicked');
     document.getElementById('modal-token').style.display = 'flex';
     // Pre-fill with existing token if available
     document.getElementById('token-input-modal').value = MY_TOKEN;
@@ -2095,6 +2126,9 @@ async function searchBoundaryObservation() {
 	
 </div>
 
+<script data-goatcounter="https://edanko.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"
+        onload="flushGoatCounterEvents()"></script>
 
 </body>
 
