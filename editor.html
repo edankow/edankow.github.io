@@ -101,7 +101,7 @@
             <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center shadow-sm z-10">
                 <div>
                     <h2 id="current-tab-title" class="text-lg font-bold text-slate-800 uppercase tracking-wider">Welcome</h2>
-                    <p id="current-tab-desc" class="text-sm text-slate-500">Upload your data files to get started.</p>
+                    <p id="current-tab-desc" class="text-sm text-slate-500">Looking for database files beside editor.html...</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="relative">
@@ -121,7 +121,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">Upload your <b>taxa.js</b>, <b>traits.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b> files using the sidebar to begin managing your database, or click <b>Add New</b> to start from scratch.</p>
+                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>taxa.js</b>, <b>traits.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -142,10 +142,10 @@
 
             <!-- Footer/Logs -->
             <footer class="bg-slate-900 text-slate-400 px-8 py-2 text-xs flex justify-between items-center">
-                <div id="status-log">System Ready. Waiting for file upload...</div>
+                <div id="status-log">Looking for database files...</div>
                 <div class="flex gap-4">
                     <span><i class="fas fa-circle text-emerald-500 text-[8px] mr-1"></i> Connected</span>
-                    <span id="file-counts">Files: 0/3</span>
+                    <span id="file-counts">Data files: 0/4</span>
                 </div>
             </footer>
         </main>
@@ -168,10 +168,24 @@
         </div>
     </div>
 
+    <!-- Loading these as neighboring scripts also works when editor.html is opened via file://. -->
+    <script src="taxa.js"></script>
+    <script src="traits.js"></script>
+    <script src="flydata.js"></script>
+    <script src="regions.js"></script>
+    <script src="map_paths.js"></script>
     <script>
-        let db = { taxa: null, traits: null, flyData: null, regions: null };
+        const cloneLoadedData = value => JSON.parse(JSON.stringify(value));
+        let db = {
+            taxa: typeof taxa !== 'undefined' ? cloneLoadedData(taxa) : null,
+            traits: typeof traits !== 'undefined' ? cloneLoadedData(traits) : null,
+            flyData: typeof flyData !== 'undefined' ? cloneLoadedData(flyData) : null,
+            regions: typeof regions !== 'undefined' ? cloneLoadedData(regions) : null
+        };
         let distributionClipboard = null;
-        let mapData = { viewBox: "0 0 1000 1000", paths: {} };
+        let editorMapData = typeof mapData !== 'undefined'
+            ? cloneLoadedData(mapData)
+            : { viewBox: "0 0 1000 1000", paths: {} };
         let currentTab = null;
         let activeEdit = { type: null, index: null, key: null };
         let searchQuery = "";
@@ -196,37 +210,70 @@
             log.innerHTML = `<span class="${isError ? 'text-red-400' : 'text-blue-400'}">></span> ${msg}`;
         }
 
+        function parseDataFile(name, text) {
+            const normalizedName = name.toLowerCase();
+            const cleanText = text.replace(/const\s+\w+\s*=\s*(?:Object\.freeze\()?(.*?)(?:\);?|;)\s*$/s, '$1');
+
+            if (normalizedName === 'map_paths.js') {
+                editorMapData = eval(`(${cleanText})`);
+                return 'mapData';
+            }
+
+            const type = normalizedName === 'taxa.js' ? 'taxa'
+                : normalizedName === 'traits.js' ? 'traits'
+                : normalizedName === 'flydata.js' ? 'flyData'
+                : normalizedName === 'regions.js' ? 'regions'
+                : null;
+
+            if (!type) return null;
+            db[type] = eval(`(${cleanText})`);
+            return type;
+        }
+
+        function finishLoading() {
+            updateUIState();
+            const hasData = Object.values(db).some(Boolean);
+            if (!currentTab && hasData) {
+                const firstAvailable = ['taxa', 'traits', 'flyData', 'regions'].find(type => db[type]);
+                switchTab(firstAvailable);
+            }
+        }
+
         async function loadFiles(event) {
             const files = Array.from(event.target.files);
             let loadedCount = 0;
-            for (const file of files) {
-                const name = file.name.toLowerCase();
-                const text = await file.text();
-                
-                if (name === 'map_paths.js') {
-                    try {
-                        const cleanText = text.replace(/const\s+\w+\s*=\s*(?:Object\.freeze\()?(.*?)(?:\);?|;)\s*$/s, '$1');
-                        mapData = eval(`(${cleanText})`);
-                        printLog(`Loaded map data.`);
-                        continue;
-                    } catch (e) { printLog(`Error loading map: ${e.message}`, true); }
-                }
 
-                let type = name.includes('taxa') ? 'taxa' : name.includes('traits') ? 'traits' : name.includes('flydata') ? 'flyData' : name.includes('regions') ? 'regions' : null;
-                if (type) {
-                    try {
-                        const cleanText = text.replace(/const\s+\w+\s*=\s*(?:Object\.freeze\()?(.*?)(?:\);?|;)\s*$/s, '$1');
-                        const data = eval(`(${cleanText})`);
-                        db[type] = data;
-                        loadedCount++;
-                        printLog(`Successfully loaded ${file.name}`);
-                    } catch (e) { printLog(`Error parsing ${file.name}: ${e.message}`, true); }
+            for (const file of files) {
+                try {
+                    const type = parseDataFile(file.name, await file.text());
+                    if (type) loadedCount++;
+                } catch (e) {
+                    printLog(`Error parsing ${file.name}: ${e.message}`, true);
                 }
             }
-            updateUIState();
-            if (!currentTab && loadedCount > 0) {
-                const firstAvailable = db.taxa ? 'taxa' : db.traits ? 'traits' : 'flyData';
-                switchTab(firstAvailable);
+
+            finishLoading();
+            printLog(`Imported ${loadedCount} file${loadedCount === 1 ? '' : 's'} manually.`);
+            event.target.value = '';
+        }
+
+        function initializeAutoLoadedFiles() {
+            const expectedFiles = ['taxa.js', 'traits.js', 'flydata.js', 'regions.js', 'map_paths.js'];
+            const loadedFiles = [
+                db.taxa && 'taxa.js',
+                db.traits && 'traits.js',
+                db.flyData && 'flydata.js',
+                db.regions && 'regions.js',
+                Object.keys(editorMapData.paths || {}).length > 0 && 'map_paths.js'
+            ].filter(Boolean);
+            const missingFiles = expectedFiles.filter(filename => !loadedFiles.includes(filename));
+
+            finishLoading();
+            if (loadedFiles.length > 0) {
+                const missingNote = missingFiles.length ? ` Missing: ${missingFiles.join(', ')}.` : '';
+                printLog(`Automatically loaded ${loadedFiles.length}/${expectedFiles.length} files.${missingNote}`, missingFiles.length > 0);
+            } else {
+                printLog('No neighboring database files were found. Use Import Files in the sidebar.', true);
             }
         }
 
@@ -237,7 +284,7 @@
                 if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
                 else { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; }
             });
-            document.getElementById('file-counts').innerText = `Files: ${count}/3`;
+            document.getElementById('file-counts').innerText = `Data files: ${count}/4`;
             if (count > 0 || currentTab) {
                 document.getElementById('welcome-screen').classList.add('hidden');
                 document.getElementById('data-view').classList.remove('hidden');
@@ -497,8 +544,8 @@
 
                 <div id="dist-panel-map" class="dist-tab-panel ${activeDistTab === 'map' ? 'active' : ''}">
                     <div id="map-container" onmousedown="startMapPan(event)" onmousemove="doMapPan(event)" onmouseup="stopMapPan()" onmouseleave="stopMapPan()" onwheel="handleMapWheel(event)">
-                        <svg id="map-svg" viewBox="${mapData.viewBox}" class="w-full h-auto drop-shadow-sm" style="transform: translate(${mapPanX}px, ${mapPanY}px) scale(${mapZoom})">
-                            ${Object.entries(mapData.paths).map(([code, d]) => `
+                        <svg id="map-svg" viewBox="${editorMapData.viewBox}" class="w-full h-auto drop-shadow-sm" style="transform: translate(${mapPanX}px, ${mapPanY}px) scale(${mapZoom})">
+                            ${Object.entries(editorMapData.paths).map(([code, d]) => `
                                 <path id="map-${code}" d="${d}" class="map-region ${currentValues.includes(code) ? 'selected' : ''}" 
                                       onclick="event.stopPropagation(); toggleRegionCode('${code}')">
                                     <title>${db.regions.find(r => r.code === code)?.name || code}</title>
@@ -744,6 +791,8 @@
             types.forEach(type => { if (db[type]) exportFile(type); });
             printLog("All available files exported.");
         }
+
+        initializeAutoLoadedFiles();
     </script>
 </body>
 </html>

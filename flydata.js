@@ -2593,7 +2593,9 @@ const flyData = [
       "LA",
       "MS",
       "OK",
-      "TX"
+      "TX",
+      "NM",
+      "AZ"
     ],
     "species": "Lucilia eximia",
     "Headlength": [
