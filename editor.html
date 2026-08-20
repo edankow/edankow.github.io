@@ -30,7 +30,7 @@
         td { vertical-align: top; overflow: hidden; }
         .trait-pill { display: inline-block; padding: 2px 8px; background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; border-radius: 999px; font-size: 11px; margin: 2px; }
 
-        /* taxonID info popover */
+        /* Controlled-vocabulary column info popovers */
         .taxon-info-btn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: #2563eb; color: #fff; font-size: 11px; font-weight: 900; cursor: pointer; border: 2px solid #fff; line-height: 1; margin-left: 8px; flex-shrink: 0; vertical-align: middle; font-style: normal; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         .taxon-info-btn:hover { background: #1e40af; transform: scale(1.1); }
         .taxon-popover { display: none; position: absolute; top: calc(100% + 12px); left: 0; z-index: 100; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 10px; padding: 14px 18px; width: 300px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1); font-size: 13px; color: #92400e; font-weight: 400; white-space: normal; line-height: 1.6; }
@@ -399,7 +399,7 @@
             }
         }
 
-        // ── taxonID info popover ─────────────────────────────────────────────
+        // ── Column info popovers ─────────────────────────────────────────────
         function toggleTaxonPopover(btn) {
             const pop = btn.nextElementSibling;
             const isOpen = pop.classList.contains('open');
@@ -414,6 +414,60 @@
             if (!e.target.closest('.taxon-info-btn') && !e.target.closest('.taxon-popover')) {
                 document.querySelectorAll('.taxon-popover.open').forEach(p => p.classList.remove('open'));
             }
+        }
+
+        function getControlledVocabularyInfo(type, key) {
+            if (type === 'taxa') {
+                if (key.toLowerCase() === 'taxonid') {
+                    return '<strong>iNaturalist taxon ID.</strong> Use the numeric ID assigned to this taxon by iNaturalist so identification links and submissions work correctly.';
+                }
+                if (key === 'rank') {
+                    return '<strong>iNaturalist taxon rank.</strong> Any rank supported by iNaturalist is allowed; examples include genus, complex, species, subspecies, and variety.';
+                }
+                if (key === 'parent') {
+                    const count = (db.taxa || []).filter(taxon => String(taxon.name || '').trim()).length;
+                    return `<strong>Taxonomy parent.</strong> Use the exact name of another record in this Taxonomy tab (${count} currently defined). Leave this blank for a root taxon; blank values are saved as <code>null</code>.`;
+                }
+            }
+
+            if (type === 'flyData') {
+                if (key === 'm_or_f') {
+                    return '<strong>Sex.</strong> Use <code>male</code>, <code>female</code>, or leave the value blank when sex is not applicable.';
+                }
+                if (key === 'species') {
+                    const count = (db.taxa || []).filter(taxon => String(taxon.name || '').trim()).length;
+                    return `<strong>Result taxon.</strong> Use the exact name of a record in the Taxonomy tab (${count} currently defined). Despite this column name, the result may be at any taxonomic rank.`;
+                }
+                if (key === 'distribution') {
+                    const count = (db.regions || []).filter(region => String(region.code || '').trim()).length;
+                    return `<strong>Distribution codes.</strong> Select codes defined in the Regions tab (${count} currently defined).`;
+                }
+
+                const trait = (db.traits || []).find(candidate => candidate.id === key);
+                if (trait) {
+                    const labels = (trait.options || []).map(option => option.label).filter(Boolean);
+                    const preview = labels.length > 0 && labels.length <= 6
+                        ? ` Current options: ${labels.map(label => `<code>${escapeHtml(label)}</code>`).join(', ')}.`
+                        : ` ${labels.length} options are currently defined.`;
+                    return `<strong>Trait vocabulary.</strong> Values come from the options for “${escapeHtml(trait.title || trait.id)}” in the Traits tab.${preview}`;
+                }
+            }
+
+            if (type === 'regions' && key === 'code') {
+                return '<strong>Region code.</strong> This code is used by Fly Database distribution values and should correspond to the appropriate region in the identification map.';
+            }
+
+            return '';
+        }
+
+        function renderControlledVocabularyInfo(type, key) {
+            const info = getControlledVocabularyInfo(type, key);
+            if (!info) return '';
+            return `
+                <span style="position:relative; display:inline-flex; align-items:center;">
+                    <button class="taxon-info-btn" onclick="event.stopPropagation(); toggleTaxonPopover(this);" aria-label="Controlled vocabulary information">i</button>
+                    <span class="taxon-popover">${info}</span>
+                </span>`;
         }
 
         function getTaxonomyCycleIssues() {
@@ -636,23 +690,12 @@
                 const uniqueBadge = renderUniqueBadge(currentTab, k);
                 const behaviorClasses = getColumnClasses(currentTab, k).join(' ');
 
-                let taxonInfoWidget = '';
-                if (currentTab === 'taxa' && k.toLowerCase() === 'taxonid') {
-                    taxonInfoWidget = `
-                        <span style="position:relative; display:inline-flex; align-items:center;">
-                            <button class="taxon-info-btn" onclick="event.stopPropagation(); toggleTaxonPopover(this);">i</button>
-                            <span class="taxon-popover">
-                                <strong>${k}</strong> must be retrieved from the
-                                <strong>iNaturalist database</strong> to ensure compatibility
-                                with the iNat integration features.
-                            </span>
-                        </span>`;
-                }
+                const controlledVocabularyInfo = renderControlledVocabularyInfo(currentTab, k);
                 
                 headHtml += `
                     <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top ${behaviorClasses}" style="width: ${width}px" data-key="${k}">
                         <div class="flex items-center">
-                            <div class="break-words whitespace-normal leading-tight flex-1 flex items-center">${displayHeader}${taxonInfoWidget}${uniqueBadge}</div>
+                            <div class="break-words whitespace-normal leading-tight flex-1 flex items-center">${displayHeader}${controlledVocabularyInfo}${uniqueBadge}</div>
                             ${quickAddBtn}
                         </div>
                         <div class="text-[10px] text-slate-400 font-mono mt-1 opacity-0 group-hover:opacity-100 transition-opacity">${k}</div>
@@ -766,6 +809,9 @@
             let newVal = val;
             if (typeof oldVal === 'number') newVal = parseFloat(val);
             if (val === 'null') newVal = null;
+            if (type === 'taxa' && key === 'parent' && (!String(val).trim() || String(val).trim().toLowerCase() === 'null')) {
+                newVal = null;
+            }
 
             const duplicateIdx = findDuplicateId(type, key, newVal, idx);
             if (duplicateIdx !== -1) {
@@ -1170,6 +1216,11 @@
             }
 
             let dataToExport = JSON.parse(JSON.stringify(db[type]));
+            if (type === 'taxa') {
+                dataToExport.forEach(taxon => {
+                    if (!String(taxon.parent ?? '').trim()) taxon.parent = null;
+                });
+            }
             if (type === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
             const text = (type === 'taxa' || type === 'regions') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
             const blob = new Blob([text], { type: 'text/javascript' });
