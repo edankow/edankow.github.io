@@ -1688,7 +1688,7 @@ async function searchTaxa(query) {
                     <div class="search-result-item" 
                          style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 0.9rem;"
                          onclick="selectTaxon('${t.id}', '${t.name}')">
-                        <strong>${t.name}</strong> <small>(${t.preferred_common_name || ''})</small>
+                        <strong>${t.name}</strong> <small>(${t.rank || ''})</small>
                     </div>
                 `).join('');
                 dropdown.style.display = 'block';
