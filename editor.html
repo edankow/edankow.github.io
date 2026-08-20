@@ -650,7 +650,9 @@
 
             const filteredData = data.filter(row => {
                 if (!searchQuery) return true;
-                return JSON.stringify(row).toLowerCase().includes(searchQuery.toLowerCase());
+                const searchableText = JSON.stringify(row).toLowerCase();
+                const searchTerms = searchQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
+                return searchTerms.every(term => searchableText.includes(term));
             });
 
             const traitMap = {};
