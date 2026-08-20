@@ -36,6 +36,10 @@
         .taxon-popover { display: none; position: absolute; top: calc(100% + 12px); left: 0; z-index: 100; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 10px; padding: 14px 18px; width: 300px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1); font-size: 13px; color: #92400e; font-weight: 400; white-space: normal; line-height: 1.6; }
         .taxon-popover.open { display: block; }
         .taxon-popover::before { content: ''; position: absolute; top: -6px; left: 18px; width: 10px; height: 10px; background: #fffbeb; border-left: 1px solid #fbbf24; border-top: 1px solid #fbbf24; transform: rotate(45deg); }
+        .unique-info-badge { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: 10px; font-weight: 900; cursor: help; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .unique-info-badge:hover, .unique-info-badge:focus { background: #6d28d9; transform: scale(1.1); outline: none; }
+        .unique-popover { display: none; position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); z-index: 110; width: 190px; padding: 9px 12px; border: 1px solid #c4b5fd; border-radius: 8px; background: #f5f3ff; color: #5b21b6; box-shadow: 0 8px 18px rgba(0,0,0,0.14); font-size: 12px; font-weight: 600; line-height: 1.4; white-space: normal; text-align: left; }
+        .unique-info-badge:hover .unique-popover, .unique-info-badge:focus .unique-popover { display: block; }
 
         /* Distribution modal tabs */
         .dist-tab-btn { padding: 8px 18px; font-size: 13px; font-weight: 600; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: all 0.15s; color: #64748b; background: #f1f5f9; }
@@ -204,6 +208,32 @@
             flyData: { id: "new_fly", m_or_f: "M", species: "New Fly", distribution: [] },
             regions: { name: "New Region", code: "XX" }
         };
+
+        // Column behavior is driven by CSS-like classes. Add "unique" to any
+        // column here to enable its badge, edit validation, copying, and export checks.
+        const columnClasses = {
+            taxa: { taxonId: ['unique'] },
+            traits: { id: ['unique'] },
+            flyData: { id: ['unique'] },
+            regions: { code: ['unique'] }
+        };
+
+        function getColumnClasses(type, key) {
+            return columnClasses[type]?.[key] || [];
+        }
+
+        function hasColumnClass(type, key, className) {
+            return getColumnClasses(type, key).includes(className);
+        }
+
+        function getColumnsWithClass(type, className) {
+            return Object.keys(columnClasses[type] || {}).filter(key => hasColumnClass(type, key, className));
+        }
+
+        function renderUniqueBadge(type, key) {
+            if (!hasColumnClass(type, key, 'unique')) return '';
+            return `<span class="unique-info-badge" tabindex="0" aria-label="Unique values enforced">&#9670;<span class="unique-popover">Unique values enforced for this column.</span></span>`;
+        }
 
         function printLog(msg, isError = false) {
             const log = document.getElementById('status-log');
@@ -419,6 +449,8 @@
                 const width = columnWidths[currentTab]?.[k] || (k === 'title' || k === 'species' ? 300 : (k === 'id' || k === 'taxonId' || k === 'taxonID' || k === 'm_or_f' ? 120 : 200));
                 let displayHeader = (currentTab === 'flyData' && traitMap[k]) ? traitMap[k] : k;
                 let quickAddBtn = (currentTab === 'flyData' && traitMap[k]) ? `<button onclick="quickAddTraitOption('${k}')" class="ml-2 text-blue-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all" title="Add new option to this trait"><i class="fas fa-plus-circle"></i></button>` : '';
+                const uniqueBadge = renderUniqueBadge(currentTab, k);
+                const behaviorClasses = getColumnClasses(currentTab, k).join(' ');
 
                 let taxonInfoWidget = '';
                 if (currentTab === 'taxa' && k.toLowerCase() === 'taxonid') {
@@ -434,9 +466,9 @@
                 }
                 
                 headHtml += `
-                    <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top" style="width: ${width}px" data-key="${k}">
+                    <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top ${behaviorClasses}" style="width: ${width}px" data-key="${k}">
                         <div class="flex items-center">
-                            <div class="break-words whitespace-normal leading-tight flex-1">${displayHeader}${taxonInfoWidget}</div>
+                            <div class="break-words whitespace-normal leading-tight flex-1 flex items-center">${displayHeader}${taxonInfoWidget}${uniqueBadge}</div>
                             ${quickAddBtn}
                         </div>
                         <div class="text-[10px] text-slate-400 font-mono mt-1 opacity-0 group-hover:opacity-100 transition-opacity">${k}</div>
@@ -455,13 +487,6 @@
 
         function handleSearch() { searchQuery = document.getElementById('search-input').value; renderTable(); }
 
-        const uniqueIdKeys = {
-            taxa: 'taxonId',
-            traits: 'id',
-            flyData: 'id',
-            regions: 'code'
-        };
-
         function normalizeId(value) {
             if (value === null || value === undefined) return '';
             return String(value).trim().toLowerCase();
@@ -469,13 +494,12 @@
 
         function findDuplicateId(type, key, value, excludedIdx = -1) {
             const normalizedValue = normalizeId(value);
-            if (!normalizedValue || uniqueIdKeys[type] !== key || !db[type]) return -1;
+            if (!normalizedValue || !hasColumnClass(type, key, 'unique') || !db[type]) return -1;
             return db[type].findIndex((row, rowIdx) => rowIdx !== excludedIdx && normalizeId(row[key]) === normalizedValue);
         }
 
-        function getDuplicateIds(type) {
-            const key = uniqueIdKeys[type];
-            if (!key || !db[type]) return [];
+        function getDuplicateValues(type, key) {
+            if (!hasColumnClass(type, key, 'unique') || !db[type]) return [];
             const seen = new Set();
             const duplicates = new Set();
             db[type].forEach(row => {
@@ -487,9 +511,8 @@
             return [...duplicates];
         }
 
-        function makeUniqueCopyId(type, originalValue) {
-            const key = uniqueIdKeys[type];
-            if (!key || originalValue === null || originalValue === undefined || originalValue === '') return null;
+        function makeUniqueCopyValue(type, key, originalValue) {
+            if (!hasColumnClass(type, key, 'unique') || originalValue === null || originalValue === undefined || originalValue === '') return null;
             if (typeof originalValue === 'number') return null;
 
             const base = `${String(originalValue).trim()}_copy`;
@@ -508,9 +531,8 @@
             const duplicateIdx = findDuplicateId(type, key, newVal, idx);
             if (duplicateIdx !== -1) {
                 if (element) element.innerText = oldVal === null || oldVal === undefined ? 'null' : oldVal;
-                const fieldLabel = uniqueIdKeys[type];
-                printLog(`${fieldLabel} must be unique. "${newVal}" is already used in row ${duplicateIdx + 1}.`, true);
-                alert(`That ${fieldLabel} is already in use. Please enter a unique value.`);
+                printLog(`${key} must be unique. "${newVal}" is already used in row ${duplicateIdx + 1}.`, true);
+                alert(`That ${key} is already in use. Please enter a unique value.`);
                 return false;
             }
 
@@ -521,7 +543,7 @@
         // --- Regions Table ---
         function renderRegionsTable() {
             const data = db.regions;
-            let headHtml = '<tr><th class="px-4 py-3 text-left font-bold text-slate-600 w-12">#</th><th class="px-4 py-3 text-left font-bold text-slate-600">Name</th><th class="px-4 py-3 text-left font-bold text-slate-600">Code</th><th class="px-4 py-3 text-right font-bold text-slate-600 w-24">Actions</th></tr>';
+            let headHtml = `<tr><th class="px-4 py-3 text-left font-bold text-slate-600 w-12">#</th><th class="px-4 py-3 text-left font-bold text-slate-600">Name</th><th class="px-4 py-3 text-left font-bold text-slate-600 unique"><span class="inline-flex items-center">Code${renderUniqueBadge('regions', 'code')}</span></th><th class="px-4 py-3 text-right font-bold text-slate-600 w-24">Actions</th></tr>`;
             document.getElementById('table-head').innerHTML = headHtml;
             let bodyHtml = '';
             data.forEach((row, idx) => {
@@ -819,8 +841,9 @@
 
         function duplicateRow(idx) { 
             const copy = JSON.parse(JSON.stringify(db[currentTab][idx])); 
-            const idKey = uniqueIdKeys[currentTab];
-            if (idKey) copy[idKey] = makeUniqueCopyId(currentTab, copy[idKey]);
+            getColumnsWithClass(currentTab, 'unique').forEach(key => {
+                copy[key] = makeUniqueCopyValue(currentTab, key, copy[key]);
+            });
             db[currentTab].splice(idx + 1, 0, copy); 
             renderTable(); 
         }
@@ -836,11 +859,13 @@
 
         function exportFile(type) {
             if (!db[type]) return;
-            const duplicateIds = getDuplicateIds(type);
-            if (duplicateIds.length > 0) {
-                const key = uniqueIdKeys[type];
-                printLog(`Cannot export ${type}: duplicate ${key} value${duplicateIds.length === 1 ? '' : 's'} (${duplicateIds.join(', ')}).`, true);
-                alert(`Cannot export ${type} until every ${key} value is unique.`);
+            const duplicateColumns = getColumnsWithClass(type, 'unique')
+                .map(key => ({ key, values: getDuplicateValues(type, key) }))
+                .filter(result => result.values.length > 0);
+            if (duplicateColumns.length > 0) {
+                const details = duplicateColumns.map(({ key, values }) => `${key}: ${values.join(', ')}`).join('; ');
+                printLog(`Cannot export ${type}: duplicate unique values (${details}).`, true);
+                alert(`Cannot export ${type} until every column marked unique contains unique values.`);
                 return false;
             }
             let dataToExport = JSON.parse(JSON.stringify(db[type]));
