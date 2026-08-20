@@ -612,7 +612,7 @@ function copyNarrativeToClipboard() {
         } catch (e) {
 	    MY_USER_ID = null;
 	    MY_USER_LOGIN = null;
-            statusEl.innerText = "TOKEN ERROR";
+            statusEl.innerHTML = `<button type="button" class="status-alert-button" onclick="openTokenModal()">iNaturalist connection expired — sign in again</button>`;
             statusEl.className = "status-bad";
             controls.classList.remove('hidden');
 	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide on error
