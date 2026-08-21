@@ -448,7 +448,10 @@ function getCurrentFlyMatches() {
 }
 
 function getPostIdButtonLabel() {
-    const isBestPossibleId = beginnerSkips.length === 0 && getCurrentFlyMatches().length > 1;
+    const matchingTaxonEndpoints = new Set(
+        getCurrentFlyMatches().map(fly => fly.species).filter(Boolean)
+    );
+    const isBestPossibleId = beginnerSkips.length === 0 && matchingTaxonEndpoints.size > 1;
     return isBestPossibleId ? 'POST ID AS BEST POSSIBLE & NEXT' : 'POST ID & NEXT';
 }
 
