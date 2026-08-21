@@ -2145,13 +2145,14 @@ async function searchBoundaryObservation() {
         API_BASE =
             `https://api.inaturalist.org/v1/observations` +
             `?taxon_id=${taxonID}` +
-	    `&rank=${encodeURIComponent(taxonRank)}` +
+	    
             `&only_id=false` +
             `&fields=all` +
             `&quality_grade=needs_id`;
 
         // Make the subsequent normal search newest-first
-        OTHER_FILTERS = cleanedFilters + "&order=asc";
+        OTHER_FILTERS = cleanedFilters + 
+             `&rank=${encodeURIComponent(taxonRank)}` +"&order=asc";
         updateBookmarkURL();
 
         OBSERVATION_QUEUE = [];
