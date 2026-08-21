@@ -533,7 +533,7 @@ const traits = [
   {
     "id": "Basicostacolor",
     "category": "wings",
-    "title": "What is the apparent color of the basicosta?",
+    "title": "What is the color of the basicosta? (sometimes obvious, but other times ambiguous; see notes)",
     "weight": 4,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=21",
     "options": [
