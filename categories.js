@@ -5,19 +5,34 @@ const categories = Object.freeze([
     "title": "Location"
   },
   {
+    "id": "frons",
+    "icon": "♊",
+    "title": "Vertex, Frons, Parafacials"
+  },
+  {
     "id": "head",
     "icon": "👤",
-    "title": "Head & Frons"
+    "title": "Face, Occiput, Genae, Antennae, & Mouthparts"
+  },
+  {
+    "id": "bodycolor",
+    "icon": "🟩",
+    "title": "Body Color & Appearance"
   },
   {
     "id": "thorax",
+    "icon": "⏽",
+    "title": "Thoracic Setae"
+  },
+  {
+    "id": "wings",
     "icon": "🪰",
-    "title": "Thorax & Wings"
+    "title": "Wings"
   },
   {
     "id": "abdomen",
     "icon": "🛡️",
-    "title": "Abdomen"
+    "title": "Abdominal Setae"
   },
   {
     "id": "terminalia",

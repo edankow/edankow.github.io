@@ -18,7 +18,7 @@ const traits = [
   },
   {
     "id": "Fronsnarrowing",
-    "category": "head",
+    "category": "frons",
     "title": "Frons shape (to separate males and females)",
     "weight": 9,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=5",
@@ -35,7 +35,7 @@ const traits = [
   },
   {
     "id": "Frontoorbitalplatesformaleswithnarrowfrons",
-    "category": "head",
+    "category": "frons",
     "title": "Are fronto-orbital plates separated?",
     "weight": 5,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167",
@@ -52,7 +52,7 @@ const traits = [
   },
   {
     "id": "FronswidthatnarrowesttohelpIDmales",
-    "category": "head",
+    "category": "frons",
     "title": "Frons at narrowest point more than 7% of head?",
     "weight": 5,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
@@ -69,7 +69,7 @@ const traits = [
   },
   {
     "id": "FronsWidthVersusEleven",
-    "category": "head",
+    "category": "frons",
     "title": "Frons at narrowest point more than 11% of head?",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
@@ -86,7 +86,7 @@ const traits = [
   },
   {
     "id": "fronswidthvscuprinamale",
-    "category": "head",
+    "category": "frons",
     "title": "Frons at narrowest point more than 15% of head width?",
     "weight": 5,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
@@ -103,7 +103,7 @@ const traits = [
   },
   {
     "id": "Fronswidthatnarrowestabout",
-    "category": "head",
+    "category": "frons",
     "title": "Frons at narrowest point more than 25% of head width?",
     "weight": 4,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
@@ -120,7 +120,7 @@ const traits = [
   },
   {
     "id": "Fronswidthversusthirty",
-    "category": "head",
+    "category": "frons",
     "title": "Frons at narrowest point more than 30% of head width?",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
@@ -137,7 +137,7 @@ const traits = [
   },
   {
     "id": "FronswidthatnarrowesttohelpIDfemales",
-    "category": "head",
+    "category": "frons",
     "title": "Frons at narrowest point more than 35% of head width?",
     "weight": 3,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=11",
@@ -154,7 +154,7 @@ const traits = [
   },
   {
     "id": "Ocellartriangle",
-    "category": "head",
+    "category": "frons",
     "title": "Ocellar triangle size (see p141 in Jones et al. 2019).",
     "weight": 2,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=141",
@@ -171,7 +171,7 @@ const traits = [
   },
   {
     "id": "IVSorientation",
-    "category": "head",
+    "category": "frons",
     "title": "Do inner vertical setae converge?",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=30",
@@ -188,7 +188,7 @@ const traits = [
   },
   {
     "id": "Parafacialwidthatleveloflunule",
-    "category": "head",
+    "category": "frons",
     "title": "Parafacial width at level of lunule.",
     "weight": 3,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=179",
@@ -205,7 +205,7 @@ const traits = [
   },
   {
     "id": "Parafacialcolor",
-    "category": "head",
+    "category": "frons",
     "title": "Parafacial color? (figure on p.167 of Jones et al 2019)",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167",
@@ -256,7 +256,7 @@ const traits = [
   },
   {
     "id": "Angleformedbyverticalsetae",
-    "category": "head",
+    "category": "frons",
     "title": "What angle do the three vertical setae form?",
     "weight": 1,
     "link": "https://zookeys.pensoft.net/article/3908/element/2/11//",
@@ -341,7 +341,7 @@ const traits = [
   },
   {
     "id": "Bodycolorreddish",
-    "category": "thorax",
+    "category": "bodycolor",
     "title": "Color of thorax or abdomen",
     "weight": 9,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
@@ -362,7 +362,7 @@ const traits = [
   },
   {
     "id": "Bodycolorcopper",
-    "category": "thorax",
+    "category": "bodycolor",
     "title": "Thorax or abdomen coppery?",
     "weight": 6,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
@@ -379,7 +379,7 @@ const traits = [
   },
   {
     "id": "Bodycolorblack",
-    "category": "thorax",
+    "category": "bodycolor",
     "title": "Thorax and abdomen entirely black?",
     "weight": 9,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=37",
@@ -515,7 +515,7 @@ const traits = [
   },
   {
     "id": "Subcostalscleritesetae",
-    "category": "thorax",
+    "category": "wings",
     "title": "Does the subcostal sclerite (ventral wing base) have setae?",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=140",
@@ -532,7 +532,7 @@ const traits = [
   },
   {
     "id": "Basicostacolor",
-    "category": "thorax",
+    "category": "wings",
     "title": "How visibly light is the basicosta in field photos? (the basicosta sometimes looks darker in field photos from certain angles than it would microscopically)",
     "weight": 4,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=21",
@@ -549,7 +549,7 @@ const traits = [
   },
   {
     "id": "TrueBasicostaColor",
-    "category": "thorax",
+    "category": "wings",
     "title": "What is the true color of the basicosta microscopically? (only fully reliable when looking at specimens, or in photos of live flies taken from a lateral angle",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=24",
@@ -566,7 +566,7 @@ const traits = [
   },
   {
     "id": "Lowercalyptercolor",
-    "category": "thorax",
+    "category": "wings",
     "title": "What color is the lower calypter?",
     "weight": 2,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=152",
@@ -583,7 +583,7 @@ const traits = [
   },
   {
     "id": "Abdominalpubescence",
-    "category": "abdomen",
+    "category": "bodycolor",
     "title": "Abdomen with extensive areas of whitish pubescence patterning? (This trait is often helpful for photos of females, but the presence of the pubescence is typically harder to detect for males)",
     "weight": 3,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=34",
@@ -668,7 +668,7 @@ const traits = [
   },
   {
     "id": "Tergitepubescence",
-    "category": "abdomen",
+    "category": "bodycolor",
     "title": "Tergite 5 pubescence? (may just appear as faint white-dusting along edges of visible region, even if extensive)",
     "weight": 3,
     "link": "\n",
