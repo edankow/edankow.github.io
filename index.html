@@ -188,6 +188,7 @@
 </div>
 
 <script src="regions.js"></script>
+<script src="categories.js"></script>
 <script src="traits.js"></script>
 <script src="flydata.js"></script>
 <script src="taxa.js"></script>
@@ -1058,6 +1059,26 @@ async function postImmediateID() {
     let skippedQuestions = []; // For "not visible / not present"
     let beginnerSkips = [];    // For beginners getting started
     let activeId = null;
+    const traitCategoryConfigs = (typeof categories !== 'undefined' ? categories : []).map(category => ({
+        id: category.id,
+        label: `${category.icon || ''}${category.icon ? ' ' : ''}${category.title || category.id}`
+    }));
+    if (!traitCategoryConfigs.some(category => category.id === 'other')) {
+        traitCategoryConfigs.push({ id: 'other', label: 'Other' });
+    }
+    const collapsedTraitCategories = new Set(traitCategoryConfigs.map(category => category.id));
+    function getTraitCategoryId(traitId) {
+        const categoryId = traitId === 'region'
+            ? 'location'
+            : traits.find(trait => trait.id === traitId)?.category;
+        return traitCategoryConfigs.some(category => category.id === categoryId) ? categoryId : 'other';
+    }
+
+    function toggleTraitCategory(categoryId) {
+        if (collapsedTraitCategories.has(categoryId)) collapsedTraitCategories.delete(categoryId);
+        else collapsedTraitCategories.add(categoryId);
+        renderMenu();
+    }
 
     function initMatrix() {
         if (typeof traits !== 'undefined') traits.forEach(t => { currentFilters[t.id] = null; });
@@ -1131,22 +1152,36 @@ async function postImmediateID() {
         }
 
         const finalOrder = [...answered.map(q => ({ ...q, bgColor: '#ffffff' })), ...sortedUnanswered];
+        const activeCategoryId = activeId ? getTraitCategoryId(activeId) : null;
+        if (activeCategoryId) collapsedTraitCategories.delete(activeCategoryId);
 
-        menu.innerHTML =`<div><h4 style="margin: 0; color: var(--primary); text-align: center; font-size: 1.1rem;"> Identification choices</h4></div>`+finalOrder.map((q, index) => {
-	    const isAnswered = currentFilters[q.id] !== null;
-            const isFirstUnanswered = index === answered.length;
-            
-            // 2. Insert the message right before the first unanswered question if all scores are 0
-            let itemHtml = `
- 		<div class="menu-item ${activeId === q.id ? 'active' : ''}" 
-                     style="background-color: ${activeId === q.id ? '' : q.bgColor};" 
-                     onclick="selectQuestion('${q.id}')">
-                    <span>${q.title}</span>
-                    ${isAnswered ? '✓' : ''}
-                </div>`;
-                
-            return (isFirstUnanswered ? messageHtml : "") + itemHtml;
+        const categoriesHtml = traitCategoryConfigs.map(category => {
+            const categoryQuestions = finalOrder.filter(q => getTraitCategoryId(q.id) === category.id);
+            if (categoryQuestions.length === 0) return '';
+            const completedCount = categoryQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id) || beginnerSkips.includes(q.id)).length;
+            const isCollapsed = collapsedTraitCategories.has(category.id);
+            const itemsHtml = categoryQuestions.map(q => {
+                const isAnswered = currentFilters[q.id] !== null;
+                return `
+                    <div class="menu-item ${activeId === q.id ? 'active' : ''}"
+                         style="background-color: ${activeId === q.id ? '' : q.bgColor};"
+                         onclick="selectQuestion('${q.id}')">
+                        <span>${q.title}</span>
+                        ${isAnswered ? '✓' : ''}
+                    </div>`;
+            }).join('');
+
+            return `
+                <section class="trait-category">
+                    <button type="button" class="trait-category-header" onclick="toggleTraitCategory('${category.id}')" aria-expanded="${!isCollapsed}">
+                        <span>${category.label}</span>
+                        <span class="trait-category-meta">${completedCount}/${categoryQuestions.length} ${isCollapsed ? '▸' : '▾'}</span>
+                    </button>
+                    <div class="trait-category-items ${isCollapsed ? 'collapsed' : ''}">${itemsHtml}</div>
+                </section>`;
         }).join('');
+
+        menu.innerHTML = `<div><h4 style="margin: 0; color: var(--primary); text-align: center; font-size: 1.1rem;">Identification choices</h4></div>${messageHtml}${categoriesHtml}`;
     }
 
     function selectQuestion(id) {

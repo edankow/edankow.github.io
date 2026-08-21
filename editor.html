@@ -115,6 +115,9 @@
                 <button onclick="switchTab('traits')" id="btn-traits" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-list-check w-5"></i> Traits
                 </button>
+                <button onclick="switchTab('categories')" id="btn-categories" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-folder-tree w-5"></i> Categories
+                </button>
                 <button onclick="switchTab('flyData')" id="btn-flyData" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-database w-5"></i> Fly Database
                 </button>
@@ -169,7 +172,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>header.js</b>, <b>taxa.js</b>, <b>traits.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
+                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>header.js</b>, <b>taxa.js</b>, <b>traits.js</b>, <b>categories.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -194,7 +197,7 @@
                 <div id="status-log">Looking for database files...</div>
                 <div class="flex gap-4">
                     <span><i class="fas fa-circle text-emerald-500 text-[8px] mr-1"></i> Connected</span>
-                    <span id="file-counts">Data files: 0/5</span>
+                    <span id="file-counts">Data files: 0/6</span>
                 </div>
             </footer>
         </main>
@@ -223,6 +226,7 @@
     <!-- Loading these as neighboring scripts also works when editor.html is opened via file://. -->
     <script src="taxa.js"></script>
     <script src="traits.js"></script>
+    <script src="categories.js"></script>
     <script src="flydata.js"></script>
     <script src="regions.js"></script>
     <script src="map_paths.js"></script>
@@ -233,6 +237,7 @@
             header: typeof HEADER_DATA !== 'undefined' ? [cloneLoadedData(HEADER_DATA)] : null,
             taxa: typeof taxa !== 'undefined' ? cloneLoadedData(taxa) : null,
             traits: typeof traits !== 'undefined' ? cloneLoadedData(traits) : null,
+            categories: typeof categories !== 'undefined' ? cloneLoadedData(categories) : null,
             flyData: typeof flyData !== 'undefined' ? cloneLoadedData(flyData) : null,
             regions: typeof regions !== 'undefined' ? cloneLoadedData(regions) : null
         };
@@ -252,6 +257,7 @@
             header: { title: "Workspace Settings", desc: "Manage the titles, defaults, and About content for this identification dataset." },
             taxa: { title: "Taxonomy Hierarchy", desc: "Manage species, complexes, and their parent relationships." },
             traits: { title: "Character Traits", desc: "Define the physical traits and their possible options for identification." },
+            categories: { title: "Trait Categories", desc: "Define the ordered category names and icons used by the identification menu." },
             flyData: { title: "Fly Database", desc: "The core database mapping traits to specific fly species." },
             regions: { title: "Regions", desc: "Manage US States and Canadian Provinces for distribution mapping." }
         };
@@ -259,7 +265,8 @@
         const defaultTemplates = {
             header: { SHORT_TITLE: "Identification Dataset", LONG_TITLE: "Identification Workspace", DEFAULT_PLACE_ID: "", DEFAULT_TAXON: "", ABOUT_CONTENT: "" },
             taxa: { taxonId: null, name: "New Species", rank: "species", parent: null },
-            traits: { id: "new_trait", title: "New Trait", weight: 1, link: "", options: [] },
+            traits: { id: "new_trait", category: "other", title: "New Trait", weight: 1, link: "", options: [] },
+            categories: { id: "new_category", icon: "📋", title: "New Category" },
             flyData: { id: "new_fly", m_or_f: "M", species: "New Fly", distribution: [] },
             regions: { name: "New Region", code: "XX" }
         };
@@ -269,6 +276,7 @@
         const columnClasses = {
             taxa: { taxonId: ['unique'] },
             traits: { id: ['unique'] },
+            categories: { id: ['unique'] },
             flyData: { id: ['unique'] },
             regions: { code: ['unique'] }
         };
@@ -370,6 +378,7 @@
 
             const type = normalizedName === 'taxa.js' ? 'taxa'
                 : normalizedName === 'traits.js' ? 'traits'
+                : normalizedName === 'categories.js' ? 'categories'
                 : normalizedName === 'flydata.js' ? 'flyData'
                 : normalizedName === 'regions.js' ? 'regions'
                 : null;
@@ -383,7 +392,7 @@
             updateUIState();
             const hasData = Object.values(db).some(Boolean);
             if (!currentTab && hasData) {
-                const firstAvailable = ['header', 'taxa', 'traits', 'flyData', 'regions'].find(type => db[type]);
+                const firstAvailable = ['header', 'taxa', 'traits', 'categories', 'flyData', 'regions'].find(type => db[type]);
                 switchTab(firstAvailable);
             }
         }
@@ -407,11 +416,12 @@
         }
 
         function initializeAutoLoadedFiles() {
-            const expectedFiles = ['header.js', 'taxa.js', 'traits.js', 'flydata.js', 'regions.js', 'map_paths.js'];
+            const expectedFiles = ['header.js', 'taxa.js', 'traits.js', 'categories.js', 'flydata.js', 'regions.js', 'map_paths.js'];
             const loadedFiles = [
                 db.header && 'header.js',
                 db.taxa && 'taxa.js',
                 db.traits && 'traits.js',
+                db.categories && 'categories.js',
                 db.flyData && 'flydata.js',
                 db.regions && 'regions.js',
                 Object.keys(editorMapData.paths || {}).length > 0 && 'map_paths.js'
@@ -429,12 +439,12 @@
 
         function updateUIState() {
             let count = 0;
-            ['header', 'taxa', 'traits', 'flyData', 'regions'].forEach(t => {
+            ['header', 'taxa', 'traits', 'categories', 'flyData', 'regions'].forEach(t => {
                 const btn = document.getElementById(`btn-${t}`);
                 if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
                 else { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; }
             });
-            document.getElementById('file-counts').innerText = `Data files: ${count}/5`;
+            document.getElementById('file-counts').innerText = `Data files: ${count}/6`;
             const shortTitle = db.header?.[0]?.SHORT_TITLE || 'Identification Dataset';
             document.getElementById('dataset-short-title').innerText = shortTitle;
             document.title = `${shortTitle} — Identification Database Editor`;
@@ -607,6 +617,11 @@
                 }
             }
 
+            if (type === 'traits' && key === 'category') {
+                const count = (db.categories || []).filter(category => String(category.id || '').trim()).length;
+                return `<strong>Trait menu category.</strong> Use the exact ID of a record in the Categories tab (${count} currently defined). Category names, icons, and menu order are managed there; diagnostic priority still comes from trait weight.`;
+            }
+
             if (type === 'regions' && key === 'code') {
                 return '<strong>Region code.</strong> This code is used by Fly Database distribution values and should correspond to the appropriate region in the identification map.';
             }
@@ -766,6 +781,16 @@
                                 : `<span class="trait-pill bg-red-50 text-red-700 ring-1 ring-red-200" title="This value is no longer defined in the Traits tab">${escapedValue} ⚠</span>`;
                         }).join('');
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openTraitPicker(${originalIdx}, '${k}')">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
+                    } else if (currentTab === 'traits' && k === 'category') {
+                        const categoryOptions = (db.categories || []).map(category => {
+                            const selected = category.id === val ? ' selected' : '';
+                            const label = `${category.icon || ''}${category.icon ? ' ' : ''}${category.title || category.id}`;
+                            return `<option value="${escapeHtml(category.id)}"${selected}>${escapeHtml(label)}</option>`;
+                        }).join('');
+                        const preservedUnknown = val && !(db.categories || []).some(category => category.id === val)
+                            ? `<option value="${escapeHtml(val)}" selected>${escapeHtml(val)} (undefined)</option>`
+                            : '';
+                        bodyHtml += `<td class="px-4 py-3"><select class="w-full p-2 border border-slate-200 rounded-lg bg-white" onchange="updateCell('traits', ${originalIdx}, 'category', this.value, this)">${preservedUnknown}${categoryOptions}</select></td>`;
                     } else if (currentTab === 'flyData' && k === 'distribution') {
                         display = Array.isArray(val) ? val.map(v => `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] mr-1">${v}</span>`).join('') : val;
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openRegionPicker(${originalIdx})">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
@@ -1400,7 +1425,7 @@
                 });
             }
             if (type === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
-            const text = (type === 'taxa' || type === 'regions') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
+            const text = (type === 'taxa' || type === 'regions' || type === 'categories') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
             const blob = new Blob([text], { type: 'text/javascript' });
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${type === 'flyData' ? 'flydata' : type}.js`; a.click();
             return true;
@@ -1416,7 +1441,7 @@
                 else renderTable();
                 return false;
             }
-            const types = ['header', 'taxa', 'traits', 'flyData', 'regions'];
+            const types = ['header', 'taxa', 'traits', 'categories', 'flyData', 'regions'];
             const results = types.filter(type => db[type]).map(type => exportFile(type));
             if (results.every(Boolean)) printLog("All available files exported.");
         }

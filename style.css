@@ -310,12 +310,21 @@ body.wide-layout .summary-box { grid-area: summary; margin-top: 0 !important; }
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
 }
-        .menu-item { 
+        .menu-item {
             padding: 15px; cursor: pointer; border-bottom: 1px solid #eee; transition: all 0.2s; font-size: 0.9rem;
             display: flex; justify-content: space-between; align-items: center;
         }
         .menu-item.active { background: var(--accent) !important; color: white; border-left: 6px solid #1e8449; }
-.active-question-section { 
+        .trait-category { border-top: 1px solid #e8e8e8; }
+        .trait-category-header {
+            width: 100%; padding: 12px 14px; border: 0; background: #f7f8f8; color: #333;
+            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+            cursor: pointer; font: inherit; font-weight: 600; text-align: left;
+        }
+        .trait-category-header:hover { background: #eef2f1; }
+        .trait-category-meta { color: #777; font-size: 0.75rem; font-weight: normal; white-space: nowrap; }
+        .trait-category-items.collapsed { display: none; }
+.active-question-section {
     max-width: 800px; 
 
 background: white; padding: 25px; border-radius: 12px; min-height: 0px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 

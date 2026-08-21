@@ -1,6 +1,7 @@
 const traits = [
   {
     "id": "Headlength",
+    "category": "head",
     "title": "How long is head? (difficult to assess; character taken from Whitworth 2006)",
     "weight": 1,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=17",
@@ -17,6 +18,7 @@ const traits = [
   },
   {
     "id": "Fronsnarrowing",
+    "category": "head",
     "title": "Frons shape (to separate males and females)",
     "weight": 9,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=5",
@@ -33,6 +35,7 @@ const traits = [
   },
   {
     "id": "Frontoorbitalplatesformaleswithnarrowfrons",
+    "category": "head",
     "title": "Are fronto-orbital plates separated?",
     "weight": 5,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167",
@@ -49,6 +52,7 @@ const traits = [
   },
   {
     "id": "FronswidthatnarrowesttohelpIDmales",
+    "category": "head",
     "title": "Frons at narrowest point more than 7% of head?",
     "weight": 5,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
@@ -65,6 +69,7 @@ const traits = [
   },
   {
     "id": "FronsWidthVersusEleven",
+    "category": "head",
     "title": "Frons at narrowest point more than 11% of head?",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
@@ -81,6 +86,7 @@ const traits = [
   },
   {
     "id": "fronswidthvscuprinamale",
+    "category": "head",
     "title": "Frons at narrowest point more than 15% of head width?",
     "weight": 5,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
@@ -97,6 +103,7 @@ const traits = [
   },
   {
     "id": "Fronswidthatnarrowestabout",
+    "category": "head",
     "title": "Frons at narrowest point more than 25% of head width?",
     "weight": 4,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
@@ -113,6 +120,7 @@ const traits = [
   },
   {
     "id": "Fronswidthversusthirty",
+    "category": "head",
     "title": "Frons at narrowest point more than 30% of head width?",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
@@ -129,6 +137,7 @@ const traits = [
   },
   {
     "id": "FronswidthatnarrowesttohelpIDfemales",
+    "category": "head",
     "title": "Frons at narrowest point more than 35% of head width?",
     "weight": 3,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=11",
@@ -145,6 +154,7 @@ const traits = [
   },
   {
     "id": "Ocellartriangle",
+    "category": "head",
     "title": "Ocellar triangle size (see p141 in Jones et al. 2019).",
     "weight": 2,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=141",
@@ -161,6 +171,7 @@ const traits = [
   },
   {
     "id": "IVSorientation",
+    "category": "head",
     "title": "Do inner vertical setae converge?",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=30",
@@ -177,6 +188,7 @@ const traits = [
   },
   {
     "id": "Parafacialwidthatleveloflunule",
+    "category": "head",
     "title": "Parafacial width at level of lunule.",
     "weight": 3,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=179",
@@ -193,6 +205,7 @@ const traits = [
   },
   {
     "id": "Parafacialcolor",
+    "category": "head",
     "title": "Parafacial color? (figure on p.167 of Jones et al 2019)",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167",
@@ -209,6 +222,7 @@ const traits = [
   },
   {
     "id": "Genae",
+    "category": "head",
     "title": "Genae (be careful not to confuse genae with postgenae).",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=173",
@@ -225,6 +239,7 @@ const traits = [
   },
   {
     "id": "Genaldilation",
+    "category": "head",
     "title": "Genal dilation (figure on p.167 of Jones et al 2019).",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167",
@@ -241,6 +256,7 @@ const traits = [
   },
   {
     "id": "Angleformedbyverticalsetae",
+    "category": "head",
     "title": "What angle do the three vertical setae form?",
     "weight": 1,
     "link": "https://zookeys.pensoft.net/article/3908/element/2/11//",
@@ -257,6 +273,7 @@ const traits = [
   },
   {
     "id": "Occipitalsetae",
+    "category": "head",
     "title": "Setae below and behind postocular setae (see figures of mexicana and eximia, e.g. in Jones et al. 2019).",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=166",
@@ -273,6 +290,7 @@ const traits = [
   },
   {
     "id": "Occipitalsetaebehindinnerverticalseta",
+    "category": "head",
     "title": "Occipital setae behind inner vertical seta (see figures in Jones et al. 2019)",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=184",
@@ -289,6 +307,7 @@ const traits = [
   },
   {
     "id": "stflagellomerelengthrelativetoeyelength",
+    "category": "head",
     "title": "How long is the first flagellomere relative to the height of the eye?",
     "weight": 2,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=147",
@@ -305,6 +324,7 @@ const traits = [
   },
   {
     "id": "Palpscolor",
+    "category": "head",
     "title": "Palps color.",
     "weight": 2,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=144",
@@ -321,6 +341,7 @@ const traits = [
   },
   {
     "id": "Bodycolorreddish",
+    "category": "thorax",
     "title": "Color of thorax or abdomen",
     "weight": 9,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
@@ -341,6 +362,7 @@ const traits = [
   },
   {
     "id": "Bodycolorcopper",
+    "category": "thorax",
     "title": "Thorax or abdomen coppery?",
     "weight": 6,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
@@ -357,6 +379,7 @@ const traits = [
   },
   {
     "id": "Bodycolorblack",
+    "category": "thorax",
     "title": "Thorax and abdomen entirely black?",
     "weight": 9,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=37",
@@ -373,6 +396,7 @@ const traits = [
   },
   {
     "id": "presuturalacrostichalsetaeposteriorpairfirst",
+    "category": "thorax",
     "title": "Posterior presutural acrostichal setae separation",
     "weight": 2,
     "link": "https://www.researchgate.net/profile/Terry-Whitworth/publication/270220615_First_record_of_Lucilia_bufonivora_Moniez_1876_Diptera_Calliphoridae_from_North_America_and_key_to_North_American_species_of_the_L_bufonivora_species_group/links/570faf7408aec95f06158813/First-record-of-Lucilia-bufonivora-Moniez-1876-Diptera-Calliphoridae-from-North-America-and-key-to-North-American-species-of-the-L-bufonivora-species-group.pdf#page=9",
@@ -389,6 +413,7 @@ const traits = [
   },
   {
     "id": "presuturalacrostichalsetaeposteriorpairsecond",
+    "category": "thorax",
     "title": "Posterior presutural acrostichal-dorsocentral setae separation",
     "weight": 1,
     "link": "https://www.researchgate.net/profile/Terry-Whitworth/publication/270220615_First_record_of_Lucilia_bufonivora_Moniez_1876_Diptera_Calliphoridae_from_North_America_and_key_to_North_American_species_of_the_L_bufonivora_species_group/links/570faf7408aec95f06158813/First-record-of-Lucilia-bufonivora-Moniez-1876-Diptera-Calliphoridae-from-North-America-and-key-to-North-American-species-of-the-L-bufonivora-species-group.pdf#page=9",
@@ -405,6 +430,7 @@ const traits = [
   },
   {
     "id": "Setulaeonposteriorpostpronotum",
+    "category": "thorax",
     "title": "Setae on posterior postpronotum (see figures, e.g. in Jones et al. 2019)",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=185",
@@ -421,6 +447,7 @@ const traits = [
   },
   {
     "id": "Setulaeonposteriornotopleuron",
+    "category": "thorax",
     "title": "Setulae on posterior notopleuron (see figures, e.g. in Jones et al. 2019)",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=185",
@@ -437,6 +464,7 @@ const traits = [
   },
   {
     "id": "acrostichalspostsutural",
+    "category": "thorax",
     "title": "# of post-sutural acrostichal pairs.",
     "weight": 5,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=19",
@@ -453,6 +481,7 @@ const traits = [
   },
   {
     "id": "intraalarsetaepresutural",
+    "category": "thorax",
     "title": "Is a pre-sutural intra-alar seta present?",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=146",
@@ -469,6 +498,7 @@ const traits = [
   },
   {
     "id": "intraalarsetaePostsutural",
+    "category": "thorax",
     "title": "# of postsutural intra-alar setae",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=146",
@@ -485,6 +515,7 @@ const traits = [
   },
   {
     "id": "Subcostalscleritesetae",
+    "category": "thorax",
     "title": "Does the subcostal sclerite (ventral wing base) have setae?",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=140",
@@ -501,6 +532,7 @@ const traits = [
   },
   {
     "id": "Basicostacolor",
+    "category": "thorax",
     "title": "What color is the basicosta overall in field photos? (the basicosta sometimes looks darker in field photos from certain angles than it would microscopically)",
     "weight": 4,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=21",
@@ -517,6 +549,7 @@ const traits = [
   },
   {
     "id": "TrueBasicostaColor",
+    "category": "thorax",
     "title": "What is the true color of the basicosta microscopically? (only fully reliable when looking at specimens, or in photos of live flies taken from a lateral angle",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=24",
@@ -533,6 +566,7 @@ const traits = [
   },
   {
     "id": "Lowercalyptercolor",
+    "category": "thorax",
     "title": "What color is the lower calypter?",
     "weight": 2,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=152",
@@ -549,6 +583,7 @@ const traits = [
   },
   {
     "id": "Abdominalpubescence",
+    "category": "abdomen",
     "title": "Abdomen with extensive areas of whitish pubescence patterning? (This trait is often helpful for photos of females, but the presence of the pubescence is typically harder to detect for males)",
     "weight": 3,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=34",
@@ -565,6 +600,7 @@ const traits = [
   },
   {
     "id": "ThirdTergiteDiscalSetae",
+    "category": "abdomen",
     "title": "Are there long, erect setae in the middle of tergite 3, anterior to the posterior margin of the tergite?",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=31",
@@ -581,6 +617,7 @@ const traits = [
   },
   {
     "id": "FourthTergiteDiscalSetae",
+    "category": "abdomen",
     "title": "Are there long, erect setae in the middle of tergite4 , anterior to the posterior margin of the tergite?",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=31",
@@ -597,6 +634,7 @@ const traits = [
   },
   {
     "id": "ThirdTergiteMarginalSetae",
+    "category": "abdomen",
     "title": "Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)? Note that if there are no long, erect median setae on tergite 4, then there are definitely not any on tergite 3 either.",
     "weight": 3,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=32",
@@ -613,6 +651,7 @@ const traits = [
   },
   {
     "id": "FourthTergiteMarginalSetae",
+    "category": "abdomen",
     "title": "Are the long setae on the posterior margin of tergite 4 erect or reclinate?",
     "weight": 5,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=33",
@@ -629,6 +668,7 @@ const traits = [
   },
   {
     "id": "Tergitepubescence",
+    "category": "abdomen",
     "title": "Tergite 5 pubescence? (may just appear as faint white-dusting along edges of visible region, even if extensive)",
     "weight": 3,
     "link": "\n",
@@ -645,6 +685,7 @@ const traits = [
   },
   {
     "id": "Malecercusinlateralview",
+    "category": "terminalia",
     "title": "Male cercus, in lateral view",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=153",
@@ -661,6 +702,7 @@ const traits = [
   },
   {
     "id": "Femaleovipositorinventralview",
+    "category": "terminalia",
     "title": "Female ovipositor, in ventral view",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=154",
@@ -681,6 +723,7 @@ const traits = [
   },
   {
     "id": "Malesurstylus",
+    "category": "terminalia",
     "title": "Male surstylus",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=157",
@@ -697,6 +740,7 @@ const traits = [
   },
   {
     "id": "Maleterminalia",
+    "category": "terminalia",
     "title": "Male cerci",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=168",
@@ -713,6 +757,7 @@ const traits = [
   },
   {
     "id": "Morphometricsbufonivoraelongata",
+    "category": "head",
     "title": "Morphometrics: antenna size bufonivora-elongata",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=158",
