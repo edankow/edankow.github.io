@@ -29,6 +29,10 @@
         .resizer:hover, .resizing { background: #3b82f6; width: 2px; }
         td { vertical-align: top; overflow: hidden; }
         .trait-pill { display: inline-block; padding: 2px 8px; background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; border-radius: 999px; font-size: 11px; margin: 2px; }
+        .column-sort-btn { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; padding: 3px 5px; border-radius: 6px; color: #94a3b8; flex-shrink: 0; }
+        .column-sort-btn:hover { color: #2563eb; background: #dbeafe; }
+        .column-sort-btn.active { color: #1d4ed8; background: #dbeafe; }
+        .flydata-row-content { overflow: hidden; }
 
         /* Controlled-vocabulary column info popovers */
         .taxon-info-btn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: #2563eb; color: #fff; font-size: 11px; font-weight: 900; cursor: pointer; border: 2px solid #fff; line-height: 1; margin-left: 8px; flex-shrink: 0; vertical-align: middle; font-style: normal; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
@@ -237,6 +241,7 @@
         let activeEdit = { type: null, index: null, key: null };
         let searchQuery = "";
         let columnWidths = {};
+        let flyDataSort = { key: null, direction: null };
         let inatTaxonSearchTimeout = null;
         let inatTaxonSearchResults = new Map();
 
@@ -275,6 +280,52 @@
 
         function getColumnsWithClass(type, className) {
             return Object.keys(columnClasses[type] || {}).filter(key => hasColumnClass(type, key, className));
+        }
+
+        function getFlyDataSortValue(row, key) {
+            const value = row[key];
+            if (Array.isArray(value)) return value.map(item => String(item ?? '')).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })).join(' | ');
+            if (value && typeof value === 'object') return JSON.stringify(value);
+            return String(value ?? '');
+        }
+
+        function toggleFlyDataSort(key) {
+            if (flyDataSort.key !== key) flyDataSort = { key, direction: 'asc' };
+            else if (flyDataSort.direction === 'asc') flyDataSort.direction = 'desc';
+            else flyDataSort = { key: null, direction: null };
+            renderTable();
+        }
+
+        function sizeFlyDataRowsToFocusedColumn(keys) {
+            if (currentTab !== 'flyData' || !flyDataSort.key || !flyDataSort.direction) return;
+            const focusedCellIndex = keys.indexOf(flyDataSort.key) + 1;
+            if (focusedCellIndex < 1) return;
+
+            document.querySelectorAll('#table-body tr').forEach(row => {
+                const dataCells = Array.from(row.cells).slice(1, -1);
+                dataCells.forEach(cell => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'flydata-row-content';
+                    while (cell.firstChild) wrapper.appendChild(cell.firstChild);
+                    cell.appendChild(wrapper);
+                });
+
+                const focusedContent = row.cells[focusedCellIndex]?.querySelector('.flydata-row-content');
+                if (!focusedContent) return;
+                const focusedHeight = Math.max(24, Math.ceil(focusedContent.scrollHeight));
+                dataCells.forEach(cell => {
+                    const wrapper = cell.querySelector('.flydata-row-content');
+                    if (wrapper) wrapper.style.height = `${focusedHeight}px`;
+                });
+            });
+        }
+
+        function getTraitOptionStyle(traitId, value) {
+            const seed = `${traitId}:${value}`;
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
+            const hue = Math.abs(hash) % 360;
+            return `background-color:hsl(${hue} 75% 92%);border-color:hsl(${hue} 55% 76%);color:hsl(${hue} 60% 27%)`;
         }
 
         function renderUniqueBadge(type, key) {
@@ -651,12 +702,23 @@
 
             if (currentTab === 'regions') { renderRegionsTable(); return; }
 
-            const filteredData = data.filter(row => {
+            let filteredData = data.filter(row => {
                 if (!searchQuery) return true;
                 const searchableText = JSON.stringify(row).toLowerCase();
                 const searchTerms = searchQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
                 return searchTerms.every(term => searchableText.includes(term));
             });
+
+            if (currentTab === 'flyData' && flyDataSort.key && flyDataSort.direction) {
+                const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+                filteredData = filteredData
+                    .map((row, order) => ({ row, order }))
+                    .sort((a, b) => {
+                        const comparison = collator.compare(getFlyDataSortValue(a.row, flyDataSort.key), getFlyDataSortValue(b.row, flyDataSort.key));
+                        return comparison === 0 ? a.order - b.order : comparison * (flyDataSort.direction === 'asc' ? 1 : -1);
+                    })
+                    .map(item => item.row);
+            }
 
             const traitMap = {};
             if (db.traits) db.traits.forEach(t => { traitMap[t.id] = t.title; });
@@ -697,7 +759,7 @@
                         display = values.map(v => {
                             const escapedValue = escapeHtml(v);
                             return validLabels.has(v)
-                                ? `<span class="trait-pill">${escapedValue}</span>`
+                                ? `<span class="trait-pill" style="${getTraitOptionStyle(k, v)}">${escapedValue}</span>`
                                 : `<span class="trait-pill bg-red-50 text-red-700 ring-1 ring-red-200" title="This value is no longer defined in the Traits tab">${escapedValue} ⚠</span>`;
                         }).join('');
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openTraitPicker(${originalIdx}, '${k}')">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
@@ -726,6 +788,7 @@
                 </tr>`;
             });
             document.getElementById('table-body').innerHTML = bodyHtml;
+            sizeFlyDataRowsToFocusedColumn(keys);
         }
 
         function escapeHtml(value) {
@@ -793,6 +856,11 @@
                 const uniqueBadge = renderUniqueBadge(currentTab, k);
                 const behaviorClasses = getColumnClasses(currentTab, k).join(' ');
                 const stickyIdClass = currentTab === 'flyData' && k === 'id' ? 'flydata-id-column' : '';
+                const isActiveSort = currentTab === 'flyData' && flyDataSort.key === k && flyDataSort.direction;
+                const sortDirectionIcon = isActiveSort ? `<i class="fas fa-arrow-${flyDataSort.direction === 'asc' ? 'up' : 'down'} text-[9px]"></i>` : '';
+                const sortButton = currentTab === 'flyData'
+                    ? `<button type="button" onclick="event.stopPropagation(); toggleFlyDataSort('${k}')" class="column-sort-btn ${isActiveSort ? 'active' : ''}" title="${isActiveSort ? `Size rows to this column and ${flyDataSort.direction === 'asc' ? 'sort descending' : 'restore original row heights and order'}` : 'Size rows to this column and sort ascending'}" aria-label="Focus and sort by ${displayHeader}"><i class="fas fa-search text-[10px]"></i>${sortDirectionIcon}</button>`
+                    : '';
 
                 const controlledVocabularyInfo = renderControlledVocabularyInfo(currentTab, k);
                 
@@ -800,6 +868,7 @@
                     <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top ${behaviorClasses} ${stickyIdClass}" style="width: ${width}px" data-key="${k}">
                         <div class="flex items-center">
                             <div class="break-words whitespace-normal leading-tight flex-1 flex items-center">${displayHeader}${controlledVocabularyInfo}${uniqueBadge}</div>
+                            ${sortButton}
                             ${quickAddBtn}
                         </div>
                         <div class="text-[10px] text-slate-400 font-mono mt-1 opacity-0 group-hover:opacity-100 transition-opacity">${k}</div>
