@@ -32,6 +32,22 @@ const traits = [
     ]
   },
   {
+    "id": "Frontoorbitalplatesformaleswithnarrowfrons",
+    "title": "Are fronto-orbital plates separated?",
+    "weight": 5,
+    "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167",
+    "options": [
+      {
+        "label": "separated. See figures in Jones et al. 2019, p.167, 174, 180",
+        "description": "The fronto-orbital plates are separated. See figures in Jones et al. 2019, p.167, 174, 180."
+      },
+      {
+        "label": "almost touching. See figures in Jones et al. 2019, p.167, 174, 180",
+        "description": "The fronto-orbital plates are almost touching. See figures in Jones et al. 2019, p.167, 174, 180."
+      }
+    ]
+  },
+  {
     "id": "FronswidthatnarrowesttohelpIDmales",
     "title": "Frons at narrowest point more than 7% of head?",
     "weight": 5,
@@ -48,34 +64,34 @@ const traits = [
     ]
   },
   {
-    "id": "FronswidthatnarrowesttohelpIDfemales",
-    "title": "Frons at narrowest point more than 35% of head width?",
-    "weight": 3,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=11",
+    "id": "FronsWidthVersusEleven",
+    "title": "Frons at narrowest point more than 11% of head?",
+    "weight": 2,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
     "options": [
       {
-        "label": "less than 35% head width",
-        "description": "The frons at narrowest is less than 35% head width."
+        "label": "at least 11% of head width",
+        "description": "The frons at narrowest is at least 11% of the head width."
       },
       {
-        "label": "at least 35% of head width",
-        "description": "The frons at narrowest is at least 35% of head width."
+        "label": "less than 11% of head width",
+        "description": "The frons at narrowest is less than 11% of the head width."
       }
     ]
   },
   {
-    "id": "Fronswidthversusthirty",
-    "title": "Frons at narrowest point more than 30% of head width?",
-    "weight": 2,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
+    "id": "fronswidthvscuprinamale",
+    "title": "Frons at narrowest point more than 15% of head width?",
+    "weight": 5,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
     "options": [
       {
-        "label": "less than 30% head width",
-        "description": "The frons at narrowest is less than 30% head width."
+        "label": "at least about 20% head width",
+        "description": "The frons at narrowest is at least about 20% head width."
       },
       {
-        "label": "at least 30% head width",
-        "description": "The frons at narrowest is at least 30% head width."
+        "label": "at most about 15% head width",
+        "description": "The frons at narrowest is at most about 15% head width."
       }
     ]
   },
@@ -96,34 +112,34 @@ const traits = [
     ]
   },
   {
-    "id": "Frontoorbitalplatesformaleswithnarrowfrons",
-    "title": "Are fronto-orbital plates separated?",
-    "weight": 5,
-    "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167",
+    "id": "Fronswidthversusthirty",
+    "title": "Frons at narrowest point more than 30% of head width?",
+    "weight": 2,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
     "options": [
       {
-        "label": "separated. See figures in Jones et al. 2019, p.167, 174, 180",
-        "description": "The fronto-orbital plates are separated. See figures in Jones et al. 2019, p.167, 174, 180."
+        "label": "less than 30% head width",
+        "description": "The frons at narrowest is less than 30% head width."
       },
       {
-        "label": "almost touching. See figures in Jones et al. 2019, p.167, 174, 180",
-        "description": "The fronto-orbital plates are almost touching. See figures in Jones et al. 2019, p.167, 174, 180."
+        "label": "at least 30% head width",
+        "description": "The frons at narrowest is at least 30% head width."
       }
     ]
   },
   {
-    "id": "fronswidthvscuprinamale",
-    "title": "Frons at narrowest point more than 15% of head width?",
-    "weight": 5,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
+    "id": "FronswidthatnarrowesttohelpIDfemales",
+    "title": "Frons at narrowest point more than 35% of head width?",
+    "weight": 3,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=11",
     "options": [
       {
-        "label": "at least about 20% head width",
-        "description": "The frons at narrowest is at least about 20% head width."
+        "label": "less than 35% head width",
+        "description": "The frons at narrowest is less than 35% head width."
       },
       {
-        "label": "at most about 15% head width",
-        "description": "The frons at narrowest is at most about 15% head width."
+        "label": "at least 35% of head width",
+        "description": "The frons at narrowest is at least 35% of head width."
       }
     ]
   },
@@ -485,7 +501,7 @@ const traits = [
   },
   {
     "id": "Basicostacolor",
-    "title": "What color is the basicosta? (sometimes ambiguous, see notes)",
+    "title": "What color is the basicosta overall in field photos? (the basicosta sometimes looks darker in field photos from certain angles than it would microscopically)",
     "weight": 4,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=21",
     "options": [
@@ -496,6 +512,22 @@ const traits = [
       {
         "label": "brown or black",
         "description": "The basicosta appears brown or black."
+      }
+    ]
+  },
+  {
+    "id": "TrueBasicostaColor",
+    "title": "What is the true color of the basicosta microscopically? (only fully reliable when looking at specimens, or in photos of live flies taken from a lateral angle",
+    "weight": 2,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=24",
+    "options": [
+      {
+        "label": "at least partially orange, yellow, or whitish.",
+        "description": "The basicosta is at least partially orange, yellow, or whitish."
+      },
+      {
+        "label": "entirely brown or black",
+        "description": "The basicosta is entirely brown or black."
       }
     ]
   },

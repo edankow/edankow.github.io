@@ -140,6 +140,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -296,6 +302,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -407,6 +419,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -512,6 +530,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -631,6 +655,13 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width",
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -741,6 +772,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "reclinate"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -926,6 +963,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -1114,6 +1157,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -1296,6 +1345,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1471,6 +1526,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1613,6 +1674,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1738,6 +1805,15 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1871,6 +1947,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1988,6 +2070,16 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width",
+      "at least 35% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2092,6 +2184,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -2200,6 +2298,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -2349,6 +2453,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -2499,6 +2609,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "reclinate"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -2654,6 +2770,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2810,6 +2932,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2926,6 +3054,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -3040,6 +3174,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "reclinate"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -3159,6 +3299,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -3273,6 +3419,12 @@ const flyData = [
     ],
     "FourthTergiteMarginalSetae": [
       "reclinate"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -3319,7 +3471,10 @@ const flyData = [
     "Bodycolorreddish": [
       "shining black"
     ],
-    "ThirdTergiteMarginalSetae": []
+    "ThirdTergiteMarginalSetae": [],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ]
   },
   {
     "id": "l_graphita_female",
@@ -3352,6 +3507,9 @@ const flyData = [
     ],
     "Bodycolorreddish": [
       "shining black"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
     ]
   }
 ];
