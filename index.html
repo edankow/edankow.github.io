@@ -1634,10 +1634,10 @@ function escapeRegionString(value) {
                 answerOrder.push(id);
             }
         });
-	if (activeId && getTraitCategoryId(activeId) === categoryId) {     activeId = null; }
+	selectQuestion(activeId)
+	jumpToNextQuestion();
 	collapsedTraitCategories.add(categoryId);
         updateUI();
-        jumpToNextQuestion();
     }
 
 
