@@ -533,7 +533,7 @@ const traits = [
   {
     "id": "Basicostacolor",
     "category": "wings",
-    "title": "How visibly light is the basicosta in field photos? (the basicosta sometimes looks darker in field photos from certain angles than it would microscopically)",
+    "title": "What is the apparent color of the basicosta?",
     "weight": 4,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=21",
     "options": [
@@ -544,23 +544,6 @@ const traits = [
       {
         "label": "brown or black",
         "description": "The basicosta appears brown or black."
-      }
-    ]
-  },
-  {
-    "id": "TrueBasicostaColor",
-    "category": "wings",
-    "title": "What is the true color of the basicosta microscopically? (only fully reliable when looking at specimens, or in photos of live flies taken from a lateral angle",
-    "weight": 2,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=24",
-    "options": [
-      {
-        "label": "at least partially orange, yellow, or whitish.",
-        "description": "The basicosta is at least partially orange, yellow, or whitish."
-      },
-      {
-        "label": "entirely brown or black",
-        "description": "The basicosta is entirely brown or black."
       }
     ]
   },
