@@ -1935,7 +1935,7 @@ function jumpToNextQuestion() {
     }).sort((a, b) => b.score - a.score);
 
     // 4. If there's a valid next question, select it
-    if (sortedRemaining.length > 0 && sortedRemaining[0].score > 0) {
+    if (sortedRemaining.length > 0) {
         selectQuestion(sortedRemaining[0].id);
     }
 }
