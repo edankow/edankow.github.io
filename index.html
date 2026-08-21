@@ -447,12 +447,15 @@ function getCurrentFlyMatches() {
     });
 }
 
-function getPostIdButtonLabel() {
+function isBestPossibleId(filtered = getCurrentFlyMatches()) {
     const matchingTaxonEndpoints = new Set(
-        getCurrentFlyMatches().map(fly => fly.species).filter(Boolean)
+        filtered.map(fly => fly.species).filter(Boolean)
     );
-    const isBestPossibleId = beginnerSkips.length === 0 && matchingTaxonEndpoints.size > 1;
-    return isBestPossibleId ? 'POST ID AS BEST POSSIBLE & NEXT' : 'POST ID & NEXT';
+    return beginnerSkips.length === 0 && matchingTaxonEndpoints.size > 1;
+}
+
+function getPostIdButtonLabel() {
+    return isBestPossibleId() ? 'POST ID AS BEST POSSIBLE & NEXT' : 'POST ID & NEXT';
 }
 
 function updatePostIdButtonLabels() {
@@ -973,12 +976,12 @@ async function postImmediateID() {
         
         if (taxonInfo && taxonInfo.taxonId) {
             // --- WHAT DO IF NOT A SPECIES LEVEL ID --
-		// Only vote on community ID if the user didn't hit any generic convenience skips
-	            if (beginnerSkips.length === 0) {
+		// Only vote on community ID when the UI identifies this as the best possible ID.
+	            if (isBestPossibleId(filtered)) {
 	                setCommunityTaxonStatus(taxonInfo);
 	            } else {
-	                console.log("Convenience skips detected. Skipping community verification vote adjustments.");
-	            }           
+	                console.log("Best-possible ID conditions not met. Skipping community verification vote adjustments.");
+	            }
 
             // 3. Submit immediately to iNat
             sendIdentification(CURRENT_OBS_ID, taxonInfo.taxonId);
