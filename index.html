@@ -1154,9 +1154,6 @@ async function postImmediateID() {
         }
 
         const finalOrder = [...answered.map(q => ({ ...q, bgColor: '#ffffff' })), ...sortedUnanswered];
-        const activeCategoryId = activeId ? getTraitCategoryId(activeId) : null;
-        if (activeCategoryId) collapsedTraitCategories.delete(activeCategoryId);
-
         const categoriesHtml = traitCategoryConfigs.map(category => {
             const categoryQuestions = finalOrder.filter(q => getTraitCategoryId(q.id) === category.id);
             if (categoryQuestions.length === 0) return '';
@@ -1196,6 +1193,7 @@ async function postImmediateID() {
     function selectQuestion(id) {
     const questionChanged = activeId !== id;
     activeId = id;
+    collapsedTraitCategories.delete(getTraitCategoryId(id));
     renderMenu();
 
     // 1. Calculate matches and diagnostic state
