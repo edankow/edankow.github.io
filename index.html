@@ -657,7 +657,8 @@ function copyNarrativeToClipboard() {
         }
         try {
             const res = await fetch("https://api.inaturalist.org/v1/users/me", {
-                headers: { "Authorization": `Bearer ${MY_TOKEN}` }
+                headers: { "Authorization": `Bearer ${MY_TOKEN}` },
+                signal: AbortSignal.timeout(4000)
             });
             const userData = await res.json();
             if (res.ok && userData.results?.length > 0) {
@@ -1765,7 +1766,7 @@ function escapeRegionString(value) {
         
             // 3. Update UI and fetch data
             updateStatusUI().then(() => { 
-                if (MY_TOKEN) fetchObservations(); 
+                if (MY_USER_ID) fetchObservations(); 
             });
         });
     };
@@ -2184,7 +2185,7 @@ async function searchBoundaryObservation() {
 </div>
 
 <script data-goatcounter="https://edanko.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"
+        async src="https://gc.zgo.at/count.js"
         onload="flushGoatCounterEvents()"></script>
 
 </body>
