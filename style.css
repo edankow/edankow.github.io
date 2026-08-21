@@ -324,6 +324,10 @@ body.wide-layout .summary-box { grid-area: summary; margin-top: 0 !important; }
         .trait-category-header:hover { background: #eef2f1; }
         .trait-category-meta { color: #777; font-size: 0.75rem; font-weight: normal; white-space: nowrap; }
         .trait-category-items.collapsed { display: none; }
+        .outgroup-id-shortcuts { margin-bottom: 15px; padding: 10px; background: #f7f8f8; border-radius: 4px; font-size: 0.85rem; }
+        .outgroup-id-shortcut-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .outgroup-id-shortcut { padding: 6px 9px; border: 1px solid #b8c4c0; border-radius: 4px; background: white; color: #245b49; cursor: pointer; font: inherit; }
+        .outgroup-id-shortcut:hover { background: #e8f4ef; border-color: #70a793; }
 .active-question-section {
     max-width: 800px; 
 

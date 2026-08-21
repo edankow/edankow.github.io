@@ -63,6 +63,8 @@
             <strong>Matrix Suggestion:</strong> <span id="suggestion-text"></span>
         </div>
 
+        <div id="outgroup-id-shortcuts" class="outgroup-id-shortcuts" style="display:none;"></div>
+
 <div style="position:relative; margin-bottom: 15px;">
             <input type="text" id="taxon-search-input" placeholder="Start typing taxon name (e.g. Lucilia)..." oninput="searchTaxa(this.value)" autocomplete="off">
             <div id="search-results-dropdown" style="position:absolute; width:100%; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
@@ -192,6 +194,7 @@
 <script src="traits.js"></script>
 <script src="flydata.js"></script>
 <script src="taxa.js"></script>
+<script src="outgroup_taxa.js"></script>
 <script src="header.js"></script>
 
 
@@ -468,8 +471,9 @@ function updatePostIdButtonLabels() {
 
 
     /* --- MODAL LOGIC --- */
-function openIDModal() { 
-    document.getElementById('modal-id').style.display = 'flex'; 
+function openIDModal() {
+    document.getElementById('modal-id').style.display = 'flex';
+    renderOutgroupTaxonShortcuts();
 
 // Step A: Calculate matches
 const filtered = getCurrentFlyMatches();
@@ -495,6 +499,31 @@ if (common && common.length > 0) {
         document.getElementById('suggested-id-area').style.display = 'none';
         document.getElementById('manual-taxon-id').value = '';
     }
+}
+
+function renderOutgroupTaxonShortcuts() {
+    const container = document.getElementById('outgroup-id-shortcuts');
+    const configuredTaxa = typeof outgroupTaxa !== 'undefined' ? outgroupTaxa : [];
+    container.innerHTML = '';
+    container.style.display = configuredTaxa.length ? 'block' : 'none';
+    if (!configuredTaxa.length) return;
+
+    const heading = document.createElement('strong');
+    heading.textContent = 'Outgroup shortcuts';
+    container.appendChild(heading);
+
+    const buttonList = document.createElement('div');
+    buttonList.className = 'outgroup-id-shortcut-list';
+    configuredTaxa.forEach(taxon => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'outgroup-id-shortcut';
+        button.textContent = taxon.name || String(taxon.taxonId);
+        button.title = taxon.rank ? `${taxon.name} (${taxon.rank})` : taxon.name;
+        button.addEventListener('click', () => selectTaxon(taxon.taxonId, taxon.name || ''));
+        buttonList.appendChild(button);
+    });
+    container.appendChild(buttonList);
 }
 
     function openCommentModal() { document.getElementById('modal-comment').style.display = 'flex'; }

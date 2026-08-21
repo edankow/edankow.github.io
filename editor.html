@@ -112,6 +112,9 @@
                 <button onclick="switchTab('taxa')" id="btn-taxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-sitemap w-5"></i> Taxonomy
                 </button>
+                <button onclick="switchTab('outgroupTaxa')" id="btn-outgroupTaxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-arrow-up-right-dots w-5"></i> Outgroup IDs
+                </button>
                 <button onclick="switchTab('traits')" id="btn-traits" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-list-check w-5"></i> Traits
                 </button>
@@ -172,7 +175,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>header.js</b>, <b>taxa.js</b>, <b>traits.js</b>, <b>categories.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
+                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>header.js</b>, <b>taxa.js</b>, <b>outgroup_taxa.js</b>, <b>traits.js</b>, <b>categories.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -197,7 +200,7 @@
                 <div id="status-log">Looking for database files...</div>
                 <div class="flex gap-4">
                     <span><i class="fas fa-circle text-emerald-500 text-[8px] mr-1"></i> Connected</span>
-                    <span id="file-counts">Data files: 0/6</span>
+                    <span id="file-counts">Data files: 0/7</span>
                 </div>
             </footer>
         </main>
@@ -225,6 +228,7 @@
 
     <!-- Loading these as neighboring scripts also works when editor.html is opened via file://. -->
     <script src="taxa.js"></script>
+    <script src="outgroup_taxa.js"></script>
     <script src="traits.js"></script>
     <script src="categories.js"></script>
     <script src="flydata.js"></script>
@@ -236,6 +240,7 @@
         let db = {
             header: typeof HEADER_DATA !== 'undefined' ? [cloneLoadedData(HEADER_DATA)] : null,
             taxa: typeof taxa !== 'undefined' ? cloneLoadedData(taxa) : null,
+            outgroupTaxa: typeof outgroupTaxa !== 'undefined' ? cloneLoadedData(outgroupTaxa) : null,
             traits: typeof traits !== 'undefined' ? cloneLoadedData(traits) : null,
             categories: typeof categories !== 'undefined' ? cloneLoadedData(categories) : null,
             flyData: typeof flyData !== 'undefined' ? cloneLoadedData(flyData) : null,
@@ -256,6 +261,7 @@
         const tabConfigs = {
             header: { title: "Workspace Settings", desc: "Manage the titles, defaults, and About content for this identification dataset." },
             taxa: { title: "Taxonomy Hierarchy", desc: "Manage species, complexes, and their parent relationships." },
+            outgroupTaxa: { title: "Outgroup ID Shortcuts", desc: "Manage taxon shortcuts shown in the Add Other ID modal." },
             traits: { title: "Character Traits", desc: "Define the physical traits and their possible options for identification." },
             categories: { title: "Trait Categories", desc: "Define the ordered category names and icons used by the identification menu." },
             flyData: { title: "Fly Database", desc: "The core database mapping traits to specific fly species." },
@@ -265,6 +271,7 @@
         const defaultTemplates = {
             header: { SHORT_TITLE: "Identification Dataset", LONG_TITLE: "Identification Workspace", DEFAULT_PLACE_ID: "", DEFAULT_TAXON: "", ABOUT_CONTENT: "" },
             taxa: { taxonId: null, name: "New Species", rank: "species", parent: null },
+            outgroupTaxa: { taxonId: null, name: "New Outgroup", rank: "family" },
             traits: { id: "new_trait", category: "other", title: "New Trait", weight: 1, link: "", options: [] },
             categories: { id: "new_category", icon: "📋", title: "New Category" },
             flyData: { id: "new_fly", m_or_f: "M", species: "New Fly", distribution: [] },
@@ -275,6 +282,7 @@
         // column here to enable its badge, edit validation, copying, and export checks.
         const columnClasses = {
             taxa: { taxonId: ['unique'] },
+            outgroupTaxa: { taxonId: ['unique'] },
             traits: { id: ['unique'] },
             categories: { id: ['unique'] },
             flyData: { id: ['unique'] },
@@ -377,6 +385,7 @@
             }
 
             const type = normalizedName === 'taxa.js' ? 'taxa'
+                : normalizedName === 'outgroup_taxa.js' ? 'outgroupTaxa'
                 : normalizedName === 'traits.js' ? 'traits'
                 : normalizedName === 'categories.js' ? 'categories'
                 : normalizedName === 'flydata.js' ? 'flyData'
@@ -392,7 +401,7 @@
             updateUIState();
             const hasData = Object.values(db).some(Boolean);
             if (!currentTab && hasData) {
-                const firstAvailable = ['header', 'taxa', 'traits', 'categories', 'flyData', 'regions'].find(type => db[type]);
+                const firstAvailable = ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'].find(type => db[type]);
                 switchTab(firstAvailable);
             }
         }
@@ -416,10 +425,11 @@
         }
 
         function initializeAutoLoadedFiles() {
-            const expectedFiles = ['header.js', 'taxa.js', 'traits.js', 'categories.js', 'flydata.js', 'regions.js', 'map_paths.js'];
+            const expectedFiles = ['header.js', 'taxa.js', 'outgroup_taxa.js', 'traits.js', 'categories.js', 'flydata.js', 'regions.js', 'map_paths.js'];
             const loadedFiles = [
                 db.header && 'header.js',
                 db.taxa && 'taxa.js',
+                db.outgroupTaxa && 'outgroup_taxa.js',
                 db.traits && 'traits.js',
                 db.categories && 'categories.js',
                 db.flyData && 'flydata.js',
@@ -439,12 +449,12 @@
 
         function updateUIState() {
             let count = 0;
-            ['header', 'taxa', 'traits', 'categories', 'flyData', 'regions'].forEach(t => {
+            ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'].forEach(t => {
                 const btn = document.getElementById(`btn-${t}`);
                 if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
                 else { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; }
             });
-            document.getElementById('file-counts').innerText = `Data files: ${count}/6`;
+            document.getElementById('file-counts').innerText = `Data files: ${count}/7`;
             const shortTitle = db.header?.[0]?.SHORT_TITLE || 'Identification Dataset';
             document.getElementById('dataset-short-title').innerText = shortTitle;
             document.title = `${shortTitle} — Identification Database Editor`;
@@ -462,8 +472,12 @@
             document.getElementById('current-tab-title').innerText = tabConfigs[tab].title;
             document.getElementById('current-tab-desc').innerText = tabConfigs[tab].desc;
             document.getElementById('add-new-btn').classList.toggle('hidden', tab === 'header');
-            document.getElementById('inat-taxon-search-container').classList.toggle('hidden', tab !== 'taxa');
-            if (tab !== 'taxa') document.getElementById('inat-taxon-search-results').classList.add('hidden');
+            const isTaxonImportTab = tab === 'taxa' || tab === 'outgroupTaxa';
+            document.getElementById('inat-taxon-search-container').classList.toggle('hidden', !isTaxonImportTab);
+            document.getElementById('inat-taxon-search-input').placeholder = tab === 'outgroupTaxa'
+                ? 'Add outgroup from iNaturalist...'
+                : 'Add taxon from iNaturalist...';
+            if (!isTaxonImportTab) document.getElementById('inat-taxon-search-results').classList.add('hidden');
             
             if (!db[tab] && tab !== 'flyData') {
                 document.getElementById('welcome-screen').classList.remove('hidden');
@@ -517,6 +531,7 @@
             const dropdown = document.getElementById('inat-taxon-search-results');
             const input = document.getElementById('inat-taxon-search-input');
             const selected = inatTaxonSearchResults.get(String(taxonId));
+            const targetType = currentTab === 'outgroupTaxa' ? 'outgroupTaxa' : 'taxa';
             if (!selected) return;
 
             dropdown.classList.add('hidden');
@@ -526,32 +541,39 @@
                 if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
                 const data = await response.json();
                 const taxon = data.results?.[0] || selected;
-                const ancestors = taxon.ancestors || selected.ancestors || [];
-                let immediateParent = ancestors.length > 0 ? ancestors[ancestors.length - 1].name : null;
-                const parentId = taxon.parent_id || selected.parent_id;
-                if (!immediateParent && parentId) {
-                    const parentResponse = await fetch(`https://api.inaturalist.org/v1/taxa/${encodeURIComponent(parentId)}`);
-                    if (parentResponse.ok) {
-                        const parentData = await parentResponse.json();
-                        immediateParent = parentData.results?.[0]?.name || null;
+                let immediateParent = null;
+                if (targetType === 'taxa') {
+                    const ancestors = taxon.ancestors || selected.ancestors || [];
+                    immediateParent = ancestors.length > 0 ? ancestors[ancestors.length - 1].name : null;
+                    const parentId = taxon.parent_id || selected.parent_id;
+                    if (!immediateParent && parentId) {
+                        const parentResponse = await fetch(`https://api.inaturalist.org/v1/taxa/${encodeURIComponent(parentId)}`);
+                        if (parentResponse.ok) {
+                            const parentData = await parentResponse.json();
+                            immediateParent = parentData.results?.[0]?.name || null;
+                        }
                     }
                 }
 
-                if (!db.taxa) db.taxa = [];
-                const existingIdx = db.taxa.findIndex(record => String(record.taxonId) === String(taxon.id));
-                const importedRecord = {
+                if (!db[targetType]) db[targetType] = [];
+                const existingIdx = db[targetType].findIndex(record => String(record.taxonId) === String(taxon.id));
+                const importedRecord = targetType === 'taxa' ? {
                     taxonId: taxon.id,
                     name: taxon.name,
                     rank: taxon.rank,
                     parent: immediateParent || null
+                } : {
+                    taxonId: taxon.id,
+                    name: taxon.name,
+                    rank: taxon.rank
                 };
 
                 if (existingIdx === -1) {
-                    db.taxa.unshift(importedRecord);
-                    printLog(`Added ${taxon.name} from iNaturalist.`);
+                    db[targetType].unshift(importedRecord);
+                    printLog(`Added ${taxon.name} to ${targetType === 'taxa' ? 'Taxonomy' : 'Outgroup IDs'} from iNaturalist.`);
                 } else {
-                    db.taxa[existingIdx] = { ...db.taxa[existingIdx], ...importedRecord };
-                    printLog(`Updated existing taxon ${taxon.name} from iNaturalist.`);
+                    db[targetType][existingIdx] = { ...db[targetType][existingIdx], ...importedRecord };
+                    printLog(`Updated ${taxon.name} in ${targetType === 'taxa' ? 'Taxonomy' : 'Outgroup IDs'} from iNaturalist.`);
                 }
 
                 input.value = '';
@@ -581,14 +603,14 @@
         }
 
         function getControlledVocabularyInfo(type, key) {
-            if (type === 'taxa') {
+            if (type === 'taxa' || type === 'outgroupTaxa') {
                 if (key.toLowerCase() === 'taxonid') {
                     return '<strong>iNaturalist taxon ID.</strong> Use the numeric ID assigned to this taxon by iNaturalist so identification links and submissions work correctly.';
                 }
                 if (key === 'rank') {
                     return '<strong>iNaturalist taxon rank.</strong> Any rank supported by iNaturalist is allowed; examples include genus, complex, species, subspecies, and variety.';
                 }
-                if (key === 'parent') {
+                if (type === 'taxa' && key === 'parent') {
                     const count = (db.taxa || []).filter(taxon => String(taxon.name || '').trim()).length;
                     return `<strong>Taxonomy parent.</strong> Use the exact name of another record in this Taxonomy tab (${count} currently defined). Leave this blank for a root taxon; blank values are saved as <code>null</code>.`;
                 }
@@ -1425,9 +1447,10 @@
                 });
             }
             if (type === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
-            const text = (type === 'taxa' || type === 'regions' || type === 'categories') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
+            const text = (type === 'taxa' || type === 'outgroupTaxa' || type === 'regions' || type === 'categories') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
             const blob = new Blob([text], { type: 'text/javascript' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${type === 'flyData' ? 'flydata' : type}.js`; a.click();
+            const exportFilename = type === 'flyData' ? 'flydata.js' : type === 'outgroupTaxa' ? 'outgroup_taxa.js' : `${type}.js`;
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = exportFilename; a.click();
             return true;
         }
 
@@ -1441,7 +1464,7 @@
                 else renderTable();
                 return false;
             }
-            const types = ['header', 'taxa', 'traits', 'categories', 'flyData', 'regions'];
+            const types = ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'];
             const results = types.filter(type => db[type]).map(type => exportFile(type));
             if (results.every(Boolean)) printLog("All available files exported.");
         }
