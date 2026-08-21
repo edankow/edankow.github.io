@@ -436,20 +436,36 @@ function handleDblClick(event) {
 function startDrag(e) { if(isPinned) isDragging = true; }
 function stopDrag(e) { isDragging = false; }
 
+function getCurrentFlyMatches() {
+    return flyData.filter(fly => {
+        return Object.keys(currentFilters).every(key => {
+            if (currentFilters[key] === null) return true;
+            if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
+            if (fly[key] === undefined) return true;
+            return fly[key] && fly[key].includes(currentFilters[key]);
+        });
+    });
+}
+
+function getPostIdButtonLabel() {
+    const isBestPossibleId = beginnerSkips.length === 0 && getCurrentFlyMatches().length > 1;
+    return isBestPossibleId ? 'POST ID AS BEST POSSIBLE & NEXT' : 'POST ID & NEXT';
+}
+
+function updatePostIdButtonLabels() {
+    const label = getPostIdButtonLabel();
+    document.querySelectorAll('[data-post-id-label]').forEach(button => {
+        button.textContent = label;
+    });
+}
+
 
     /* --- MODAL LOGIC --- */
 function openIDModal() { 
     document.getElementById('modal-id').style.display = 'flex'; 
 
 // Step A: Calculate matches
-const filtered = flyData.filter(fly => {
-    return Object.keys(currentFilters).every(key => {
-        if (currentFilters[key] === null) return true;
-        if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
-        if (fly[key] === undefined) return true;
-        return fly[key] && fly[key].includes(currentFilters[key]);
-    });
-});
+const filtered = getCurrentFlyMatches();
 
 // Step B: Get the common group name
 const common = getLowestCommonTaxon(filtered);
@@ -848,7 +864,7 @@ function autoSetRegionFromLocality(terms) {
                         <div class="geo-hierarchy"><span style="font-size:0.7em; font-weight:bold;">LOCALITY:</span><br>${geoHierarchy}</div>
                     </div>
                     <div class="btn-group">
-			<button class="btn-post" onclick="postImmediateID()" title="Post the matrix ID. When needed, this also adds the diagnostic narrative and marks a matching non-species community ID as complete.">POST RESULTS & NEXT</button>
+			<button class="btn-post" data-post-id-label onclick="postImmediateID()" title="Post the matrix ID. When needed, this also adds the diagnostic narrative and marks a matching non-species community ID as complete.">${getPostIdButtonLabel()}</button>
                         <button class="btn-id" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id});excludeAndNext(${obs.id});">AGREE & NEXT</button>
 			<button class="btn-action" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="openIDModal()">ADD OTHER ID & NEXT</button>
                         <button class="btn-skip" onmouseover="this.style.filter='brightness(0.8)'" onmouseout="this.style.filter='brightness(1)'" onclick="excludeAndNext(${obs.id})">SKIP</button>
@@ -942,14 +958,7 @@ async function setCommunityTaxonStatus(taxonInfo) {
 
 async function postImmediateID() {
     // 1. Calculate the matching taxa based on current filters
-    const filtered = flyData.filter(fly => {
-        return Object.keys(currentFilters).every(key => {
-            if (currentFilters[key] === null) return true;
-            if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
-            if (fly[key] === undefined) return true;
-            return fly[key] && fly[key].includes(currentFilters[key]);
-        });
-    });
+    const filtered = getCurrentFlyMatches();
 
     // 2. Get the suggested taxon name
     const common = getLowestCommonTaxon(filtered);
@@ -1235,10 +1244,11 @@ async function postImmediateID() {
 	    if (isConfirmationMode) {
 	        actionButtonHtml = `
 	            <button class="btn-post"
+	                    data-post-id-label
 	                    style="width:100%; margin-top:10px;"
 	                    onclick="postImmediateID()"
 	                    title="Post the matrix ID. When needed, this also adds the diagnostic narrative and marks a matching non-species community ID as complete.">
-	                Post Results & Next
+	                ${getPostIdButtonLabel()}
 	            </button>
 	        `;
 	    } else {
@@ -1282,6 +1292,8 @@ async function postImmediateID() {
             ${drawerPanelHtml}
         `;
     }
+
+    updatePostIdButtonLabels();
 
     // Scroll Logic
     setTimeout(() => {
