@@ -533,7 +533,7 @@ const traits = [
   {
     "id": "Basicostacolor",
     "category": "thorax",
-    "title": "What color is the basicosta overall in field photos? (the basicosta sometimes looks darker in field photos from certain angles than it would microscopically)",
+    "title": "How visibly light is the basicosta in field photos? (the basicosta sometimes looks darker in field photos from certain angles than it would microscopically)",
     "weight": 4,
     "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=21",
     "options": [
