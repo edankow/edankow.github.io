@@ -2417,8 +2417,7 @@ const flyData = [
       "no setae"
     ],
     "Basicostacolor": [
-      "orange, yellow, or whitish",
-      "brown or black"
+      "orange, yellow, or whitish"
     ],
     "Lowercalyptercolor": [
       "light brown, somewhat darker than upper calypter"
