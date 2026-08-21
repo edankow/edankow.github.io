@@ -1060,6 +1060,7 @@ async function postImmediateID() {
     let skippedQuestions = []; // For "not visible / not present"
     let beginnerSkips = [];    // For beginners getting started
     let activeId = null;
+    let wasConfirmationMode = false;
     const traitCategoryConfigs = (typeof categories !== 'undefined' ? categories : []).map(category => ({
         id: category.id,
         label: `${category.icon || ''}${category.icon ? ' ' : ''}${category.title || category.id}`
@@ -1206,6 +1207,16 @@ async function postImmediateID() {
         const hValue = parseFloat(calculateTraitUtility(q.id, currentMatches));
         return (hValue * (q.weight || 1)) <= 0;
     });
+
+	if (isConfirmationMode && !wasConfirmationMode) {
+	    document.getElementById('question-menu')?.scrollTo({
+	        top: 0,
+	        behavior: 'smooth'
+	    });
+	}
+	
+	wasConfirmationMode = isConfirmationMode;
+
 
     // 2. Check if a valid iNaturalist token is present
     const hasValidToken = Boolean(MY_USER_ID); 
@@ -1781,6 +1792,7 @@ function escapeRegionString(value) {
     }
 
     function resetMatrix() {
+        wasConfirmationMode = false
         currentFilters = { region: null };
         traits.forEach(t => { currentFilters[t.id] = null; });
         answerOrder = []; skippedQuestions = []; beginnerSkips = []; activeId = null;
