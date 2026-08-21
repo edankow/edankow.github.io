@@ -1161,6 +1161,7 @@ async function postImmediateID() {
             if (categoryQuestions.length === 0) return '';
             const completedCount = categoryQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id) || beginnerSkips.includes(q.id)).length;
             const isCollapsed = collapsedTraitCategories.has(category.id);
+
             const itemsHtml = categoryQuestions.map(q => {
                 const isAnswered = currentFilters[q.id] !== null;
                 return `
@@ -1176,7 +1177,13 @@ async function postImmediateID() {
                 <section class="trait-category">
                     <button type="button" class="trait-category-header" onclick="toggleTraitCategory('${category.id}')" aria-expanded="${!isCollapsed}">
                         <span>${category.label}</span>
-                        <span class="trait-category-meta">${completedCount}/${categoryQuestions.length} ${isCollapsed ? '▸' : '▾'}</span>
+                        <span class="trait-category-meta">
+                            ${completedCount}/${categoryQuestions.length}
+                            ${category.id !== 'location'
+                                ? `<span onclick="event.stopPropagation(); skipCategoryNotVisible('${category.id}')" title="Mark all unanswered traits in this category as not visible"> ⊘ </span>`
+                                : ''}
+                            ${isCollapsed ? '▸' : '▾'}
+                        </span>
                     </button>
                     <div class="trait-category-items ${isCollapsed ? 'collapsed' : ''}">${itemsHtml}</div>
                 </section>`;
@@ -1603,6 +1610,37 @@ function escapeRegionString(value) {
         setTimeout(jumpToNextQuestion, 200);
         updateUI();
     }
+
+
+    function skipCategoryNotVisible(categoryId) {
+        const categoryTraits = traits.filter(
+            trait => getTraitCategoryId(trait.id) === categoryId
+        );
+
+        categoryTraits.forEach(trait => {
+            const id = trait.id;
+
+            // Leave already-answered traits alone
+            if (currentFilters[id] !== null) return;
+
+            // Convert any convenience skip to a real "not visible" skip
+            beginnerSkips = beginnerSkips.filter(sid => sid !== id);
+
+            if (!skippedQuestions.includes(id)) {
+                skippedQuestions.push(id);
+            }
+
+            if (!answerOrder.includes(id)) {
+                answerOrder.push(id);
+            }
+        });
+	if (activeId && getTraitCategoryId(activeId) === categoryId) {     activeId = null; }
+	collapsedTraitCategories.add(categoryId);
+        updateUI();
+        jumpToNextQuestion();
+    }
+
+
 
     function updateUI() {
         const filtered = flyData.filter(fly => {
