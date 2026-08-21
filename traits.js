@@ -522,8 +522,8 @@ const traits = [
     "link": "",
     "options": [
       {
-        "label": "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)",
-        "description": "Abdomen with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)."
+        "label": "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed.",
+        "description": "Abdomen with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry."
       },
       {
         "label": "without extensive areas of abdominal pubescence that appear white-dusted",
@@ -599,7 +599,7 @@ const traits = [
     "id": "Tergitepubescence",
     "title": "Tergite 5 pubescence? (may just appear as faint white-dusting along edges of visible region, even if extensive)",
     "weight": 3,
-    "link": "",
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=34",
     "options": [
       {
         "label": "extensively pubescent",

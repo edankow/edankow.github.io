@@ -111,7 +111,7 @@ const flyData = [
       "pale, similar to upper calypter"
     ],
     "Abdominalpubescence": [
-      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed."
     ],
     "Tsetae": [
       "without especially strong or erect median marginal setae (Whitworth 2006)"
@@ -264,7 +264,7 @@ const flyData = [
       "pale, similar to upper calypter"
     ],
     "Abdominalpubescence": [
-      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed."
     ],
     "Tsetae": [
       "without especially strong or erect median marginal setae (Whitworth 2006)"
@@ -891,7 +891,7 @@ const flyData = [
       "pale, similar to upper calypter"
     ],
     "Abdominalpubescence": [
-      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed."
     ],
     "Tsetae": [
       "without especially strong or erect median marginal setae (Whitworth 2006)"
@@ -1085,7 +1085,7 @@ const flyData = [
       "pale, similar to upper calypter"
     ],
     "Abdominalpubescence": [
-      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed."
     ],
     "Tsetae": [
       "without especially strong or erect median marginal setae (Whitworth 2006)"

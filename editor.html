@@ -51,9 +51,9 @@
         .insert-row-before { top: -11px; }
         .insert-row-after { bottom: -11px; }
         #table-wrapper { padding-left: 14px; }
-        .traits-id-column { position: sticky; left: 0; z-index: 15; background: #fff; box-shadow: 2px 0 4px -2px rgba(15, 23, 42, 0.22); }
-        thead .traits-id-column { z-index: 25; background: #f8fafc; }
-        tr:hover .traits-id-column { background: #f8fafc; }
+        .flydata-id-column { position: sticky; left: 0; z-index: 15; background: #fff; box-shadow: 2px 0 4px -2px rgba(15, 23, 42, 0.22); }
+        thead .flydata-id-column { z-index: 25; background: #f8fafc; }
+        tr:hover .flydata-id-column { background: #f8fafc; }
 
         /* Distribution modal tabs */
         .dist-tab-btn { padding: 8px 18px; font-size: 13px; font-weight: 600; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: all 0.15s; color: #64748b; background: #f1f5f9; }
@@ -686,7 +686,7 @@
                 keys.forEach(k => {
                     let val = row[k];
                     let display = "";
-                    const stickyIdClass = currentTab === 'traits' && k === 'id' ? ' traits-id-column' : '';
+                    const stickyIdClass = currentTab === 'flyData' && k === 'id' ? ' flydata-id-column' : '';
                     let isTrait = (currentTab === 'flyData' && traitMap[k]);
                     let isComplex = Array.isArray(val) || (typeof val === 'object' && val !== null) || (currentTab === 'header' && typeof val === 'string' && val.length > 160);
 
@@ -792,7 +792,7 @@
                 let quickAddBtn = (currentTab === 'flyData' && traitMap[k]) ? `<button onclick="quickAddTraitOption('${k}')" class="ml-2 text-blue-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all" title="Add new option to this trait"><i class="fas fa-plus-circle"></i></button>` : '';
                 const uniqueBadge = renderUniqueBadge(currentTab, k);
                 const behaviorClasses = getColumnClasses(currentTab, k).join(' ');
-                const stickyIdClass = currentTab === 'traits' && k === 'id' ? 'traits-id-column' : '';
+                const stickyIdClass = currentTab === 'flyData' && k === 'id' ? 'flydata-id-column' : '';
 
                 const controlledVocabularyInfo = renderControlledVocabularyInfo(currentTab, k);
                 
