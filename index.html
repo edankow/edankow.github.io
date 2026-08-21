@@ -1193,6 +1193,7 @@ async function postImmediateID() {
     }
 
     function selectQuestion(id) {
+    const questionChanged = activeId !== id;
     activeId = id;
     renderMenu();
 
@@ -1345,6 +1346,7 @@ async function postImmediateID() {
     updatePostIdButtonLabels();
 
     // Scroll Logic
+    if (questionChanged) {
     setTimeout(() => {
 	    const menu = document.getElementById('question-menu');
 	    const item = document.querySelector(`.menu-item[onclick*="'${id}'"]`);
@@ -1361,6 +1363,7 @@ async function postImmediateID() {
 	        behavior: 'smooth'
 	    });
 	}, 50);
+    }
 }
 
 
@@ -1935,7 +1938,7 @@ function jumpToNextQuestion() {
     }).sort((a, b) => b.score - a.score);
 
     // 4. If there's a valid next question, select it
-    if (sortedRemaining.length > 0) {
+    if (sortedRemaining.length > 0 && sortedRemaining[0].score > 0) {
         selectQuestion(sortedRemaining[0].id);
     }
 }
