@@ -532,34 +532,66 @@ const traits = [
     ]
   },
   {
-    "id": "Tsetae",
-    "title": "Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)? Note that if there are no long, erect median setae on tergite 4, then there are definitely not any on tergite 3 either.",
+    "id": "ThirdTergiteDiscalSetae",
+    "title": "Are there long, erect setae in the middle of tergite 3, anterior to the posterior margin of the tergite?",
     "weight": 2,
-    "link": "https://www.birdblowfly.com/images/Publications/Keys.pdf#page=6",
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=31",
     "options": [
       {
-        "label": "without especially strong or erect median marginal setae (Whitworth 2006)",
-        "description": "The posterior margin of tergite 3 without especially strong or erect median marginal setae (Whitworth 2006)."
+        "label": "With long, erect discal setae on tergite 3",
+        "description": "Tergite 3 with long, erect discal setae"
       },
       {
-        "label": "with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)",
-        "description": "The posterior margin of tergite 3 with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)."
+        "label": "Without long, erect discal setae on tergite 3",
+        "description": "Tergite 3 without long, erect discal setae"
       }
     ]
   },
   {
-    "id": "Tposteriorsetae",
-    "title": "Are the long setae on the posterior margin of tergite 4 erect or appressed?",
-    "weight": 4,
-    "link": "",
+    "id": "FourthTergiteDiscalSetae",
+    "title": "Are there long, erect setae in the middle of tergite4 , anterior to the posterior margin of the tergite?",
+    "weight": 2,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=31",
+    "options": [
+      {
+        "label": "with long, erect discal setae on tergite 4",
+        "description": "Tergite 4 with long, erect discal setae"
+      },
+      {
+        "label": "without long, erect discal setae on tergite 4",
+        "description": "Tergite 4 without long, erect discal setae"
+      }
+    ]
+  },
+  {
+    "id": "ThirdTergiteMarginalSetae",
+    "title": "Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)? Note that if there are no long, erect median setae on tergite 4, then there are definitely not any on tergite 3 either.",
+    "weight": 3,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=32",
+    "options": [
+      {
+        "label": "without especially strong or erect median marginal setae",
+        "description": "The posterior margin of tergite 3 without especially strong or erect median marginal setae."
+      },
+      {
+        "label": "with 1-2 pairs of long, erect median marginal setae",
+        "description": "The posterior margin of tergite 3 with 1-2 pairs of long, erect median marginal setae."
+      }
+    ]
+  },
+  {
+    "id": "FourthTergiteMarginalSetae",
+    "title": "Are the long setae on the posterior margin of tergite 4 erect or reclinate?",
+    "weight": 5,
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=33",
     "options": [
       {
         "label": "erect",
         "description": "The long setae on the posterior margin of tergite 4 are erect."
       },
       {
-        "label": "appressed",
-        "description": "The long setae on the posterior margin of tergite 4 are appressed."
+        "label": "reclinate",
+        "description": "The long setae on the posterior margin of tergite 4 are reclinate."
       }
     ]
   },

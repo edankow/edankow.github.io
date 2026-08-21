@@ -134,6 +134,12 @@ const flyData = [
     ],
     "Bodycolorblack": [
       "not shining black"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -281,6 +287,15 @@ const flyData = [
     ],
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -380,6 +395,18 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -479,6 +506,12 @@ const flyData = [
     "Bodycolorreddish": [
       "yellowish green, emerald green, or bluish",
       "orangish green, reddish-orange brown, or coppery brown"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -586,6 +619,18 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -690,6 +735,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "reclinate"
     ]
   },
   {
@@ -863,6 +914,18 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -1045,6 +1108,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -1215,6 +1284,18 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -1384,6 +1465,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -1512,6 +1599,20 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3",
+      "With long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "with long, erect discal setae on tergite 4",
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -1631,6 +1732,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -1751,6 +1858,19 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "with long, erect discal setae on tergite 4",
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -1862,6 +1982,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -1960,6 +2086,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -2062,6 +2194,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -2205,6 +2343,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -2349,6 +2493,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "reclinate"
     ]
   },
   {
@@ -2498,6 +2648,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -2648,6 +2804,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -2758,6 +2920,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -2866,6 +3034,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "reclinate"
     ]
   },
   {
@@ -2979,6 +3153,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
     ]
   },
   {
@@ -3087,6 +3267,12 @@ const flyData = [
     "Bodycolorreddish": [
       "orangish green, reddish-orange brown, or coppery brown",
       "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "reclinate"
     ]
   },
   {
@@ -3132,7 +3318,8 @@ const flyData = [
     ],
     "Bodycolorreddish": [
       "shining black"
-    ]
+    ],
+    "ThirdTergiteMarginalSetae": []
   },
   {
     "id": "l_graphita_female",
