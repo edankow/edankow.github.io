@@ -1681,6 +1681,9 @@ function escapeRegionString(value) {
                         
                 }
                 narrative.push(`<br><br>Therefore, we can narrow this down to ${resultText}`);
+                if (isBestPossibleId(filtered)) {
+                    narrative.push("Based on the features visible, it does not appear possible to identify this observation more precisely.");
+                }
             }
             summaryBox.innerHTML = narrative.join(" ");
         } else {

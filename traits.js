@@ -551,7 +551,7 @@ const traits = [
     "id": "Abdominalpubescence",
     "title": "Abdomen with extensive areas of whitish pubescence patterning? (This trait is often helpful for photos of females, but the presence of the pubescence is typically harder to detect for males)",
     "weight": 3,
-    "link": "",
+    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=34",
     "options": [
       {
         "label": "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed.",
@@ -631,7 +631,7 @@ const traits = [
     "id": "Tergitepubescence",
     "title": "Tergite 5 pubescence? (may just appear as faint white-dusting along edges of visible region, even if extensive)",
     "weight": 3,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=34",
+    "link": "\n",
     "options": [
       {
         "label": "extensively pubescent",
