@@ -375,8 +375,36 @@ body.wide-layout .summary-box {
             gap: 9px;
         }
 
-        #modal-post-confirmation .modal-content > h3 {
-            margin: 0 0 2px;
+        .post-confirm-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 2px;
+        }
+
+        .post-confirm-heading h3 {
+            margin: 0;
+            flex: 0 0 auto;
+        }
+
+        .post-confirm-session-skip {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            max-width: 250px;
+            color: #666;
+            font-size: 0.7rem;
+            line-height: 1.2;
+            text-align: right;
+            cursor: pointer;
+        }
+
+        .post-confirm-session-skip input {
+            width: auto;
+            margin: 0;
+            flex: 0 0 auto;
         }
 
         #post-confirm-best-possible-label {

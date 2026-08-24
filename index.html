@@ -91,7 +91,13 @@
 
 <div id="modal-post-confirmation" class="modal">
     <div class="modal-content" style="text-align:left;">
-        <h3 style="margin-top:0;">Review Post ID</h3>
+        <div class="post-confirm-heading">
+            <h3>Review Post ID</h3>
+            <label class="post-confirm-session-skip">
+                <input type="checkbox" id="post-confirm-skip-session" onchange="setSkipPostReviewForSession(this.checked)">
+                <span>For the rest of this session, clicking “Post ID” will submit the ID and comment immediately without showing this window.</span>
+            </label>
+        </div>
         <label for="post-confirm-taxon-search" style="display:block; font-weight:bold; margin-bottom:5px;">Identification</label>
         <div style="display:grid; grid-template-columns:minmax(0, 2fr) minmax(120px, 1fr); gap:10px; align-items:flex-start; margin-bottom:10px;">
             <div style="position:relative; min-width:0;">
@@ -236,6 +242,7 @@
     let OBSERVATION_QUEUE = [];
     let CURRENT_OBS_ID = null;
 	let PENDING_IMMEDIATE_ID = null;
+	let SKIP_POST_REVIEW_FOR_SESSION = false;
 	let HAS_SHOWN_WELCOME_MODAL = false;
 	const GOATCOUNTER_EVENT_QUEUE = [];
 	let BATCH_SIZE = 30
@@ -1049,6 +1056,10 @@ function getImmediateIdNarrative(taxonInfo) {
     return narrativeText;
 }
 
+function setSkipPostReviewForSession(shouldSkip) {
+    SKIP_POST_REVIEW_FOR_SESSION = shouldSkip;
+}
+
 function postImmediateID() {
     // Calculate and preview the actions. Nothing is posted until the modal is submitted.
     const filtered = getCurrentFlyMatches();
@@ -1075,8 +1086,13 @@ function postImmediateID() {
     document.getElementById('post-confirm-taxon-id').value = taxonInfo.taxonId;
     document.getElementById('post-confirm-best-possible').checked = PENDING_IMMEDIATE_ID.markBestPossible;
     document.getElementById('post-confirm-comment').innerHTML = getImmediateIdNarrative(taxonInfo);
+    document.getElementById('post-confirm-skip-session').checked = SKIP_POST_REVIEW_FOR_SESSION;
     document.getElementById('post-confirm-error').style.display = 'none';
-    document.getElementById('modal-post-confirmation').style.display = 'flex';
+    if (SKIP_POST_REVIEW_FOR_SESSION) {
+        submitConfirmedImmediateID();
+    } else {
+        document.getElementById('modal-post-confirmation').style.display = 'flex';
+    }
 }
 
 let POST_CONFIRM_SEARCH_RESULTS = [];
@@ -1152,6 +1168,7 @@ async function submitConfirmedImmediateID() {
 
     const idPosted = await sendIdentification(pending.observationId, taxonId);
     if (!idPosted) {
+        document.getElementById('modal-post-confirmation').style.display = 'flex';
         errorArea.textContent = "The identification could not be posted. Please try again.";
         errorArea.style.display = 'block';
         submitButton.disabled = false;
@@ -1177,6 +1194,7 @@ async function submitConfirmedImmediateID() {
             if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
         } catch (error) {
             console.error("Comment failed to post", error);
+            document.getElementById('modal-post-confirmation').style.display = 'flex';
             errorArea.textContent = "The identification posted, but the comment did not. You can retry the comment on iNaturalist.";
             errorArea.style.display = 'block';
             submitButton.disabled = false;
