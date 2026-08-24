@@ -1137,7 +1137,7 @@ function selectPostConfirmationTaxon(index) {
     document.getElementById('post-confirm-search-results').style.display = 'none';
 }
 
-async function submitConfirmedImmediateID() {
+function submitConfirmedImmediateID() {
     if (!PENDING_IMMEDIATE_ID) return;
 
     const taxonId = Number(document.getElementById('post-confirm-taxon-id').value);
@@ -1146,7 +1146,6 @@ async function submitConfirmedImmediateID() {
     const commentBody = commentEditor.textContent.trim() ? commentEditor.innerHTML.trim() : "";
     const markBestPossible = document.getElementById('post-confirm-best-possible').checked;
     const errorArea = document.getElementById('post-confirm-error');
-    const submitButton = document.getElementById('post-confirm-submit');
 
     if (!Number.isInteger(taxonId) || taxonId <= 0) {
         errorArea.textContent = "Enter a valid Taxon ID before submitting.";
@@ -1162,25 +1161,18 @@ async function submitConfirmedImmediateID() {
         taxonId
     };
 
-    submitButton.disabled = true;
-    submitButton.textContent = "Submitting...";
     errorArea.style.display = 'none';
 
-    const idPosted = await sendIdentification(pending.observationId, taxonId);
-    if (!idPosted) {
-        document.getElementById('modal-post-confirmation').style.display = 'flex';
-        errorArea.textContent = "The identification could not be posted. Please try again.";
-        errorArea.style.display = 'block';
-        submitButton.disabled = false;
-        submitButton.textContent = "Submit & Next";
-        return;
-    }
+    // Restore the original high-speed workflow: launch requests in the
+    // background and advance without waiting for iNaturalist's responses.
+    sendIdentification(pending.observationId, taxonId).then(idPosted => {
+        if (!idPosted) console.error(`Identification failed for observation ${pending.observationId}`);
+    });
 
     if (markBestPossible) setCommunityTaxonStatus(submittedTaxon);
 
     if (commentBody) {
-        try {
-            const response = await fetch("https://api.inaturalist.org/v1/comments", {
+        fetch("https://api.inaturalist.org/v1/comments", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MY_TOKEN}` },
                 body: JSON.stringify({
@@ -1190,18 +1182,11 @@ async function submitConfirmedImmediateID() {
                         parent_type: "Observation"
                     }
                 })
-            });
-            if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
-        } catch (error) {
-            console.error("Comment failed to post", error);
-            document.getElementById('modal-post-confirmation').style.display = 'flex';
-            errorArea.textContent = "The identification posted, but the comment did not. You can retry the comment on iNaturalist.";
-            errorArea.style.display = 'block';
-            submitButton.disabled = false;
-            submitButton.textContent = "Continue to Next";
-            submitButton.onclick = () => finishConfirmedImmediateID(pending.observationId);
-            return;
-        }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
+            })
+            .catch(error => console.error("Comment failed to post", error));
     }
 
     finishConfirmedImmediateID(pending.observationId);
