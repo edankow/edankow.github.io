@@ -392,6 +392,32 @@ body.wide-layout .summary-box {
             font-size: 0.68rem;
         }
 
+        .rich-comment-editor {
+            box-sizing: border-box;
+            min-height: 145px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            font-family: inherit;
+            font-size: 0.85rem;
+            line-height: 1.35;
+            white-space: normal;
+        }
+
+        .rich-comment-editor:focus {
+            outline: 2px solid rgba(41, 128, 185, 0.25);
+            border-color: #2980b9;
+        }
+
+        .rich-comment-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #888;
+            pointer-events: none;
+        }
+
 .comments-section {
     background: #fdfdfd;
     padding: 10px;

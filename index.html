@@ -107,7 +107,7 @@
         </label>
 
         <label for="post-confirm-comment" style="display:block; font-weight:bold; margin-bottom:5px;">Comment <span style="font-weight:normal; color:#666;">(leave blank to post no comment)</span></label>
-        <textarea id="post-confirm-comment" rows="8" placeholder="No diagnostic comment will be posted."></textarea>
+        <div id="post-confirm-comment" class="rich-comment-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="No diagnostic comment will be posted."></div>
 
         <div id="post-confirm-error" style="display:none; color:#b00020; font-size:0.85rem; margin:8px 0;"></div>
         <div style="display:flex; gap:10px; margin-top:12px;">
@@ -1042,9 +1042,9 @@ function getImmediateIdNarrative(taxonInfo) {
     if (!narrativeText || narrativeText === placeholder) return "";
 
     if (MY_USER_LOGIN?.toLowerCase() === "edanko") {
-        narrativeText += "\n\n--------------------------\n\nI made this identification using my interactive key that you can visit at https://edankow.github.io/identify/.";
+        narrativeText += "<br><br>--------------------------<br><br>I made this identification using my interactive key that you can visit at https://edankow.github.io/identify/.";
     } else {
-        narrativeText += "\n\n--------------------------\n\nThis identification was made and posted using @edanko’s interactive key at https://edankow.github.io/identify/.";
+        narrativeText += "<br><br>--------------------------<br><br>This identification was made and posted using @edanko’s interactive key at https://edankow.github.io/identify/.";
     }
     return narrativeText;
 }
@@ -1074,7 +1074,7 @@ function postImmediateID() {
     document.getElementById('post-confirm-taxon-search').value = taxonInfo.name || lowestName;
     document.getElementById('post-confirm-taxon-id').value = taxonInfo.taxonId;
     document.getElementById('post-confirm-best-possible').checked = PENDING_IMMEDIATE_ID.markBestPossible;
-    document.getElementById('post-confirm-comment').value = getImmediateIdNarrative(taxonInfo);
+    document.getElementById('post-confirm-comment').innerHTML = getImmediateIdNarrative(taxonInfo);
     document.getElementById('post-confirm-error').style.display = 'none';
     document.getElementById('modal-post-confirmation').style.display = 'flex';
 }
@@ -1126,7 +1126,8 @@ async function submitConfirmedImmediateID() {
 
     const taxonId = Number(document.getElementById('post-confirm-taxon-id').value);
     const taxonName = document.getElementById('post-confirm-taxon-search').value.trim();
-    const commentBody = document.getElementById('post-confirm-comment').value.trim();
+    const commentEditor = document.getElementById('post-confirm-comment');
+    const commentBody = commentEditor.textContent.trim() ? commentEditor.innerHTML.trim() : "";
     const markBestPossible = document.getElementById('post-confirm-best-possible').checked;
     const errorArea = document.getElementById('post-confirm-error');
     const submitButton = document.getElementById('post-confirm-submit');
@@ -2275,6 +2276,16 @@ async function generateCodeChallenge(verifier) {
 //finds the oldest observation that is needs ID and returns a series of observations with that ID and locality:
 async function searchBoundaryObservation() {
     try {
+        // Always begin a focused-group search from this key's configured taxon,
+        // even if the user previously changed the queue's taxon filter.
+        CURRENT_TAXON_ID = window.DEFAULT_TAXON;
+        API_BASE =
+            `https://api.inaturalist.org/v1/observations` +
+            `?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}` +
+            `&only_id=false` +
+            `&fields=all` +
+            `&quality_grade=needs_id`;
+
         const excludedIds = FINISHED_OBS_IDS.length
             ? `&not_id=${FINISHED_OBS_IDS.join(",")}`
             : "";
