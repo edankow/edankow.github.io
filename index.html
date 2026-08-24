@@ -243,6 +243,7 @@
     let CURRENT_OBS_ID = null;
 	let PENDING_IMMEDIATE_ID = null;
 	let SKIP_POST_REVIEW_FOR_SESSION = false;
+	let HAS_TRACKED_IDENTIFICATION_SESSION = false;
 	let HAS_SHOWN_WELCOME_MODAL = false;
 	const GOATCOUNTER_EVENT_QUEUE = [];
 	let BATCH_SIZE = 30
@@ -974,6 +975,10 @@ function autoSetRegionFromLocality(terms) {
     }
 
     async function sendIdentification(obsId, taxonId) {
+        if (!HAS_TRACKED_IDENTIFICATION_SESSION) {
+            HAS_TRACKED_IDENTIFICATION_SESSION = true;
+            trackGoatCounterEvent('identification-session-started', 'Identification session started');
+        }
         try {
             const response = await fetch("https://api.inaturalist.org/v1/identifications", {
                 method: "POST",
@@ -981,7 +986,6 @@ function autoSetRegionFromLocality(terms) {
                 body: JSON.stringify({ identification: { observation_id: obsId, taxon_id: taxonId, disagreement: true } })
             });
             if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
-            trackGoatCounterEvent('identification-submitted', 'Identification submitted');
             return true;
         } catch (e) {
             console.error("ID Failed", e);
