@@ -95,11 +95,13 @@
         <p style="font-size:0.85rem; color:#666;">Review exactly what will be submitted to iNaturalist.</p>
 
         <label for="post-confirm-taxon-search" style="display:block; font-weight:bold; margin-bottom:5px;">Identification</label>
-        <div style="position:relative; margin-bottom:10px;">
-            <input type="text" id="post-confirm-taxon-search" placeholder="Start typing taxon name (e.g. Lucilia)..." oninput="searchPostConfirmationTaxa(this.value)" autocomplete="off">
-            <div id="post-confirm-search-results" style="position:absolute; width:100%; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow:0 4px 6px rgba(0,0,0,0.1);"></div>
+        <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:15px;">
+            <div style="position:relative; flex:2; min-width:0;">
+                <input type="text" id="post-confirm-taxon-search" placeholder="Start typing taxon name (e.g. Lucilia)..." oninput="searchPostConfirmationTaxa(this.value)" autocomplete="off">
+                <div id="post-confirm-search-results" style="position:absolute; width:100%; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow:0 4px 6px rgba(0,0,0,0.1);"></div>
+            </div>
+            <input type="text" inputmode="numeric" pattern="[0-9]*" id="post-confirm-taxon-id" placeholder="Taxon ID" style="flex:1; min-width:0;">
         </div>
-        <input type="number" id="post-confirm-taxon-id" placeholder="Enter Taxon ID Number..." style="margin-bottom:15px;">
 
         <label style="display:flex; align-items:flex-start; gap:8px; margin-bottom:15px; cursor:pointer;">
             <input type="checkbox" id="post-confirm-best-possible" style="width:auto; margin-top:3px;">
