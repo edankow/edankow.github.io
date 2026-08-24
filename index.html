@@ -1329,7 +1329,6 @@ function finishConfirmedImmediateID(observationId) {
             const categoryQuestions = finalOrder.filter(q => getTraitCategoryId(q.id) === category.id);
             if (categoryQuestions.length === 0) return '';
             const completedCount = categoryQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id) || beginnerSkips.includes(q.id)).length;
-            const hasSkippableTraits = categoryQuestions.some(q => q.id !== 'region');
             const isCollapsed = collapsedTraitCategories.has(category.id);
 
             const itemsHtml = categoryQuestions.map(q => {
@@ -1349,9 +1348,7 @@ function finishConfirmedImmediateID(observationId) {
                         <span>${category.label}</span>
                         <span class="trait-category-meta">
                             ${completedCount}/${categoryQuestions.length}
-                            ${hasSkippableTraits
-                                ? `<span onclick="event.stopPropagation(); skipCategoryNotVisible('${category.id}')" title="Mark all unanswered traits in this category as not visible"> ⊘ </span>`
-                                : ''}
+                            <span class="trait-category-skip" onclick="event.stopPropagation(); skipCategoryNotVisible('${category.id}')" title="Mark all unanswered traits in this category as impossible to score">⊘</span>
                             ${isCollapsed ? '▸' : '▾'}
                         </span>
                     </button>
@@ -1797,8 +1794,8 @@ function escapeRegionString(value) {
 
 
     function skipCategoryNotVisible(categoryId) {
-        const categoryTraits = traits.filter(
-            trait => trait.id !== 'region' && getTraitCategoryId(trait.id) === categoryId
+        const categoryTraits = getAllQuestions().filter(
+            trait => getTraitCategoryId(trait.id) === categoryId
         );
 
         categoryTraits.forEach(trait => {
