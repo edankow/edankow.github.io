@@ -1137,13 +1137,24 @@ function selectPostConfirmationTaxon(index) {
     document.getElementById('post-confirm-search-results').style.display = 'none';
 }
 
+function serializePostConfirmationComment(commentEditor) {
+    if (!commentEditor.textContent.trim()) return "";
+
+    // The rich editor needs <br> elements to display the attribution spacing,
+    // but iNaturalist comments historically received real newlines here.
+    return commentEditor.innerHTML.trim().replace(
+        /<br\s*\/?><br\s*\/?>\s*--------------------------\s*<br\s*\/?><br\s*\/?>/i,
+        "\n\n--------------------------\n\n"
+    );
+}
+
 function submitConfirmedImmediateID() {
     if (!PENDING_IMMEDIATE_ID) return;
 
     const taxonId = Number(document.getElementById('post-confirm-taxon-id').value);
     const taxonName = document.getElementById('post-confirm-taxon-search').value.trim();
     const commentEditor = document.getElementById('post-confirm-comment');
-    const commentBody = commentEditor.textContent.trim() ? commentEditor.innerHTML.trim() : "";
+    const commentBody = serializePostConfirmationComment(commentEditor);
     const markBestPossible = document.getElementById('post-confirm-best-possible').checked;
     const errorArea = document.getElementById('post-confirm-error');
 
