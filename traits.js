@@ -1,5 +1,13 @@
 const traits = [
   {
+    "id": "region",
+    "category": "location",
+    "title": "Region",
+    "weight": 10,
+    "link": "",
+    "options": []
+  },
+  {
     "id": "Headlength",
     "category": "head",
     "title": "How long is head? (difficult to assess; character taken from Whitworth 2006)",

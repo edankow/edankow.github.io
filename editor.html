@@ -719,7 +719,9 @@
             if (currentTab === 'flyData') {
                 keys = ['id', 'm_or_f', 'species', 'distribution'];
                 if (db.traits) {
-                    db.traits.forEach(t => { if (!keys.includes(t.id)) keys.push(t.id); });
+                    db.traits.forEach(t => {
+                        if (t.id !== 'region' && !keys.includes(t.id)) keys.push(t.id);
+                    });
                 }
                 if (data && data.length > 0) {
                     Object.keys(data[0]).forEach(k => {
@@ -761,7 +763,10 @@
             }
 
             const traitMap = {};
-            if (db.traits) db.traits.forEach(t => { traitMap[t.id] = t.title; });
+            if (db.traits) db.traits.forEach(t => {
+                // Region remains backed by Fly Database's special distribution field.
+                if (t.id !== 'region') traitMap[t.id] = t.title;
+            });
 
             renderHeader(keys, traitMap);
 
@@ -816,6 +821,8 @@
                     } else if (currentTab === 'flyData' && k === 'distribution') {
                         display = Array.isArray(val) ? val.map(v => `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] mr-1">${v}</span>`).join('') : val;
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openRegionPicker(${originalIdx})">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
+                    } else if (currentTab === 'traits' && k === 'id' && row.id === 'region') {
+                        bodyHtml += `<td class="px-4 py-3 bg-slate-100 text-slate-500 font-mono" title="The Region trait ID is required by the specialized region interface and cannot be changed.">${escapeHtml(val)} <i class="fas fa-lock ml-1 text-[10px]"></i></td>`;
                     } else if (isComplex) {
                         display = Array.isArray(val) ? `<span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium">${val.length} items</span>` : `<span class="px-2 py-1 bg-purple-50 text-purple-600 rounded text-xs font-medium">Object</span>`;
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openComplexEditor('${currentTab}', ${originalIdx}, '${k}')">${display}</td>`;
@@ -1031,6 +1038,11 @@
 
         function updateCell(type, idx, key, val, element) {
             const oldVal = db[type][idx][key];
+            if (type === 'traits' && key === 'id' && oldVal === 'region') {
+                if (element) element.innerText = oldVal;
+                printLog('The Region trait ID is required by the specialized region interface and cannot be changed.', true);
+                return false;
+            }
             let newVal = val;
             if (typeof oldVal === 'number') newVal = parseFloat(val);
             if (val === 'null') newVal = null;
@@ -1360,7 +1372,9 @@
             } else {
                 template = JSON.parse(JSON.stringify(defaultTemplates[type]));
                 if (type === 'flyData' && db.traits) {
-                    db.traits.forEach(t => { template[t.id] = []; });
+                    db.traits.forEach(t => {
+                        if (t.id !== 'region') template[t.id] = [];
+                    });
                 }
             }
 

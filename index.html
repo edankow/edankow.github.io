@@ -1225,10 +1225,15 @@ function finishConfirmedImmediateID(observationId) {
     }
     const collapsedTraitCategories = new Set(traitCategoryConfigs.map(category => category.id));
     function getTraitCategoryId(traitId) {
-        const categoryId = traitId === 'region'
-            ? 'location'
-            : traits.find(trait => trait.id === traitId)?.category;
+        const categoryId = traits.find(trait => trait.id === traitId)?.category
+            || (traitId === 'region' ? 'location' : null);
         return traitCategoryConfigs.some(category => category.id === categoryId) ? categoryId : 'other';
+    }
+
+    function getAllQuestions() {
+        return traits.some(trait => trait.id === 'region')
+            ? [...traits]
+            : [{ id: 'region', category: 'location', title: 'Region', weight: 10 }, ...traits];
     }
 
     function toggleTraitCategory(categoryId) {
@@ -1287,7 +1292,7 @@ function finishConfirmedImmediateID(observationId) {
             });
         });
 
-        const allQuestions = [{ id: 'region', title: 'Region', weight: 10}, ...traits];
+        const allQuestions = getAllQuestions();
 	const answered = allQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id) || beginnerSkips.includes(q.id));
         const unanswered = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id) && !beginnerSkips.includes(q.id));
 
@@ -1313,6 +1318,7 @@ function finishConfirmedImmediateID(observationId) {
             const categoryQuestions = finalOrder.filter(q => getTraitCategoryId(q.id) === category.id);
             if (categoryQuestions.length === 0) return '';
             const completedCount = categoryQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id) || beginnerSkips.includes(q.id)).length;
+            const hasSkippableTraits = categoryQuestions.some(q => q.id !== 'region');
             const isCollapsed = collapsedTraitCategories.has(category.id);
 
             const itemsHtml = categoryQuestions.map(q => {
@@ -1332,7 +1338,7 @@ function finishConfirmedImmediateID(observationId) {
                         <span>${category.label}</span>
                         <span class="trait-category-meta">
                             ${completedCount}/${categoryQuestions.length}
-                            ${category.id !== 'location'
+                            ${hasSkippableTraits
                                 ? `<span onclick="event.stopPropagation(); skipCategoryNotVisible('${category.id}')" title="Mark all unanswered traits in this category as not visible"> ⊘ </span>`
                                 : ''}
                             ${isCollapsed ? '▸' : '▾'}
@@ -1781,7 +1787,7 @@ function escapeRegionString(value) {
 
     function skipCategoryNotVisible(categoryId) {
         const categoryTraits = traits.filter(
-            trait => getTraitCategoryId(trait.id) === categoryId
+            trait => trait.id !== 'region' && getTraitCategoryId(trait.id) === categoryId
         );
 
         categoryTraits.forEach(trait => {
@@ -2090,7 +2096,7 @@ function jumpToNextQuestion() {
         });
     });
 
-    const allQuestions = [{ id: 'region', title: 'Region', weight: 10}, ...traits];
+    const allQuestions = getAllQuestions();
     
     // 2. Filter for only unanswered and unskipped questions
     const remaining = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id) && !beginnerSkips.includes(q.id));
