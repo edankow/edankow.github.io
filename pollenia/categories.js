@@ -1,5 +1,10 @@
 const categories = Object.freeze([
   {
+    "id": "location",
+    "icon": "📍",
+    "title": "Location"
+  },
+  {
     "id": "head",
     "icon": "👤",
     "title": "Head"

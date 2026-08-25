@@ -1298,6 +1298,9 @@ function finishConfirmedImmediateID(observationId) {
         id: category.id,
         label: `${category.icon || ''}${category.icon ? ' ' : ''}${category.title || category.id}`
     }));
+    if (!traitCategoryConfigs.some(category => category.id === 'location')) {
+        traitCategoryConfigs.unshift({ id: 'location', label: '📍 Location' });
+    }
     if (!traitCategoryConfigs.some(category => category.id === 'other')) {
         traitCategoryConfigs.push({ id: 'other', label: 'Other' });
     }

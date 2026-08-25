@@ -1,5 +1,13 @@
 const traits = [
   {
+    "id": "region",
+    "category": "location",
+    "title": "Region",
+    "weight": 10,
+    "link": "",
+    "options": []
+  },
+  {
     "id": "fronshape",
     "category": "head",
     "title": "Frons width (to separate males and females)",

@@ -297,6 +297,20 @@
         }
 
         const restoredWorkspaceDraft = restoreWorkspaceDraft();
+        function ensureRegionTraitConfiguration() {
+            if (!Array.isArray(db.categories)) db.categories = [];
+            if (!db.categories.some(category => category.id === 'location')) {
+                db.categories.unshift({ id: 'location', icon: '📍', title: 'Location' });
+            }
+            if (!Array.isArray(db.traits)) db.traits = [];
+            const regionTrait = db.traits.find(trait => trait.id === 'region');
+            if (regionTrait) {
+                regionTrait.category = 'location';
+            } else {
+                db.traits.unshift({ id: 'region', category: 'location', title: 'Region', weight: 10, link: '', options: [] });
+            }
+        }
+        ensureRegionTraitConfiguration();
         let lastWorkspaceDraft = null;
 
         function saveWorkspaceDraft() {
@@ -472,6 +486,7 @@
                 }
             }
 
+            ensureRegionTraitConfiguration();
             finishLoading();
             printLog(`Imported ${loadedCount} file${loadedCount === 1 ? '' : 's'} manually.`);
             event.target.value = '';
@@ -516,8 +531,8 @@
                 }],
                 taxa: [],
                 outgroupTaxa: [],
-                traits: [],
-                categories: [],
+                traits: [{ id: 'region', category: 'location', title: 'Region', weight: 10, link: '', options: [] }],
+                categories: [{ id: 'location', icon: '📍', title: 'Location' }],
                 flyData: [],
                 regions: linkedRegions
             };
