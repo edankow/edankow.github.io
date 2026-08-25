@@ -256,6 +256,11 @@ let isPinned = false;
 
 let CURRENT_TAXON_ID = window.DEFAULT_TAXON; // Default taxon ID
 let IDENTIFY_OWN_OBSERVATIONS = false;
+let UNREVIEWED_QUEUE_FILTERS = null;
+
+function refreshObservationApiBase() {
+    API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}&only_id=false&fields=all&quality_grade=needs_id`;
+}
 
 function trackGoatCounterEvent(path, title) {
     const event = { path, title, event: true, no_session: true };
@@ -303,7 +308,7 @@ function loadFiltersFromURL() {
 
     OTHER_FILTERS = extraFilters.toString();
     if (OTHER_FILTERS) OTHER_FILTERS = '&' + OTHER_FILTERS;
-    API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}&only_id=false&fields=all&quality_grade=needs_id`;
+    refreshObservationApiBase();
 }
 
 function updateBookmarkURL() {
@@ -344,7 +349,28 @@ function toggleIdentifyOwnObservations() {
         return;
     }
 
-    IDENTIFY_OWN_OBSERVATIONS = !IDENTIFY_OWN_OBSERVATIONS;
+    if (!IDENTIFY_OWN_OBSERVATIONS) {
+        // "My observations" starts from this key's clean defaults instead of
+        // inheriting a focused-group search or other filters that may yield nothing.
+        UNREVIEWED_QUEUE_FILTERS = {
+            taxonId: CURRENT_TAXON_ID,
+            placeId: CURRENT_PLACE_ID,
+            otherFilters: OTHER_FILTERS
+        };
+        CURRENT_TAXON_ID = window.DEFAULT_TAXON;
+        CURRENT_PLACE_ID = window.DEFAULT_PLACE_ID;
+        OTHER_FILTERS = '';
+        IDENTIFY_OWN_OBSERVATIONS = true;
+    } else {
+        IDENTIFY_OWN_OBSERVATIONS = false;
+        if (UNREVIEWED_QUEUE_FILTERS) {
+            CURRENT_TAXON_ID = UNREVIEWED_QUEUE_FILTERS.taxonId;
+            CURRENT_PLACE_ID = UNREVIEWED_QUEUE_FILTERS.placeId;
+            OTHER_FILTERS = UNREVIEWED_QUEUE_FILTERS.otherFilters;
+            UNREVIEWED_QUEUE_FILTERS = null;
+        }
+    }
+    refreshObservationApiBase();
     updateIdentifyOwnObservationsLink();
     updateBookmarkURL();
     OBSERVATION_QUEUE = [];
@@ -2297,6 +2323,13 @@ async function generateCodeChallenge(verifier) {
 //finds the oldest observation that is needs ID and returns a series of observations with that ID and locality:
 async function searchBoundaryObservation() {
     try {
+        // A focused-group search is a fresh unreviewed search. Do not inherit
+        // "my observations" mode or custom URL filters from the current queue.
+        IDENTIFY_OWN_OBSERVATIONS = false;
+        UNREVIEWED_QUEUE_FILTERS = null;
+        OTHER_FILTERS = '';
+        updateIdentifyOwnObservationsLink();
+
         // Always begin a focused-group search from this key's configured taxon,
         // even if the user previously changed the queue's taxon filter.
         CURRENT_TAXON_ID = window.DEFAULT_TAXON;
@@ -2306,19 +2339,13 @@ async function searchBoundaryObservation() {
             `&only_id=false` +
             `&fields=all` +
             `&quality_grade=needs_id`;
+        updateBookmarkURL();
 
         const excludedIds = FINISHED_OBS_IDS.length
             ? `&not_id=${FINISHED_OBS_IDS.join(",")}`
             : "";
 
-        // Remove any existing order parameter before adding order=asc
-        const filtersWithoutOrder = OTHER_FILTERS
-            .replace(/&?order=(asc|desc)/gi, "")
-            .replace(/^&+/, "");
-
-        const cleanedFilters = filtersWithoutOrder
-            ? `&${filtersWithoutOrder}`
-            : "";
+        const cleanedFilters = "";
 
         const ascURL =
             `${API_BASE}` +
