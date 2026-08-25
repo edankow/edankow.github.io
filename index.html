@@ -1103,11 +1103,12 @@ function getImmediateIdNarrative(taxonInfo) {
     let narrativeText = document.getElementById('summary-content').innerHTML;
     const placeholder = "Select traits to generate description.";
     if (!narrativeText || narrativeText === placeholder) return "";
+    const datasetKeyURL = `https://edankow.github.io/identify/?dataset=${encodeURIComponent(window.ACTIVE_DATASET)}`;
 
     if (MY_USER_LOGIN?.toLowerCase() === "edanko") {
-        narrativeText += "<br><br>--------------------------<br><br>I made this identification using my interactive key at https://edankow.github.io/identify/.";
+        narrativeText += `<br><br>--------------------------<br><br>I made this identification using my interactive key at ${datasetKeyURL}.`;
     } else {
-        narrativeText += "<br><br>--------------------------<br><br>This identification was made and posted using @edanko’s interactive key at https://edankow.github.io/identify/.";
+        narrativeText += `<br><br>--------------------------<br><br>This identification was made and posted using @edanko’s interactive key at ${datasetKeyURL}.`;
     }
     return narrativeText;
 }
