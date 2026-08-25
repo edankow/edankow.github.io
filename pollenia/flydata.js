@@ -71,6 +71,9 @@ const flyData = [
     "paleSetulae": [
       "With tuft of pale setulae"
     ],
+    "thoracicStripe": [
+      "three pale markings divided by two narrow, off-center black stripes"
+    ],
     "taxonomy": [
       "Pollenia",
       "Pollenia pediculata"
@@ -153,6 +156,9 @@ const flyData = [
     ],
     "PresuturalIntraAlar": [
       "2 pre-sutural intra-alar setae"
+    ],
+    "thoracicStripe": [
+      "two pale stripes divided by a single wide black median stripe"
     ],
     "taxonomy": [
       "Pollenia",
@@ -238,6 +244,15 @@ const flyData = [
     "PresuturalIntraAlar": [
       "1 pre-sutural intra-alar setae"
     ],
+    "thoracicStripe": [
+      "three pale markings divided by two narrow, off-center black stripes"
+    ],
+    "basicosta": [
+      "dark brown to black."
+    ],
+    "posterior spiracle": [
+      "dark brown"
+    ],
     "taxonomy": [
       "Pollenia",
       "Pollenia labialis"
@@ -320,6 +335,15 @@ const flyData = [
     ],
     "PresuturalIntraAlar": [
       "1 pre-sutural intra-alar setae"
+    ],
+    "thoracicStripe": [
+      "three pale markings divided by two narrow, off-center black stripes"
+    ],
+    "basicosta": [
+      "light brown or medium brown, not dark brown"
+    ],
+    "posterior spiracle": [
+      "light brown, yellow, or orange"
     ],
     "taxonomy": [
       "Pollenia",
@@ -404,6 +428,15 @@ const flyData = [
     "PresuturalIntraAlar": [
       "1 pre-sutural intra-alar setae"
     ],
+    "thoracicStripe": [
+      "three pale markings divided by two narrow, off-center black stripes"
+    ],
+    "basicosta": [
+      "light brown or medium brown, not dark brown"
+    ],
+    "posterior spiracle": [
+      "light brown, yellow, or orange"
+    ],
     "taxonomy": [
       "Pollenia",
       "Pollenia angustigena"
@@ -487,6 +520,15 @@ const flyData = [
     ],
     "PresuturalIntraAlar": [
       "1 pre-sutural intra-alar setae"
+    ],
+    "thoracicStripe": [
+      "three pale markings divided by two narrow, off-center black stripes"
+    ],
+    "basicosta": [
+      "light brown or medium brown, not dark brown"
+    ],
+    "posterior spiracle": [
+      "light brown, yellow, or orange"
     ],
     "taxonomy": [
       "Pollenia",
