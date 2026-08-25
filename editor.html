@@ -137,6 +137,9 @@
                     <input type="file" multiple onchange="loadFiles(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                 </div>
                 <div id="export-container" class="hidden space-y-2">
+                    <button type="button" onclick="exportChangedFiles()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-file-arrow-down"></i> Export Changed Files
+                    </button>
                     <button type="button" onclick="exportAll()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
                         <i class="fas fa-file-export"></i> Export All Files
                     </button>
@@ -273,6 +276,11 @@
         let flyDataSort = { key: null, direction: null };
         let inatTaxonSearchTimeout = null;
         let inatTaxonSearchResults = new Map();
+        const exportableTypes = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData'];
+        const exportedFileSignatures = Object.fromEntries(
+            exportableTypes.map(type => [type, JSON.stringify(db[type])])
+        );
+        const loadedWorkspaceSignature = JSON.stringify({ db, editorMapData });
         const workspaceDraftKey = `identify-editor-draft:${window.location.pathname}:${window.ACTIVE_DATASET}`;
         let restoredWorkspaceTab = null;
 
@@ -282,6 +290,10 @@
                 if (!saved) return false;
                 const draft = JSON.parse(saved);
                 if (!draft?.db || typeof draft.db !== 'object') return false;
+                if (draft.sourceSignature !== loadedWorkspaceSignature) {
+                    sessionStorage.removeItem(workspaceDraftKey);
+                    return false;
+                }
                 db = draft.db;
                 if (draft.editorMapData) editorMapData = draft.editorMapData;
                 restoredWorkspaceTab = draft.currentTab || null;
@@ -293,7 +305,7 @@
         }
 
         function serializeWorkspaceDraft() {
-            return JSON.stringify({ db, editorMapData, currentTab });
+            return JSON.stringify({ sourceSignature: loadedWorkspaceSignature, db, editorMapData, currentTab });
         }
 
         const restoredWorkspaceDraft = restoreWorkspaceDraft();
@@ -1588,9 +1600,31 @@
                 else renderTable();
                 return false;
             }
-            const types = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData'];
-            const results = types.filter(type => db[type]).map(type => exportFile(type));
-            if (results.every(Boolean)) printLog("All available files exported.");
+            const availableTypes = exportableTypes.filter(type => db[type]);
+            const results = availableTypes.map(type => exportFile(type));
+            if (results.every(Boolean)) {
+                availableTypes.forEach(type => { exportedFileSignatures[type] = JSON.stringify(db[type]); });
+                printLog("All available files exported.");
+            }
+        }
+
+        function exportChangedFiles() {
+            const changedTypes = exportableTypes.filter(
+                type => db[type] && JSON.stringify(db[type]) !== exportedFileSignatures[type]
+            );
+            if (changedTypes.length === 0) {
+                printLog('No dataset files have changed.');
+                alert('No dataset files have changed since they were loaded or last exported.');
+                return true;
+            }
+
+            const results = changedTypes.map(type => exportFile(type));
+            if (results.every(Boolean)) {
+                changedTypes.forEach(type => { exportedFileSignatures[type] = JSON.stringify(db[type]); });
+                printLog(`Exported ${changedTypes.length} changed file${changedTypes.length === 1 ? '' : 's'}.`);
+                return true;
+            }
+            return false;
         }
 
         initializeAutoLoadedFiles();
