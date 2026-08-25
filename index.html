@@ -1958,8 +1958,11 @@ function escapeRegionString(value) {
             if (filtered.length === 0) {
                 narrative.push("<br><br><strong>No matching species found.</strong>");
             } else {
-                const uniqueSexes = [...new Set(filtered.map(f => f.m_or_f).filter(Boolean))];
-                const sexPrefix = uniqueSexes.length === 1 ? `${uniqueSexes[0]} ` : "";
+                const specifiedSexes = filtered.map(f => String(f.m_or_f || '').trim()).filter(Boolean);
+                const uniqueSexes = [...new Set(specifiedSexes)];
+                const sexPrefix = specifiedSexes.length === filtered.length && uniqueSexes.length === 1
+                    ? `${uniqueSexes[0]} `
+                    : "";
                 
                 let lowestTaxonDisplay = "Unknown";
                 if (commonTaxa && commonTaxa.length > 0) {
