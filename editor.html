@@ -127,15 +127,6 @@
             </nav>
 
             <div class="p-4 border-t border-slate-100 space-y-3">
-                <button type="button" onclick="createNewDataset()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
-                    <i class="fas fa-file-circle-plus"></i> New Dataset
-                </button>
-                <div class="relative">
-                    <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-file-import"></i> Import Files
-                    </button>
-                    <input type="file" multiple onchange="loadFiles(event)" class="absolute inset-0 opacity-0 cursor-pointer">
-                </div>
                 <div id="export-container" class="hidden space-y-2">
                     <button type="button" onclick="exportChangedFiles()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
                         <i class="fas fa-file-arrow-down"></i> Export Changed Files
@@ -178,7 +169,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">The editor automatically loads its selected dataset folder and the region set named by that dataset's <b>REGION_SET</b> metadata. You can still import files manually from the sidebar.</p>
+                    <p class="text-slate-500 max-w-md">Choose a configured dataset at startup, or start a new dataset from scratch.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -235,24 +226,34 @@
     <script>
         const editorDatasets = window.DATASET_LISTS?.editor || [];
         const requestedDataset = new URLSearchParams(window.location.search).get('dataset');
-        window.ACTIVE_DATASET = editorDatasets.includes(requestedDataset) ? requestedDataset : editorDatasets[0];
-        if (!window.ACTIVE_DATASET || !/^[a-z0-9-]+$/.test(window.ACTIVE_DATASET)) {
-            throw new Error('datasets.js must provide at least one valid editor dataset folder.');
+        window.START_NEW_DATASET = requestedDataset === 'new';
+        window.ACTIVE_DATASET = editorDatasets.includes(requestedDataset)
+            ? requestedDataset
+            : (window.START_NEW_DATASET ? 'new' : null);
+        window.EDITOR_AWAITING_DATASET = !window.ACTIVE_DATASET;
+        if (window.EDITOR_AWAITING_DATASET) {
+            window.showDatasetChooser('editor', true);
+        } else if (!window.START_NEW_DATASET) {
+            document.write(`<script src="${window.ACTIVE_DATASET}/header.js"><\/script>`);
+        } else {
+            window.REGION_SET = 'us-canada';
         }
-        if (!editorDatasets.includes(requestedDataset)) window.showDatasetChooser('editor');
-        document.write(`<script src="${window.ACTIVE_DATASET}/header.js"><\/script>`);
     </script>
     <script>
-        if (!window.REGION_SET || !/^[a-z0-9-]+$/.test(window.REGION_SET)) {
-            throw new Error('header.js must define a valid REGION_SET.');
+        if (!window.EDITOR_AWAITING_DATASET) {
+            if (!window.REGION_SET || !/^[a-z0-9-]+$/.test(window.REGION_SET)) {
+                throw new Error('header.js must define a valid REGION_SET.');
+            }
+            document.write(`<script src="regions/${window.REGION_SET}/regions.js"><\/script>`);
+            document.write(`<script src="regions/${window.REGION_SET}/map_paths.js"><\/script>`);
+            if (!window.START_NEW_DATASET) {
+                document.write(`<script src="${window.ACTIVE_DATASET}/taxa.js"><\/script>`);
+                document.write(`<script src="${window.ACTIVE_DATASET}/outgroup_taxa.js"><\/script>`);
+                document.write(`<script src="${window.ACTIVE_DATASET}/traits.js"><\/script>`);
+                document.write(`<script src="${window.ACTIVE_DATASET}/categories.js"><\/script>`);
+                document.write(`<script src="${window.ACTIVE_DATASET}/flydata.js"><\/script>`);
+            }
         }
-        document.write(`<script src="regions/${window.REGION_SET}/regions.js"><\/script>`);
-        document.write(`<script src="regions/${window.REGION_SET}/map_paths.js"><\/script>`);
-        document.write(`<script src="${window.ACTIVE_DATASET}/taxa.js"><\/script>`);
-        document.write(`<script src="${window.ACTIVE_DATASET}/outgroup_taxa.js"><\/script>`);
-        document.write(`<script src="${window.ACTIVE_DATASET}/traits.js"><\/script>`);
-        document.write(`<script src="${window.ACTIVE_DATASET}/categories.js"><\/script>`);
-        document.write(`<script src="${window.ACTIVE_DATASET}/flydata.js"><\/script>`);
     </script>
     <script>
         const cloneLoadedData = value => JSON.parse(JSON.stringify(value));
@@ -280,35 +281,6 @@
         const exportedFileSignatures = Object.fromEntries(
             exportableTypes.map(type => [type, JSON.stringify(db[type])])
         );
-        const loadedWorkspaceSignature = JSON.stringify({ db, editorMapData });
-        const workspaceDraftKey = `identify-editor-draft:${window.location.pathname}:${window.ACTIVE_DATASET}`;
-        let restoredWorkspaceTab = null;
-
-        function restoreWorkspaceDraft() {
-            try {
-                const saved = sessionStorage.getItem(workspaceDraftKey);
-                if (!saved) return false;
-                const draft = JSON.parse(saved);
-                if (!draft?.db || typeof draft.db !== 'object') return false;
-                if (draft.sourceSignature !== loadedWorkspaceSignature) {
-                    sessionStorage.removeItem(workspaceDraftKey);
-                    return false;
-                }
-                db = draft.db;
-                if (draft.editorMapData) editorMapData = draft.editorMapData;
-                restoredWorkspaceTab = draft.currentTab || null;
-                return true;
-            } catch (error) {
-                console.warn('Could not restore the editor workspace draft.', error);
-                return false;
-            }
-        }
-
-        function serializeWorkspaceDraft() {
-            return JSON.stringify({ sourceSignature: loadedWorkspaceSignature, db, editorMapData, currentTab });
-        }
-
-        const restoredWorkspaceDraft = restoreWorkspaceDraft();
         function ensureRegionTraitConfiguration() {
             if (!Array.isArray(db.categories)) db.categories = [];
             if (!db.categories.some(category => category.id === 'location')) {
@@ -322,23 +294,7 @@
                 db.traits.unshift({ id: 'region', category: 'location', title: 'Region', weight: 10, link: '', options: [] });
             }
         }
-        ensureRegionTraitConfiguration();
-        let lastWorkspaceDraft = null;
-
-        function saveWorkspaceDraft() {
-            try {
-                const serialized = serializeWorkspaceDraft();
-                if (lastWorkspaceDraft === null) {
-                    lastWorkspaceDraft = serialized;
-                    return;
-                }
-                if (serialized === lastWorkspaceDraft) return;
-                sessionStorage.setItem(workspaceDraftKey, serialized);
-                lastWorkspaceDraft = serialized;
-            } catch (error) {
-                console.warn('Could not save the editor workspace draft.', error);
-            }
-        }
+        if (!window.EDITOR_AWAITING_DATASET) ensureRegionTraitConfiguration();
 
         const tabConfigs = {
             header: { title: "Workspace Settings", desc: "Manage the titles, defaults, and About content for this identification dataset." },
@@ -523,13 +479,11 @@
                 const missingNote = missingFiles.length ? ` Missing: ${missingFiles.join(', ')}.` : '';
                 printLog(`Automatically loaded ${loadedFiles.length}/${expectedFiles.length} files.${missingNote}`, missingFiles.length > 0);
             } else {
-                printLog('No neighboring database files were found. Use Import Files in the sidebar.', true);
+                printLog('No configured dataset files were loaded.', true);
             }
         }
 
-        function createNewDataset() {
-            if (!confirm('Start a new dataset? Any unexported changes in the current workspace will be lost.')) return;
-
+        function initializeNewDataset() {
             const linkedRegionSet = db.header?.[0]?.REGION_SET || window.REGION_SET || '';
             const linkedRegions = db.regions ? cloneLoadedData(db.regions) : [];
             db = {
@@ -1180,8 +1134,56 @@
                 return false;
             }
 
+            if (type === 'traits' && key === 'id' && oldVal !== newVal) {
+                const conflictingFly = (db.flyData || []).find(fly =>
+                    Object.prototype.hasOwnProperty.call(fly, oldVal) &&
+                    Object.prototype.hasOwnProperty.call(fly, newVal)
+                );
+                if (conflictingFly) {
+                    if (element) element.innerText = oldVal;
+                    alert(`Cannot rename this trait to "${newVal}" because Fly Database record "${conflictingFly.id || 'unnamed'}" already contains both columns.`);
+                    return false;
+                }
+            }
+
             if (oldVal !== newVal) {
                 db[type][idx][key] = newVal;
+                if (type === 'categories' && key === 'id') {
+                    let updatedTraits = 0;
+                    (db.traits || []).forEach(trait => {
+                        if (trait.category === oldVal) {
+                            trait.category = newVal;
+                            updatedTraits++;
+                        }
+                    });
+                    printLog(`Renamed category "${oldVal}" to "${newVal}" and updated ${updatedTraits} assigned trait${updatedTraits === 1 ? '' : 's'}.`);
+                }
+                if (type === 'traits' && key === 'id') {
+                    let updatedFlies = 0;
+                    (db.flyData || []).forEach(fly => {
+                        if (!Object.prototype.hasOwnProperty.call(fly, oldVal)) return;
+                        fly[newVal] = fly[oldVal];
+                        delete fly[oldVal];
+                        updatedFlies++;
+                    });
+                    printLog(`Renamed trait "${oldVal}" to "${newVal}" and updated ${updatedFlies} Fly Database record${updatedFlies === 1 ? '' : 's'}.`);
+                }
+                if (type === 'taxa' && key === 'name') {
+                    let updatedReferences = 0;
+                    (db.taxa || []).forEach(taxon => {
+                        if (taxon.parent === oldVal) {
+                            taxon.parent = newVal;
+                            updatedReferences++;
+                        }
+                    });
+                    (db.flyData || []).forEach(fly => {
+                        if (fly.species === oldVal) {
+                            fly.species = newVal;
+                            updatedReferences++;
+                        }
+                    });
+                    printLog(`Renamed taxon "${oldVal}" to "${newVal}" and updated ${updatedReferences} dependent reference${updatedReferences === 1 ? '' : 's'}.`);
+                }
                 if (type === 'header' && key === 'SHORT_TITLE') {
                     document.getElementById('dataset-short-title').innerText = newVal || 'Identification Dataset';
                 }
@@ -1437,8 +1439,8 @@
                         <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 relative group">
                             <div class="flex justify-between mb-2"><span class="text-xs font-bold text-slate-400 uppercase">Option ${i + 1}</span><button onclick="removeOption(${i})" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-all"><i class="fas fa-times"></i></button></div>
                             <div class="space-y-3">
-                                <input type="text" class="w-full p-2 border border-slate-200 rounded-lg text-sm" value="${opt.label || ''}" placeholder="Label" onchange="updateOption(${i}, 'label', this.value)">
-                                <textarea class="w-full p-2 border border-slate-200 rounded-lg text-sm" rows="2" placeholder="Description" onchange="updateOption(${i}, 'description', this.value)">${opt.description || ''}</textarea>
+                                <input type="text" class="w-full p-2 border border-slate-200 rounded-lg text-sm" value="${opt.label || ''}" placeholder="Label" oninput="updateOption(${i}, 'label', this.value)">
+                                <textarea class="w-full p-2 border border-slate-200 rounded-lg text-sm" rows="2" placeholder="Description" oninput="updateOption(${i}, 'description', this.value)">${opt.description || ''}</textarea>
                             </div>
                         </div>`;
                 });
@@ -1481,7 +1483,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const modal = document.getElementById('modal');
-                if (!modal.classList.contains('hidden')) closeModal();
+                if (!modal.classList.contains('hidden')) saveModal();
                 document.querySelectorAll('.taxon-popover.open').forEach(p => p.classList.remove('open'));
             }
         });
@@ -1603,8 +1605,7 @@
             const availableTypes = exportableTypes.filter(type => db[type]);
             const results = availableTypes.map(type => exportFile(type));
             if (results.every(Boolean)) {
-                availableTypes.forEach(type => { exportedFileSignatures[type] = JSON.stringify(db[type]); });
-                printLog("All available files exported.");
+                printLog("Download requested for all available files.");
             }
         }
 
@@ -1614,25 +1615,22 @@
             );
             if (changedTypes.length === 0) {
                 printLog('No dataset files have changed.');
-                alert('No dataset files have changed since they were loaded or last exported.');
+                alert('No dataset files have changed since they were loaded.');
                 return true;
             }
 
             const results = changedTypes.map(type => exportFile(type));
             if (results.every(Boolean)) {
-                changedTypes.forEach(type => { exportedFileSignatures[type] = JSON.stringify(db[type]); });
-                printLog(`Exported ${changedTypes.length} changed file${changedTypes.length === 1 ? '' : 's'}.`);
+                printLog(`Download requested for ${changedTypes.length} changed file${changedTypes.length === 1 ? '' : 's'}.`);
                 return true;
             }
             return false;
         }
 
-        initializeAutoLoadedFiles();
-        if (restoredWorkspaceTab && tabConfigs[restoredWorkspaceTab]) switchTab(restoredWorkspaceTab);
-        lastWorkspaceDraft = serializeWorkspaceDraft();
-        if (restoredWorkspaceDraft) printLog('Restored unsaved workspace changes after reload.');
-        window.setInterval(saveWorkspaceDraft, 2000);
-        window.addEventListener('beforeunload', saveWorkspaceDraft);
+        if (!window.EDITOR_AWAITING_DATASET) {
+            if (window.START_NEW_DATASET) initializeNewDataset();
+            else initializeAutoLoadedFiles();
+        }
     </script>
 </body>
 </html>

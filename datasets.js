@@ -10,9 +10,9 @@ window.DATASET_LISTS = Object.freeze({
   ])
 });
 
-window.showDatasetChooser = function showDatasetChooser(pageKey) {
+window.showDatasetChooser = function showDatasetChooser(pageKey, includeNewDataset = false) {
   const datasets = window.DATASET_LISTS?.[pageKey] || [];
-  if (datasets.length < 2) return;
+  if (datasets.length < 2 && !includeNewDataset) return;
 
   const overlay = document.createElement("div");
   overlay.setAttribute("role", "dialog");
@@ -40,6 +40,18 @@ window.showDatasetChooser = function showDatasetChooser(pageKey) {
     });
     choices.appendChild(button);
   });
+  if (includeNewDataset) {
+    const newButton = document.createElement("button");
+    newButton.type = "button";
+    newButton.textContent = "Start New Dataset";
+    newButton.style.cssText = "width:100%;margin-top:6px;padding:12px 16px;border:1px solid #0f172a;border-radius:10px;background:#0f172a;color:#fff;font:600 16px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;cursor:pointer;text-align:left";
+    newButton.addEventListener("click", () => {
+      const params = new URLSearchParams(window.location.search);
+      params.set("dataset", "new");
+      window.location.search = params.toString();
+    });
+    choices.appendChild(newButton);
+  }
 
   panel.appendChild(choices);
   overlay.appendChild(panel);
