@@ -146,6 +146,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "at least partially orange, yellow, or whitish."
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -308,6 +314,9 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "at least partially orange, yellow, or whitish."
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -780,6 +789,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "at least partially orange, yellow, or whitish."
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -1165,6 +1180,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "at least partially orange, yellow, or whitish."
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -2460,6 +2481,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "at least partially orange, yellow, or whitish."
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -2616,6 +2643,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "at least partially orange, yellow, or whitish."
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -2777,6 +2810,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -2939,6 +2978,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -3061,6 +3106,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -3181,6 +3232,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -3306,6 +3363,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
@@ -3426,6 +3489,12 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
     ]
   },
   {
