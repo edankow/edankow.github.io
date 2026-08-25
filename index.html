@@ -849,6 +849,9 @@ function copyNarrativeToClipboard() {
 async function showNextFromQueue() {
     if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
     const obs = OBSERVATION_QUEUE.shift();
+    // Every observation starts with a clean identification matrix. Location is
+    // applied for the new record below after its place hierarchy is fetched.
+    resetMatrix();
     CURRENT_OBSERVATION = obs; // saved and checked when posting comment to see if all IDs are CV
     CURRENT_OBS_ID = obs.id;
     document.getElementById('queue-count').innerText = `  (${1+TOTAL_API_RESULTS + OBSERVATION_QUEUE.length - Math.min(BATCH_SIZE, TOTAL_API_RESULTS)} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
@@ -1281,7 +1284,6 @@ function finishConfirmedImmediateID(observationId) {
 
     function excludeAndNext(obsId) {
         if (!FINISHED_OBS_IDS.includes(obsId)) FINISHED_OBS_IDS.push(obsId);
-        resetMatrix();
         showNextFromQueue();
     }
 
