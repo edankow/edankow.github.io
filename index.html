@@ -12,7 +12,7 @@
 <div id="modal-filters" class="modal">
     <div class="modal-content">
         <h3>Add Extra URL Filters</h3>
-        <p style="font-size: 0.8rem; color: #666;">Enter additional iNaturalist API parameters (e.g., <code>user_id=username</code>, <code>order=asc</code>, <code>disagreements=true</code>, or <code>lrank=complex</code>).</p>
+        <p style="font-size: 0.8rem; color: #666;">Enter additional iNaturalist API parameters (e.g., <code>user_id=username</code>; <code>quality_grade=needs_id,research</code>; <code>order=asc</code>; <code>disagreements=true</code>; or <code>lrank=complex</code>).</p>
         <input type="text" id="new-other-filters" placeholder="e.g. user_id=edanko">
         <div style="display:flex; gap:10px;">
             <button onclick="updateOtherFilters()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Update & Refresh</button>
@@ -250,7 +250,7 @@
     let CURRENT_COMMUNITY_ID = null;
     let CURRENT_PLACE_ID = window.DEFAULT_PLACE_ID; // Default from header.js
     let OTHER_FILTERS = ""; // Default other filters
-    let API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${window.DEFAULT_TAXON}&only_id=false&fields=all&quality_grade=needs_id`;
+    let API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${window.DEFAULT_TAXON}&only_id=false&fields=all`;
 
 let isPinned = false; 
 
@@ -259,7 +259,16 @@ let IDENTIFY_OWN_OBSERVATIONS = false;
 let UNREVIEWED_QUEUE_FILTERS = null;
 
 function refreshObservationApiBase() {
-    API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}&only_id=false&fields=all&quality_grade=needs_id`;
+    API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}&only_id=false&fields=all`;
+}
+
+function getQueueSearchFilters() {
+    const params = new URLSearchParams(OTHER_FILTERS.replace(/^&/, ''));
+    if (!params.has('quality_grade')) {
+        params.set('quality_grade', 'needs_id');
+    }
+    const query = params.toString();
+    return query ? `&${query}` : '';
 }
 
 function trackGoatCounterEvent(path, title) {
@@ -442,7 +451,7 @@ function updateTaxonFilter() {
     if (newId) {
         CURRENT_TAXON_ID = newId;
         // Update the API_BASE to reflect the new taxon ID
-        API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${CURRENT_TAXON_ID}&only_id=false&fields=all&quality_grade=needs_id`;
+        refreshObservationApiBase();
         updateBookmarkURL();
         
         OBSERVATION_QUEUE = []; 
@@ -796,7 +805,7 @@ function copyNarrativeToClipboard() {
         queueCountEl.innerText = " (Refilling buffer...)";
         try {
             const excludedIds = FINISHED_OBS_IDS.length > 0 ? `&not_id=${FINISHED_OBS_IDS.join(',')}` : '';
-            const filteredURL = `${API_BASE}&per_page=${BATCH_SIZE}&place_id=${CURRENT_PLACE_ID}${OTHER_FILTERS}${getAccountQueueFilters()}${excludedIds}`;
+            const filteredURL = `${API_BASE}&per_page=${BATCH_SIZE}&place_id=${CURRENT_PLACE_ID}${getQueueSearchFilters()}${getAccountQueueFilters()}${excludedIds}`;
             const response = await fetch(filteredURL, { headers: { "Authorization": `Bearer ${MY_TOKEN}` } });
             const data = await response.json();
             TOTAL_API_RESULTS = data.total_results || 0;
@@ -2337,8 +2346,7 @@ async function searchBoundaryObservation() {
             `https://api.inaturalist.org/v1/observations` +
             `?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}` +
             `&only_id=false` +
-            `&fields=all` +
-            `&quality_grade=needs_id`;
+            `&fields=all`;
         updateBookmarkURL();
 
         const excludedIds = FINISHED_OBS_IDS.length
@@ -2352,7 +2360,7 @@ async function searchBoundaryObservation() {
             `&per_page=1` +
             `&order=asc` +
             `&place_id=6217,1` +
-            `${cleanedFilters}` +
+            `${getQueueSearchFilters()}` +
             `${getAccountQueueFilters()}` +
             `${excludedIds}`;
 
@@ -2407,10 +2415,8 @@ async function searchBoundaryObservation() {
         API_BASE =
             `https://api.inaturalist.org/v1/observations` +
             `?taxon_id=${taxonID}` +
-	    
             `&only_id=false` +
-            `&fields=all` +
-            `&quality_grade=needs_id`;
+            `&fields=all`;
 
         // Make the subsequent normal search newest-first
         OTHER_FILTERS = cleanedFilters + 
