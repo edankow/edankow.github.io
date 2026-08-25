@@ -1,0 +1,1 @@
+const outgroupTaxa = Object.freeze([]);
