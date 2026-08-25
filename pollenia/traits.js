@@ -202,5 +202,22 @@ const traits = [
         "description": "Setulae on ventral abdomen sparsely spaced (see Jewiss-Gaines et al., 2012)."
       }
     ]
+  },
+  {
+    "id": "Terminaliashape",
+    "category": "abdomen",
+    "title": "Male terminalia shape?",
+    "weight": 1,
+    "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2022/07/jmw_19.pdf#page=22",
+    "options": [
+      {
+        "label": "matching P. angustigena; surstyli straighter and cerci broader",
+        "description": "Male terminalia match P. angustigena; surstyli straighter and cerci broader (see Jewiss-Gaines et al., 2012)."
+      },
+      {
+        "label": "matching P. griseotomentosa; surstyli hook-shaped and cerci more slender",
+        "description": "Male terminalia match P. griseotomentosa; surstyli hook-shaped and cerci more slender (see Jewiss-Gaines et al., 2012)."
+      }
+    ]
   }
 ];
