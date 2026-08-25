@@ -1053,7 +1053,7 @@ function getImmediateIdNarrative(taxonInfo) {
     if (!narrativeText || narrativeText === placeholder) return "";
 
     if (MY_USER_LOGIN?.toLowerCase() === "edanko") {
-        narrativeText += "<br><br>--------------------------<br><br>I made this identification using my interactive key: https://edankow.github.io/identify/.<br><br>Although I can’t personally identify every observation, you can use the key to work through your own observations here: https://edankow.github.io/identify/?own_observations=true";
+        narrativeText += "<br><br>--------------------------<br><br>I made this identification using my interactive key: https://edankow.github.io/identify/.<br><br>You can use the key to work through your own observations here: https://edankow.github.io/identify/?own_observations=true. If you have time, you can also use it to help with other people’s observations. Every identification helps.";
     } else {
         narrativeText += "<br><br>--------------------------<br><br>This identification was made and posted using @edanko’s interactive key at https://edankow.github.io/identify/.";
     }
