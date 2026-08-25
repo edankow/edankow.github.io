@@ -529,15 +529,23 @@ function handleDblClick(event) {
 function startDrag(e) { if(isPinned) isDragging = true; }
 function stopDrag(e) { isDragging = false; }
 
-function getCurrentFlyMatches() {
-    return flyData.filter(fly => {
-        return Object.keys(currentFilters).every(key => {
-            if (currentFilters[key] === null) return true;
-            if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
-            if (fly[key] === undefined) return true;
-            return fly[key] && fly[key].includes(currentFilters[key]);
-        });
+function flyMatchesCurrentFilters(fly) {
+    return Object.keys(currentFilters).every(key => {
+        if (currentFilters[key] === null) return true;
+        if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
+
+        const recordedValues = fly[key];
+        if (recordedValues === undefined || recordedValues === null) return true;
+        if (Array.isArray(recordedValues)) {
+            return recordedValues.length === 0 || recordedValues.includes(currentFilters[key]);
+        }
+        if (String(recordedValues).trim() === '') return true;
+        return String(recordedValues).includes(currentFilters[key]);
     });
+}
+
+function getCurrentFlyMatches() {
+    return flyData.filter(flyMatchesCurrentFilters);
 }
 
 function isBestPossibleId(filtered = getCurrentFlyMatches()) {
@@ -1351,14 +1359,7 @@ function finishConfirmedImmediateID(observationId) {
 
     function renderMenu() {
         const menu = document.getElementById('question-menu');
-        const currentMatches = flyData.filter(fly => {
-            return Object.keys(currentFilters).every(key => {
-                if (currentFilters[key] === null) return true;
-                if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
-		if (fly[key] === undefined) return true;
-                return fly[key] && fly[key].includes(currentFilters[key]);
-            });
-        });
+        const currentMatches = flyData.filter(flyMatchesCurrentFilters);
 
         const allQuestions = getAllQuestions();
 	const answered = allQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id) || beginnerSkips.includes(q.id));
@@ -1624,14 +1625,7 @@ function toggleDrawer(id) {
 }
 
 function getFilteredFlies() {
-    return flyData.filter(fly => {
-        return Object.keys(currentFilters).every(key => {
-            if (currentFilters[key] === null) return true;
-            if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
-            if (fly[key] === undefined) return true;
-            return fly[key] && fly[key].includes(currentFilters[key]);
-        });
-    });
+    return flyData.filter(flyMatchesCurrentFilters);
 }
 
 
@@ -1881,14 +1875,7 @@ function escapeRegionString(value) {
 
 
     function updateUI() {
-        const filtered = flyData.filter(fly => {
-            return Object.keys(currentFilters).every(key => {
-                if (currentFilters[key] === null) return true;
-                if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
-		if (fly[key] === undefined) return true;
-                return fly[key] && fly[key].includes(currentFilters[key]);
-            });
-        });
+        const filtered = flyData.filter(flyMatchesCurrentFilters);
 
         const breadcrumbArea = document.getElementById('taxonomic-breadcrumb');
         const commonTaxa = getLowestCommonTaxon(filtered);
@@ -2155,14 +2142,7 @@ function selectPlace(id, displayName) {
 
 function jumpToNextQuestion() {
     // 1. Get the list of questions in the same order they appear in the menu
-    const currentMatches = flyData.filter(fly => {
-        return Object.keys(currentFilters).every(key => {
-            if (currentFilters[key] === null) return true;
-            if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
-            if (fly[key] === undefined) return true;
-            return fly[key] && fly[key].includes(currentFilters[key]);
-        });
-    });
+    const currentMatches = flyData.filter(flyMatchesCurrentFilters);
 
     const allQuestions = getAllQuestions();
     
