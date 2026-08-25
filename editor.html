@@ -272,6 +272,46 @@
         let flyDataSort = { key: null, direction: null };
         let inatTaxonSearchTimeout = null;
         let inatTaxonSearchResults = new Map();
+        const workspaceDraftKey = `identify-editor-draft:${window.location.pathname}:${window.ACTIVE_DATASET}`;
+        let restoredWorkspaceTab = null;
+
+        function restoreWorkspaceDraft() {
+            try {
+                const saved = sessionStorage.getItem(workspaceDraftKey);
+                if (!saved) return false;
+                const draft = JSON.parse(saved);
+                if (!draft?.db || typeof draft.db !== 'object') return false;
+                db = draft.db;
+                if (draft.editorMapData) editorMapData = draft.editorMapData;
+                restoredWorkspaceTab = draft.currentTab || null;
+                return true;
+            } catch (error) {
+                console.warn('Could not restore the editor workspace draft.', error);
+                return false;
+            }
+        }
+
+        function serializeWorkspaceDraft() {
+            return JSON.stringify({ db, editorMapData, currentTab });
+        }
+
+        const restoredWorkspaceDraft = restoreWorkspaceDraft();
+        let lastWorkspaceDraft = null;
+
+        function saveWorkspaceDraft() {
+            try {
+                const serialized = serializeWorkspaceDraft();
+                if (lastWorkspaceDraft === null) {
+                    lastWorkspaceDraft = serialized;
+                    return;
+                }
+                if (serialized === lastWorkspaceDraft) return;
+                sessionStorage.setItem(workspaceDraftKey, serialized);
+                lastWorkspaceDraft = serialized;
+            } catch (error) {
+                console.warn('Could not save the editor workspace draft.', error);
+            }
+        }
 
         const tabConfigs = {
             header: { title: "Workspace Settings", desc: "Manage the titles, defaults, and About content for this identification dataset." },
@@ -1528,6 +1568,11 @@
         }
 
         initializeAutoLoadedFiles();
+        if (restoredWorkspaceTab && tabConfigs[restoredWorkspaceTab]) switchTab(restoredWorkspaceTab);
+        lastWorkspaceDraft = serializeWorkspaceDraft();
+        if (restoredWorkspaceDraft) printLog('Restored unsaved workspace changes after reload.');
+        window.setInterval(saveWorkspaceDraft, 2000);
+        window.addEventListener('beforeunload', saveWorkspaceDraft);
     </script>
 </body>
 </html>
