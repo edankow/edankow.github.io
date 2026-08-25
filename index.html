@@ -223,13 +223,19 @@
     </div>
 </div>
 
-<script src="regions.js"></script>
+<script src="lucilia/header.js"></script>
+<script>
+    if (!window.REGION_SET || !/^[a-z0-9-]+$/.test(window.REGION_SET)) {
+        throw new Error('header.js must define a valid REGION_SET.');
+    }
+    document.write(`<script src="regions/${window.REGION_SET}/regions.js"><\/script>`);
+    document.write(`<script src="regions/${window.REGION_SET}/map_paths.js"><\/script>`);
+</script>
 <script src="lucilia/categories.js"></script>
 <script src="lucilia/traits.js"></script>
 <script src="lucilia/flydata.js"></script>
 <script src="lucilia/taxa.js"></script>
 <script src="lucilia/outgroup_taxa.js"></script>
-<script src="lucilia/header.js"></script>
 
 
 <script>
