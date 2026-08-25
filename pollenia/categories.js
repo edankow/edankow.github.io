@@ -1,5 +1,10 @@
 const categories = Object.freeze([
   {
+    "id": "head",
+    "icon": "👤",
+    "title": "Head"
+  },
+  {
     "id": "bodycolor",
     "icon": "🟩",
     "title": "Body Color & Appearance"
@@ -13,5 +18,15 @@ const categories = Object.freeze([
     "id": "wings",
     "icon": "🪰",
     "title": "Wings & Posterior Spiracles"
+  },
+  {
+    "id": "legs",
+    "icon": "🦵",
+    "title": "Legs"
+  },
+  {
+    "id": "abdomen",
+    "icon": "🛡️",
+    "title": "Abdomen"
   }
 ]);

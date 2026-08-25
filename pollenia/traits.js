@@ -1,5 +1,39 @@
 const traits = [
   {
+    "id": "fronshape",
+    "category": "head",
+    "title": "Frons width (to separate males and females)",
+    "weight": 9,
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=9",
+    "options": [
+      {
+        "label": "very narrow, <10% head width at narrowest point",
+        "description": "The frons is very narrow, <10% head width at narrowest point."
+      },
+      {
+        "label": "very wide, >20% head width at narrowest point",
+        "description": "The frons is very wide, >20% head width at narrowest point."
+      }
+    ]
+  },
+  {
+    "id": "facialcarina",
+    "category": "head",
+    "title": "Facial carina between antennae",
+    "weight": 2,
+    "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2022/07/jmw_19.pdf#page=5",
+    "options": [
+      {
+        "label": "reduced or absent",
+        "description": "Facial carina reduced or absent."
+      },
+      {
+        "label": "well-developed",
+        "description": "Facial carina well-developed."
+      }
+    ]
+  },
+  {
     "id": "thoracicStripe",
     "category": "bodycolor",
     "title": "Anterior scutum markings?",
@@ -51,6 +85,23 @@ const traits = [
     ]
   },
   {
+    "id": "PresuturalSupraAlar",
+    "category": "upperthorax",
+    "title": "Presutural anterior supra-alar seta?",
+    "weight": 2,
+    "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2022/07/jmw_19.pdf#page=5",
+    "options": [
+      {
+        "label": "Present",
+        "description": "Presutural anterior supra-alar seta present."
+      },
+      {
+        "label": "Absent",
+        "description": "Presutural anterior supra-alar seta absent."
+      }
+    ]
+  },
+  {
     "id": "paleSetulae",
     "category": "wings",
     "title": "Underside of wing with tuft of pale setulae at intersection of subcosta and humeral crossvein?",
@@ -85,7 +136,7 @@ const traits = [
     ]
   },
   {
-    "id": "posterior spiracle",
+    "id": "posteriorspiracle",
     "category": "wings",
     "title": "Posterior spiracle lappet color?",
     "weight": 1,
@@ -98,6 +149,57 @@ const traits = [
       {
         "label": "dark brown",
         "description": "Lappets of posterior thoracic spiracle dark brown or black."
+      }
+    ]
+  },
+  {
+    "id": "MidTibia",
+    "category": "legs",
+    "title": "Anterodorsal setae on mid tibia?",
+    "weight": 2,
+    "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2022/07/jmw_19.pdf#page=6",
+    "options": [
+      {
+        "label": "Two to three",
+        "description": "Two to three anterodorsal setae present on mid tibia."
+      },
+      {
+        "label": "One",
+        "description": "One anterodorsal setae present on mid tibia."
+      }
+    ]
+  },
+  {
+    "id": "FemorVestiture",
+    "category": "legs",
+    "title": "Setulae on posteroventral surface of mid and hind femora?",
+    "weight": 1,
+    "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2022/07/jmw_19.pdf#page=6",
+    "options": [
+      {
+        "label": "with pale yellowish setulae",
+        "description": "Posteroventral surface of mid and hind femora with pale yellowish setulae."
+      },
+      {
+        "label": "no pale yellowish setulae; may have dark brown setulae",
+        "description": "Posteroventral surface of mid and hind femora with dark brown setulae but no pale yellowish setulae."
+      }
+    ]
+  },
+  {
+    "id": "Ventralabdomen",
+    "category": "abdomen",
+    "title": "Density of setulae on ventral abdomen?",
+    "weight": 1,
+    "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2022/07/jmw_19.pdf#page=6",
+    "options": [
+      {
+        "label": "Densely spaced (compare P. angustigena)",
+        "description": "Setulae on ventral abdomen densely spaced (see Jewiss-Gaines et al., 2012)."
+      },
+      {
+        "label": "Sparsely spaced (compare P. rudis)",
+        "description": "Setulae on ventral abdomen sparsely spaced (see Jewiss-Gaines et al., 2012)."
       }
     ]
   }
