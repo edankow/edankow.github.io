@@ -12,7 +12,7 @@ const traits = [
     "category": "head",
     "title": "How long is head? (difficult to assess; character taken from Whitworth 2006)",
     "weight": 1,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=17",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=17",
     "options": [
       {
         "label": "Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)",
@@ -29,7 +29,7 @@ const traits = [
     "category": "frons",
     "title": "Frons shape (to separate males and females)",
     "weight": 9,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=5",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=5",
     "options": [
       {
         "label": "conspicuously narrowed above antennal bases",
@@ -63,7 +63,7 @@ const traits = [
     "category": "frons",
     "title": "Frons at narrowest point more than 7% of head?",
     "weight": 5,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=9",
     "options": [
       {
         "label": "at least 7% of the head width",
@@ -80,7 +80,7 @@ const traits = [
     "category": "frons",
     "title": "Frons at narrowest point more than 11% of head?",
     "weight": 2,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=9",
     "options": [
       {
         "label": "at least 11% of head width",
@@ -97,7 +97,7 @@ const traits = [
     "category": "frons",
     "title": "Frons at narrowest point more than 15% of head width?",
     "weight": 5,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=9",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=9",
     "options": [
       {
         "label": "at least about 20% head width",
@@ -114,7 +114,7 @@ const traits = [
     "category": "frons",
     "title": "Frons at narrowest point more than 25% of head width?",
     "weight": 4,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=7",
     "options": [
       {
         "label": "less than 25% head width",
@@ -131,7 +131,7 @@ const traits = [
     "category": "frons",
     "title": "Frons at narrowest point more than 30% of head width?",
     "weight": 2,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=7",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=7",
     "options": [
       {
         "label": "less than 30% head width",
@@ -148,7 +148,7 @@ const traits = [
     "category": "frons",
     "title": "Frons at narrowest point more than 35% of head width?",
     "weight": 3,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=11",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=11",
     "options": [
       {
         "label": "less than 35% head width",
@@ -182,7 +182,7 @@ const traits = [
     "category": "frons",
     "title": "Do inner vertical setae converge?",
     "weight": 2,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=30",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=30",
     "options": [
       {
         "label": "nearly parallel in dorsal view",
@@ -352,7 +352,7 @@ const traits = [
     "category": "bodycolor",
     "title": "Color of thorax or abdomen",
     "weight": 9,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=27",
     "options": [
       {
         "label": "orangish green, reddish-orange brown, or coppery brown",
@@ -373,7 +373,7 @@ const traits = [
     "category": "bodycolor",
     "title": "Thorax or abdomen coppery?",
     "weight": 6,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=27",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=27",
     "options": [
       {
         "label": "extensively and rather uniformly coppery brown (unique to Lucilia cuprina)",
@@ -390,7 +390,7 @@ const traits = [
     "category": "bodycolor",
     "title": "Thorax and abdomen entirely black?",
     "weight": 9,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=37",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=37",
     "options": [
       {
         "label": "shining black",
@@ -475,7 +475,7 @@ const traits = [
     "category": "thorax",
     "title": "# of post-sutural acrostichal pairs.",
     "weight": 5,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=19",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=19",
     "options": [
       {
         "label": "three",
@@ -543,7 +543,7 @@ const traits = [
     "category": "wings",
     "title": "What is the color of the basicosta? (sometimes obvious, but other times ambiguous; see notes)",
     "weight": 4,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=21",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=21",
     "options": [
       {
         "label": "orange, yellow, or whitish",
@@ -577,7 +577,7 @@ const traits = [
     "category": "bodycolor",
     "title": "Abdomen with extensive areas of whitish pubescence patterning? (This trait is often helpful for photos of females, but the presence of the pubescence is typically harder to detect for males)",
     "weight": 3,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=34",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=34",
     "options": [
       {
         "label": "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed.",
@@ -594,7 +594,7 @@ const traits = [
     "category": "abdomen",
     "title": "Are there long, erect setae in the middle of tergite 3, anterior to the posterior margin of the tergite?",
     "weight": 2,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=31",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=31",
     "options": [
       {
         "label": "With long, erect discal setae on tergite 3",
@@ -611,7 +611,7 @@ const traits = [
     "category": "abdomen",
     "title": "Are there long, erect setae in the middle of tergite4 , anterior to the posterior margin of the tergite?",
     "weight": 2,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=31",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=31",
     "options": [
       {
         "label": "with long, erect discal setae on tergite 4",
@@ -628,7 +628,7 @@ const traits = [
     "category": "abdomen",
     "title": "Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)? Note that if there are no long, erect median setae on tergite 4, then there are definitely not any on tergite 3 either.",
     "weight": 3,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=32",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=32",
     "options": [
       {
         "label": "without especially strong or erect median marginal setae",
@@ -645,7 +645,7 @@ const traits = [
     "category": "abdomen",
     "title": "Are the long setae on the posterior margin of tergite 4 erect or reclinate?",
     "weight": 5,
-    "link": "https://edankow.github.io/identify/lucilia_us_canada.pdf#page=33",
+    "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=33",
     "options": [
       {
         "label": "erect",

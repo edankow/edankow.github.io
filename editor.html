@@ -175,7 +175,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>header.js</b>, <b>taxa.js</b>, <b>outgroup_taxa.js</b>, <b>traits.js</b>, <b>categories.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
+                    <p class="text-slate-500 max-w-md">The editor automatically loads the Lucilia dataset from <b>lucilia/</b>, plus <b>regions.js</b> and <b>map_paths.js</b> from beside <b>editor.html</b>. You can still import files manually from the sidebar.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -227,14 +227,14 @@
     </div>
 
     <!-- Loading these as neighboring scripts also works when editor.html is opened via file://. -->
-    <script src="taxa.js"></script>
-    <script src="outgroup_taxa.js"></script>
-    <script src="traits.js"></script>
-    <script src="categories.js"></script>
-    <script src="flydata.js"></script>
+    <script src="lucilia/taxa.js"></script>
+    <script src="lucilia/outgroup_taxa.js"></script>
+    <script src="lucilia/traits.js"></script>
+    <script src="lucilia/categories.js"></script>
+    <script src="lucilia/flydata.js"></script>
     <script src="regions.js"></script>
     <script src="map_paths.js"></script>
-    <script src="header.js"></script>
+    <script src="lucilia/header.js"></script>
     <script>
         const cloneLoadedData = value => JSON.parse(JSON.stringify(value));
         let db = {
