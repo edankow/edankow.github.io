@@ -223,19 +223,29 @@
     </div>
 </div>
 
-<script src="lucilia/header.js"></script>
+<script src="datasets.js"></script>
+<script>
+    const indexDatasets = window.DATASET_LISTS?.index || [];
+    const requestedDataset = new URLSearchParams(window.location.search).get('dataset');
+    window.ACTIVE_DATASET = indexDatasets.includes(requestedDataset) ? requestedDataset : indexDatasets[0];
+    if (!window.ACTIVE_DATASET || !/^[a-z0-9-]+$/.test(window.ACTIVE_DATASET)) {
+        throw new Error('datasets.js must provide at least one valid index dataset folder.');
+    }
+    if (!indexDatasets.includes(requestedDataset)) window.showDatasetChooser('index');
+    document.write(`<script src="${window.ACTIVE_DATASET}/header.js"><\/script>`);
+</script>
 <script>
     if (!window.REGION_SET || !/^[a-z0-9-]+$/.test(window.REGION_SET)) {
         throw new Error('header.js must define a valid REGION_SET.');
     }
     document.write(`<script src="regions/${window.REGION_SET}/regions.js"><\/script>`);
     document.write(`<script src="regions/${window.REGION_SET}/map_paths.js"><\/script>`);
+    document.write(`<script src="${window.ACTIVE_DATASET}/categories.js"><\/script>`);
+    document.write(`<script src="${window.ACTIVE_DATASET}/traits.js"><\/script>`);
+    document.write(`<script src="${window.ACTIVE_DATASET}/flydata.js"><\/script>`);
+    document.write(`<script src="${window.ACTIVE_DATASET}/taxa.js"><\/script>`);
+    document.write(`<script src="${window.ACTIVE_DATASET}/outgroup_taxa.js"><\/script>`);
 </script>
-<script src="lucilia/categories.js"></script>
-<script src="lucilia/traits.js"></script>
-<script src="lucilia/flydata.js"></script>
-<script src="lucilia/taxa.js"></script>
-<script src="lucilia/outgroup_taxa.js"></script>
 
 
 <script>
@@ -300,7 +310,7 @@ window.goatcounter = window.goatcounter || {
 
 // Keep queue settings in the page URL so configured searches can be bookmarked.
 const NON_FILTER_URL_PARAMS = new Set([
-    'code', 'state', 'error', 'error_description', 'error_uri'
+    'code', 'state', 'error', 'error_description', 'error_uri', 'dataset'
 ]);
 
 function loadFiltersFromURL() {
@@ -328,6 +338,7 @@ function loadFiltersFromURL() {
 
 function updateBookmarkURL() {
     const params = new URLSearchParams();
+    params.set('dataset', window.ACTIVE_DATASET);
     params.set('taxon_id', CURRENT_TAXON_ID);
     params.set('place_id', CURRENT_PLACE_ID);
     if (IDENTIFY_OWN_OBSERVATIONS) {

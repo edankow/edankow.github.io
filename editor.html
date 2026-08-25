@@ -178,7 +178,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">The editor automatically loads the Lucilia dataset from <b>lucilia/</b> and the region set named by its <b>REGION_SET</b> metadata. You can still import files manually from the sidebar.</p>
+                    <p class="text-slate-500 max-w-md">The editor automatically loads its selected dataset folder and the region set named by that dataset's <b>REGION_SET</b> metadata. You can still import files manually from the sidebar.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -229,20 +229,30 @@
         </div>
     </div>
 
-    <!-- Header metadata selects the shared region dataset before the editor initializes. -->
-    <script src="lucilia/header.js"></script>
+    <!-- The root dataset list selects a dataset; its header then selects the shared region set. -->
+    <script src="datasets.js"></script>
+    <script>
+        const editorDatasets = window.DATASET_LISTS?.editor || [];
+        const requestedDataset = new URLSearchParams(window.location.search).get('dataset');
+        window.ACTIVE_DATASET = editorDatasets.includes(requestedDataset) ? requestedDataset : editorDatasets[0];
+        if (!window.ACTIVE_DATASET || !/^[a-z0-9-]+$/.test(window.ACTIVE_DATASET)) {
+            throw new Error('datasets.js must provide at least one valid editor dataset folder.');
+        }
+        if (!editorDatasets.includes(requestedDataset)) window.showDatasetChooser('editor');
+        document.write(`<script src="${window.ACTIVE_DATASET}/header.js"><\/script>`);
+    </script>
     <script>
         if (!window.REGION_SET || !/^[a-z0-9-]+$/.test(window.REGION_SET)) {
             throw new Error('header.js must define a valid REGION_SET.');
         }
         document.write(`<script src="regions/${window.REGION_SET}/regions.js"><\/script>`);
         document.write(`<script src="regions/${window.REGION_SET}/map_paths.js"><\/script>`);
+        document.write(`<script src="${window.ACTIVE_DATASET}/taxa.js"><\/script>`);
+        document.write(`<script src="${window.ACTIVE_DATASET}/outgroup_taxa.js"><\/script>`);
+        document.write(`<script src="${window.ACTIVE_DATASET}/traits.js"><\/script>`);
+        document.write(`<script src="${window.ACTIVE_DATASET}/categories.js"><\/script>`);
+        document.write(`<script src="${window.ACTIVE_DATASET}/flydata.js"><\/script>`);
     </script>
-    <script src="lucilia/taxa.js"></script>
-    <script src="lucilia/outgroup_taxa.js"></script>
-    <script src="lucilia/traits.js"></script>
-    <script src="lucilia/categories.js"></script>
-    <script src="lucilia/flydata.js"></script>
     <script>
         const cloneLoadedData = value => JSON.parse(JSON.stringify(value));
         let db = {
