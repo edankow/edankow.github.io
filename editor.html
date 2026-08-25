@@ -124,9 +124,6 @@
                 <button onclick="switchTab('flyData')" id="btn-flyData" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-database w-5"></i> Fly Database
                 </button>
-                <button onclick="switchTab('regions')" id="btn-regions" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
-                    <i class="fas fa-map-location-dot w-5"></i> Regions
-                </button>
             </nav>
 
             <div class="p-4 border-t border-slate-100 space-y-3">
@@ -203,7 +200,7 @@
                 <div id="status-log">Looking for database files...</div>
                 <div class="flex gap-4">
                     <span><i class="fas fa-circle text-emerald-500 text-[8px] mr-1"></i> Connected</span>
-                    <span id="file-counts">Data files: 0/7</span>
+                    <span id="file-counts">Data files: 0/6</span>
                 </div>
             </footer>
         </main>
@@ -282,8 +279,7 @@
             outgroupTaxa: { title: "Outgroup ID Shortcuts", desc: "Manage taxon shortcuts shown in the Add Other ID modal." },
             traits: { title: "Character Traits", desc: "Define the physical traits and their possible options for identification." },
             categories: { title: "Trait Categories", desc: "Define the ordered category names and icons used by the identification menu." },
-            flyData: { title: "Fly Database", desc: "The core database mapping traits to specific fly species." },
-            regions: { title: "Regions", desc: "Manage US States and Canadian Provinces for distribution mapping." }
+            flyData: { title: "Fly Database", desc: "The core database mapping traits to specific fly species." }
         };
 
         const defaultTemplates = {
@@ -292,8 +288,7 @@
             outgroupTaxa: { taxonId: null, name: "New Outgroup", rank: "family" },
             traits: { id: "new_trait", category: "other", title: "New Trait", weight: 1, link: "", options: [] },
             categories: { id: "new_category", icon: "📋", title: "New Category" },
-            flyData: { id: "new_fly", m_or_f: "M", species: "New Fly", distribution: [] },
-            regions: { name: "New Region", code: "XX" }
+            flyData: { id: "new_fly", m_or_f: "M", species: "New Fly", distribution: [] }
         };
 
         // Column behavior is driven by CSS-like classes. Add "unique" to any
@@ -303,8 +298,7 @@
             outgroupTaxa: { taxonId: ['unique'] },
             traits: { id: ['unique'] },
             categories: { id: ['unique'] },
-            flyData: { id: ['unique'] },
-            regions: { code: ['unique'] }
+            flyData: { id: ['unique'] }
         };
 
         function getColumnClasses(type, key) {
@@ -419,7 +413,7 @@
             updateUIState();
             const hasData = Object.values(db).some(Boolean);
             if (!currentTab && hasData) {
-                const firstAvailable = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData', 'regions'].find(type => db[type]);
+                const firstAvailable = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData'].find(type => db[type]);
                 switchTab(firstAvailable);
             }
         }
@@ -500,12 +494,12 @@
 
         function updateUIState() {
             let count = 0;
-            ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData', 'regions'].forEach(t => {
+            ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData'].forEach(t => {
                 const btn = document.getElementById(`btn-${t}`);
                 if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
                 else { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; }
             });
-            document.getElementById('file-counts').innerText = `Data files: ${count}/7`;
+            document.getElementById('file-counts').innerText = `Data files: ${count}/6`;
             const shortTitle = db.header?.[0]?.SHORT_TITLE || 'Identification Dataset';
             document.getElementById('dataset-short-title').innerText = shortTitle;
             document.title = `${shortTitle} — Identification Database Editor`;
@@ -1528,7 +1522,7 @@
                 else renderTable();
                 return false;
             }
-            const types = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData', 'regions'];
+            const types = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData'];
             const results = types.filter(type => db[type]).map(type => exportFile(type));
             if (results.every(Boolean)) printLog("All available files exported.");
         }
