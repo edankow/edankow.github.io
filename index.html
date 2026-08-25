@@ -1088,7 +1088,7 @@ function getImmediateIdNarrative(taxonInfo) {
     if (!narrativeText || narrativeText === placeholder) return "";
 
     if (MY_USER_LOGIN?.toLowerCase() === "edanko") {
-        narrativeText += "<br><br>--------------------------<br><br>I made this identification using my interactive key. You can use it to continue working through your observations at https://edankow.github.io/identify/?own_observations=true.";
+        narrativeText += "<br><br>--------------------------<br><br>I made this identification using my interactive key at https://edankow.github.io/identify/.";
     } else {
         narrativeText += "<br><br>--------------------------<br><br>This identification was made and posted using @edanko’s interactive key at https://edankow.github.io/identify/.";
     }
