@@ -106,38 +106,38 @@
             </div>
             
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                <button onclick="switchTab('header')" id="btn-header" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                <button type="button" onclick="event.preventDefault(); switchTab('header')" id="btn-header" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-sliders w-5"></i> Workspace
                 </button>
-                <button onclick="switchTab('taxa')" id="btn-taxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                <button type="button" onclick="event.preventDefault(); switchTab('taxa')" id="btn-taxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-sitemap w-5"></i> Taxonomy
                 </button>
-                <button onclick="switchTab('outgroupTaxa')" id="btn-outgroupTaxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                <button type="button" onclick="event.preventDefault(); switchTab('outgroupTaxa')" id="btn-outgroupTaxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-arrow-up-right-dots w-5"></i> Outgroup IDs
                 </button>
-                <button onclick="switchTab('categories')" id="btn-categories" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                <button type="button" onclick="event.preventDefault(); switchTab('categories')" id="btn-categories" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-folder-tree w-5"></i> Categories
                 </button>
-                <button onclick="switchTab('traits')" id="btn-traits" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                <button type="button" onclick="event.preventDefault(); switchTab('traits')" id="btn-traits" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-list-check w-5"></i> Traits
                 </button>
-                <button onclick="switchTab('flyData')" id="btn-flyData" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                <button type="button" onclick="event.preventDefault(); switchTab('flyData')" id="btn-flyData" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-database w-5"></i> Fly Database
                 </button>
             </nav>
 
             <div class="p-4 border-t border-slate-100 space-y-3">
-                <button onclick="createNewDataset()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                <button type="button" onclick="createNewDataset()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
                     <i class="fas fa-file-circle-plus"></i> New Dataset
                 </button>
                 <div class="relative">
-                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                    <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
                         <i class="fas fa-file-import"></i> Import Files
                     </button>
                     <input type="file" multiple onchange="loadFiles(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                 </div>
                 <div id="export-container" class="hidden space-y-2">
-                    <button onclick="exportAll()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                    <button type="button" onclick="exportAll()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
                         <i class="fas fa-file-export"></i> Export All Files
                     </button>
                 </div>
@@ -225,6 +225,7 @@
             </div>
         </div>
     </div>
+    <datalist id="taxonomy-entry-options"></datalist>
 
     <!-- The root dataset list selects a dataset; its header then selects the shared region set. -->
     <script src="datasets.js"></script>
@@ -850,6 +851,13 @@
                 // Region remains backed by Fly Database's special distribution field.
                 if (t.id !== 'region') traitMap[t.id] = t.title;
             });
+            const taxonomyOptions = document.getElementById('taxonomy-entry-options');
+            if (taxonomyOptions) {
+                taxonomyOptions.innerHTML = (db.taxa || [])
+                    .filter(taxon => String(taxon.name || '').trim())
+                    .map(taxon => `<option value="${escapeHtml(taxon.name)}"></option>`)
+                    .join('');
+            }
 
             renderHeader(keys, traitMap);
 
@@ -901,6 +909,8 @@
                             ? `<option value="${escapeHtml(val)}" selected>${escapeHtml(val)} (undefined)</option>`
                             : '';
                         bodyHtml += `<td class="px-4 py-3"><select class="w-full p-2 border border-slate-200 rounded-lg bg-white" onchange="updateCell('traits', ${originalIdx}, 'category', this.value, this)">${preservedUnknown}${categoryOptions}</select></td>`;
+                    } else if (currentTab === 'flyData' && k === 'species') {
+                        bodyHtml += `<td class="px-4 py-3${stickyIdClass}"><input type="text" list="taxonomy-entry-options" value="${escapeHtml(val ?? '')}" placeholder="Search taxonomy..." autocomplete="off" class="w-full min-w-56 p-2 border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none" onchange="updateCell('flyData', ${originalIdx}, 'species', this.value, this)" onblur="updateCell('flyData', ${originalIdx}, 'species', this.value, this)"></td>`;
                     } else if (currentTab === 'flyData' && k === 'distribution') {
                         display = Array.isArray(val) ? val.map(v => `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] mr-1">${v}</span>`).join('') : val;
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openRegionPicker(${originalIdx})">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;

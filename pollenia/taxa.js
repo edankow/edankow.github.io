@@ -25,7 +25,7 @@ const taxa = Object.freeze([
   },
   {
     "taxonId": 1610884,
-    "name": "Pollenia vagabunda",
+    "name": "P. vagabunda complex",
     "rank": "complex",
     "parent": "Pollenia"
   },
@@ -33,7 +33,7 @@ const taxa = Object.freeze([
     "taxonId": 448298,
     "name": "Pollenia vagabunda",
     "rank": "species",
-    "parent": "Pollenia vagabunda"
+    "parent": "P. vagabunda complex"
   },
   {
     "taxonId": 488490,
