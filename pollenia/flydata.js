@@ -148,6 +148,12 @@ const flyData = [
     "paleSetulae": [
       "Without tuft of pale setulae"
     ],
+    "PostpronotalLobe": [
+      "with anterior setae"
+    ],
+    "PresuturalIntraAlar": [
+      "2 pre-sutural intra-alar setae"
+    ],
     "taxonomy": [
       "Pollenia",
       "P. vagabunda complex",
@@ -226,6 +232,12 @@ const flyData = [
     "paleSetulae": [
       "Without tuft of pale setulae"
     ],
+    "PostpronotalLobe": [
+      "without anterior setae"
+    ],
+    "PresuturalIntraAlar": [
+      "1 pre-sutural intra-alar setae"
+    ],
     "taxonomy": [
       "Pollenia",
       "Pollenia labialis"
@@ -302,6 +314,12 @@ const flyData = [
     ],
     "paleSetulae": [
       "Without tuft of pale setulae"
+    ],
+    "PostpronotalLobe": [
+      "without anterior setae"
+    ],
+    "PresuturalIntraAlar": [
+      "1 pre-sutural intra-alar setae"
     ],
     "taxonomy": [
       "Pollenia",
@@ -380,6 +398,12 @@ const flyData = [
     "paleSetulae": [
       "Without tuft of pale setulae"
     ],
+    "PostpronotalLobe": [
+      "without anterior setae"
+    ],
+    "PresuturalIntraAlar": [
+      "1 pre-sutural intra-alar setae"
+    ],
     "taxonomy": [
       "Pollenia",
       "Pollenia angustigena"
@@ -457,6 +481,12 @@ const flyData = [
     ],
     "paleSetulae": [
       "Without tuft of pale setulae"
+    ],
+    "PostpronotalLobe": [
+      "without anterior setae"
+    ],
+    "PresuturalIntraAlar": [
+      "1 pre-sutural intra-alar setae"
     ],
     "taxonomy": [
       "Pollenia",

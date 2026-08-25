@@ -908,7 +908,8 @@
                         const preservedUnknown = val && !(db.categories || []).some(category => category.id === val)
                             ? `<option value="${escapeHtml(val)}" selected>${escapeHtml(val)} (undefined)</option>`
                             : '';
-                        bodyHtml += `<td class="px-4 py-3"><select class="w-full p-2 border border-slate-200 rounded-lg bg-white" onchange="updateCell('traits', ${originalIdx}, 'category', this.value, this)">${preservedUnknown}${categoryOptions}</select></td>`;
+                        const unassignedOption = `<option value=""${!val ? ' selected' : ''}>Unassigned</option>`;
+                        bodyHtml += `<td class="px-4 py-3"><select class="w-full p-2 border border-slate-200 rounded-lg bg-white" onchange="updateCell('traits', ${originalIdx}, 'category', this.value, this)">${unassignedOption}${preservedUnknown}${categoryOptions}</select></td>`;
                     } else if (currentTab === 'flyData' && k === 'species') {
                         bodyHtml += `<td class="px-4 py-3${stickyIdClass}"><input type="text" list="taxonomy-entry-options" value="${escapeHtml(val ?? '')}" placeholder="Search taxonomy..." autocomplete="off" class="w-full min-w-56 p-2 border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none" onchange="updateCell('flyData', ${originalIdx}, 'species', this.value, this)" onblur="updateCell('flyData', ${originalIdx}, 'species', this.value, this)"></td>`;
                     } else if (currentTab === 'flyData' && k === 'distribution') {
