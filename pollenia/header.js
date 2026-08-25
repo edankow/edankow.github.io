@@ -5,7 +5,7 @@ window.HEADER_DATA = Object.freeze({
   "REGION_SET": "us-canada",
   "DEFAULT_PLACE_ID": "6712,1",
   "DEFAULT_TAXON": "133825",
-  "ABOUT_CONTENT": "<p>This interactive key to <i>Pollenia</i> was built by Even Dankowicz.</p>\n<p>Almost all trait data were initially derived from <a href=\"https://cjai.biologicalsurvey.ca/wp-content/uploads/2022/07/jmw_19.pdf\">Jewiss-Gaines et al. (2012)</a>.</p>\n<p>Hawaiian distribution records were taken from the <a href=\"https://hbs.bishopmuseum.org/aocat/calliphoridae.html\">Australasian-Oceanian Diptera Catalog</a>.</p>"
+  "ABOUT_CONTENT": "This interactive key to Lucilia was created by Even Dankowicz. \n\nFor references, see content under \"View Reference Images.\""
 });
 
 window.SHORT_TITLE = window.HEADER_DATA.SHORT_TITLE;
