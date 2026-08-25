@@ -29,8 +29,14 @@
         .resizer:hover, .resizing { background: #3b82f6; width: 2px; }
         td { vertical-align: top; overflow: hidden; }
         .trait-pill { display: inline-block; padding: 2px 8px; background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; border-radius: 999px; font-size: 11px; margin: 2px; }
+        .column-sort-btn { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; padding: 3px 5px; border-radius: 6px; color: #94a3b8; flex-shrink: 0; }
+        .column-sort-btn:hover { color: #2563eb; background: #dbeafe; }
+        .column-sort-btn.active { color: #1d4ed8; background: #dbeafe; }
+        .flydata-row-content { overflow: hidden; }
+        .flydata-header-label { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; line-clamp: 5; overflow: hidden; line-height: 1.25; max-height: 6.25em; }
+        .flydata-header-label.expanded { display: block; max-height: none; overflow: visible; -webkit-line-clamp: unset; line-clamp: unset; }
 
-        /* taxonID info popover */
+        /* Controlled-vocabulary column info popovers */
         .taxon-info-btn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: #2563eb; color: #fff; font-size: 11px; font-weight: 900; cursor: pointer; border: 2px solid #fff; line-height: 1; margin-left: 8px; flex-shrink: 0; vertical-align: middle; font-style: normal; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         .taxon-info-btn:hover { background: #1e40af; transform: scale(1.1); }
         .taxon-popover { display: none; position: absolute; top: calc(100% + 12px); left: 0; z-index: 100; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 10px; padding: 14px 18px; width: 300px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1); font-size: 13px; color: #92400e; font-weight: 400; white-space: normal; line-height: 1.6; }
@@ -51,9 +57,28 @@
         .insert-row-before { top: -11px; }
         .insert-row-after { bottom: -11px; }
         #table-wrapper { padding-left: 14px; }
+        .flydata-id-column { position: sticky; left: -14px; z-index: 15; background: #fff; box-shadow: 2px 0 4px -2px rgba(15, 23, 42, 0.22); }
+        #table-head { z-index: 30; }
+        thead .flydata-id-column { z-index: 35; background: #f8fafc; }
+        tr:hover .flydata-id-column { background: #f8fafc; }
 
         /* Distribution modal tabs */
         .dist-tab-btn { padding: 8px 18px; font-size: 13px; font-weight: 600; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; transition: all 0.15s; color: #64748b; background: #f1f5f9; }
+        .taxonomy-cycle-error {
+            background: #fef2f2 !important;
+            color: #991b1b;
+            box-shadow: inset 0 0 0 2px #ef4444;
+        }
+        .taxonomy-cycle-error::after {
+            content: attr(data-cycle-error);
+            display: block;
+            margin-top: 4px;
+            color: #dc2626;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.25;
+            pointer-events: none;
+        }
         .dist-tab-btn.active { background: #fff; color: #1e40af; border-color: #e2e8f0; position: relative; bottom: -1px; }
         .dist-tab-btn:not(.active):hover { background: #e2e8f0; }
         .dist-tab-panel { display: none; }
@@ -87,8 +112,14 @@
                 <button onclick="switchTab('taxa')" id="btn-taxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-sitemap w-5"></i> Taxonomy
                 </button>
+                <button onclick="switchTab('outgroupTaxa')" id="btn-outgroupTaxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-arrow-up-right-dots w-5"></i> Outgroup IDs
+                </button>
                 <button onclick="switchTab('traits')" id="btn-traits" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-list-check w-5"></i> Traits
+                </button>
+                <button onclick="switchTab('categories')" id="btn-categories" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-folder-tree w-5"></i> Categories
                 </button>
                 <button onclick="switchTab('flyData')" id="btn-flyData" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-database w-5"></i> Fly Database
@@ -116,12 +147,17 @@
         <!-- Main Content -->
         <main class="flex-1 flex flex-col overflow-hidden">
             <!-- Header -->
-            <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center shadow-sm z-10">
+            <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center shadow-sm z-30">
                 <div>
                     <h2 id="current-tab-title" class="text-lg font-bold text-slate-800 uppercase tracking-wider">Welcome</h2>
                     <p id="current-tab-desc" class="text-sm text-slate-500">Looking for database files beside editor.html...</p>
                 </div>
                 <div class="flex items-center gap-4">
+                    <div id="inat-taxon-search-container" class="relative hidden">
+                        <i class="fas fa-leaf absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500"></i>
+                        <input type="text" id="inat-taxon-search-input" oninput="searchINatTaxa(this.value)" placeholder="Add taxon from iNaturalist..." autocomplete="off" class="pl-10 pr-4 py-2 bg-emerald-50 border border-emerald-200 rounded-full text-sm focus:ring-2 focus:ring-emerald-500 w-72 transition-all">
+                        <div id="inat-taxon-search-results" class="hidden absolute right-0 top-full mt-2 w-96 max-h-80 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-50"></div>
+                    </div>
                     <div id="search-control" class="relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search data..." class="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 w-64 transition-all">
@@ -139,7 +175,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800">Ready to edit?</h3>
-                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>header.js</b>, <b>taxa.js</b>, <b>traits.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
+                    <p class="text-slate-500 max-w-md">The editor automatically looks beside <b>editor.html</b> for <b>header.js</b>, <b>taxa.js</b>, <b>outgroup_taxa.js</b>, <b>traits.js</b>, <b>categories.js</b>, <b>flydata.js</b>, <b>regions.js</b>, and <b>map_paths.js</b>. You can still import them manually from the sidebar.</p>
                 </div>
 
                 <div id="data-view" class="hidden h-full flex flex-col">
@@ -164,7 +200,7 @@
                 <div id="status-log">Looking for database files...</div>
                 <div class="flex gap-4">
                     <span><i class="fas fa-circle text-emerald-500 text-[8px] mr-1"></i> Connected</span>
-                    <span id="file-counts">Data files: 0/5</span>
+                    <span id="file-counts">Data files: 0/7</span>
                 </div>
             </footer>
         </main>
@@ -192,7 +228,9 @@
 
     <!-- Loading these as neighboring scripts also works when editor.html is opened via file://. -->
     <script src="taxa.js"></script>
+    <script src="outgroup_taxa.js"></script>
     <script src="traits.js"></script>
+    <script src="categories.js"></script>
     <script src="flydata.js"></script>
     <script src="regions.js"></script>
     <script src="map_paths.js"></script>
@@ -202,7 +240,9 @@
         let db = {
             header: typeof HEADER_DATA !== 'undefined' ? [cloneLoadedData(HEADER_DATA)] : null,
             taxa: typeof taxa !== 'undefined' ? cloneLoadedData(taxa) : null,
+            outgroupTaxa: typeof outgroupTaxa !== 'undefined' ? cloneLoadedData(outgroupTaxa) : null,
             traits: typeof traits !== 'undefined' ? cloneLoadedData(traits) : null,
+            categories: typeof categories !== 'undefined' ? cloneLoadedData(categories) : null,
             flyData: typeof flyData !== 'undefined' ? cloneLoadedData(flyData) : null,
             regions: typeof regions !== 'undefined' ? cloneLoadedData(regions) : null
         };
@@ -214,11 +254,16 @@
         let activeEdit = { type: null, index: null, key: null };
         let searchQuery = "";
         let columnWidths = {};
+        let flyDataSort = { key: null, direction: null };
+        let inatTaxonSearchTimeout = null;
+        let inatTaxonSearchResults = new Map();
 
         const tabConfigs = {
             header: { title: "Workspace Settings", desc: "Manage the titles, defaults, and About content for this identification dataset." },
             taxa: { title: "Taxonomy Hierarchy", desc: "Manage species, complexes, and their parent relationships." },
+            outgroupTaxa: { title: "Outgroup ID Shortcuts", desc: "Manage taxon shortcuts shown in the Add Other ID modal." },
             traits: { title: "Character Traits", desc: "Define the physical traits and their possible options for identification." },
+            categories: { title: "Trait Categories", desc: "Define the ordered category names and icons used by the identification menu." },
             flyData: { title: "Fly Database", desc: "The core database mapping traits to specific fly species." },
             regions: { title: "Regions", desc: "Manage US States and Canadian Provinces for distribution mapping." }
         };
@@ -226,7 +271,9 @@
         const defaultTemplates = {
             header: { SHORT_TITLE: "Identification Dataset", LONG_TITLE: "Identification Workspace", DEFAULT_PLACE_ID: "", DEFAULT_TAXON: "", ABOUT_CONTENT: "" },
             taxa: { taxonId: null, name: "New Species", rank: "species", parent: null },
-            traits: { id: "new_trait", title: "New Trait", weight: 1, link: "", options: [] },
+            outgroupTaxa: { taxonId: null, name: "New Outgroup", rank: "family" },
+            traits: { id: "new_trait", category: "other", title: "New Trait", weight: 1, link: "", options: [] },
+            categories: { id: "new_category", icon: "📋", title: "New Category" },
             flyData: { id: "new_fly", m_or_f: "M", species: "New Fly", distribution: [] },
             regions: { name: "New Region", code: "XX" }
         };
@@ -235,7 +282,9 @@
         // column here to enable its badge, edit validation, copying, and export checks.
         const columnClasses = {
             taxa: { taxonId: ['unique'] },
+            outgroupTaxa: { taxonId: ['unique'] },
             traits: { id: ['unique'] },
+            categories: { id: ['unique'] },
             flyData: { id: ['unique'] },
             regions: { code: ['unique'] }
         };
@@ -250,6 +299,52 @@
 
         function getColumnsWithClass(type, className) {
             return Object.keys(columnClasses[type] || {}).filter(key => hasColumnClass(type, key, className));
+        }
+
+        function getFlyDataSortValue(row, key) {
+            const value = row[key];
+            if (Array.isArray(value)) return value.map(item => String(item ?? '')).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })).join(' | ');
+            if (value && typeof value === 'object') return JSON.stringify(value);
+            return String(value ?? '');
+        }
+
+        function toggleFlyDataSort(key) {
+            if (flyDataSort.key !== key) flyDataSort = { key, direction: 'asc' };
+            else if (flyDataSort.direction === 'asc') flyDataSort.direction = 'desc';
+            else flyDataSort = { key: null, direction: null };
+            renderTable();
+        }
+
+        function sizeFlyDataRowsToFocusedColumn(keys) {
+            if (currentTab !== 'flyData' || !flyDataSort.key || !flyDataSort.direction) return;
+            const focusedCellIndex = keys.indexOf(flyDataSort.key) + 1;
+            if (focusedCellIndex < 1) return;
+
+            document.querySelectorAll('#table-body tr').forEach(row => {
+                const dataCells = Array.from(row.cells).slice(1, -1);
+                dataCells.forEach(cell => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'flydata-row-content';
+                    while (cell.firstChild) wrapper.appendChild(cell.firstChild);
+                    cell.appendChild(wrapper);
+                });
+
+                const focusedContent = row.cells[focusedCellIndex]?.querySelector('.flydata-row-content');
+                if (!focusedContent) return;
+                const focusedHeight = Math.max(24, Math.ceil(focusedContent.scrollHeight));
+                dataCells.forEach(cell => {
+                    const wrapper = cell.querySelector('.flydata-row-content');
+                    if (wrapper) wrapper.style.height = `${focusedHeight}px`;
+                });
+            });
+        }
+
+        function getTraitOptionStyle(traitId, value) {
+            const seed = `${traitId}:${value}`;
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
+            const hue = Math.abs(hash) % 360;
+            return `background-color:hsl(${hue} 75% 92%);border-color:hsl(${hue} 55% 76%);color:hsl(${hue} 60% 27%)`;
         }
 
         function renderUniqueBadge(type, key) {
@@ -290,7 +385,9 @@
             }
 
             const type = normalizedName === 'taxa.js' ? 'taxa'
+                : normalizedName === 'outgroup_taxa.js' ? 'outgroupTaxa'
                 : normalizedName === 'traits.js' ? 'traits'
+                : normalizedName === 'categories.js' ? 'categories'
                 : normalizedName === 'flydata.js' ? 'flyData'
                 : normalizedName === 'regions.js' ? 'regions'
                 : null;
@@ -304,7 +401,7 @@
             updateUIState();
             const hasData = Object.values(db).some(Boolean);
             if (!currentTab && hasData) {
-                const firstAvailable = ['header', 'taxa', 'traits', 'flyData', 'regions'].find(type => db[type]);
+                const firstAvailable = ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'].find(type => db[type]);
                 switchTab(firstAvailable);
             }
         }
@@ -328,11 +425,13 @@
         }
 
         function initializeAutoLoadedFiles() {
-            const expectedFiles = ['header.js', 'taxa.js', 'traits.js', 'flydata.js', 'regions.js', 'map_paths.js'];
+            const expectedFiles = ['header.js', 'taxa.js', 'outgroup_taxa.js', 'traits.js', 'categories.js', 'flydata.js', 'regions.js', 'map_paths.js'];
             const loadedFiles = [
                 db.header && 'header.js',
                 db.taxa && 'taxa.js',
+                db.outgroupTaxa && 'outgroup_taxa.js',
                 db.traits && 'traits.js',
+                db.categories && 'categories.js',
                 db.flyData && 'flydata.js',
                 db.regions && 'regions.js',
                 Object.keys(editorMapData.paths || {}).length > 0 && 'map_paths.js'
@@ -350,12 +449,12 @@
 
         function updateUIState() {
             let count = 0;
-            ['header', 'taxa', 'traits', 'flyData', 'regions'].forEach(t => {
+            ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'].forEach(t => {
                 const btn = document.getElementById(`btn-${t}`);
                 if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
                 else { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; }
             });
-            document.getElementById('file-counts').innerText = `Data files: ${count}/5`;
+            document.getElementById('file-counts').innerText = `Data files: ${count}/7`;
             const shortTitle = db.header?.[0]?.SHORT_TITLE || 'Identification Dataset';
             document.getElementById('dataset-short-title').innerText = shortTitle;
             document.title = `${shortTitle} — Identification Database Editor`;
@@ -374,6 +473,12 @@
             document.getElementById('current-tab-desc').innerText = tabConfigs[tab].desc;
             document.getElementById('add-new-btn').classList.toggle('hidden', tab === 'header');
             document.getElementById('search-control').classList.toggle('hidden', tab === 'header');
+            const isTaxonImportTab = tab === 'taxa' || tab === 'outgroupTaxa';
+            document.getElementById('inat-taxon-search-container').classList.toggle('hidden', !isTaxonImportTab);
+            document.getElementById('inat-taxon-search-input').placeholder = tab === 'outgroupTaxa'
+                ? 'Add outgroup from iNaturalist...'
+                : 'Add taxon from iNaturalist...';
+            if (!isTaxonImportTab) document.getElementById('inat-taxon-search-results').classList.add('hidden');
             
             if (!db[tab] && tab !== 'flyData') {
                 document.getElementById('welcome-screen').classList.remove('hidden');
@@ -385,7 +490,103 @@
             }
         }
 
-        // ── taxonID info popover ─────────────────────────────────────────────
+        async function searchINatTaxa(query) {
+            const dropdown = document.getElementById('inat-taxon-search-results');
+            const trimmedQuery = query.trim();
+            clearTimeout(inatTaxonSearchTimeout);
+
+            if (trimmedQuery.length < 3) {
+                dropdown.classList.add('hidden');
+                dropdown.innerHTML = '';
+                return;
+            }
+
+            inatTaxonSearchTimeout = setTimeout(async () => {
+                dropdown.innerHTML = '<div class="p-4 text-sm text-slate-400">Searching iNaturalist…</div>';
+                dropdown.classList.remove('hidden');
+                try {
+                    const response = await fetch(`https://api.inaturalist.org/v1/taxa/autocomplete?q=${encodeURIComponent(trimmedQuery)}`);
+                    if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
+                    const data = await response.json();
+                    const results = data.results || [];
+                    inatTaxonSearchResults = new Map(results.map(taxon => [String(taxon.id), taxon]));
+
+                    if (results.length === 0) {
+                        dropdown.innerHTML = '<div class="p-4 text-sm text-slate-400">No matching taxa found.</div>';
+                        return;
+                    }
+
+                    dropdown.innerHTML = results.map(taxon => `
+                        <button type="button" onclick="selectINatTaxon('${taxon.id}')" class="block w-full text-left px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-emerald-50 transition-colors">
+                            <strong class="text-slate-800">${escapeHtml(taxon.name)}</strong>
+                            <small class="text-slate-500">(${escapeHtml(taxon.rank || '')})</small>
+                        </button>`).join('');
+                } catch (error) {
+                    dropdown.innerHTML = '<div class="p-4 text-sm text-red-600">Could not search iNaturalist. Check your connection and try again.</div>';
+                    printLog(`iNaturalist taxon search failed: ${error.message}`, true);
+                }
+            }, 300);
+        }
+
+        async function selectINatTaxon(taxonId) {
+            const dropdown = document.getElementById('inat-taxon-search-results');
+            const input = document.getElementById('inat-taxon-search-input');
+            const selected = inatTaxonSearchResults.get(String(taxonId));
+            const targetType = currentTab === 'outgroupTaxa' ? 'outgroupTaxa' : 'taxa';
+            if (!selected) return;
+
+            dropdown.classList.add('hidden');
+            input.value = selected.name;
+            try {
+                const response = await fetch(`https://api.inaturalist.org/v1/taxa/${encodeURIComponent(taxonId)}`);
+                if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
+                const data = await response.json();
+                const taxon = data.results?.[0] || selected;
+                let immediateParent = null;
+                if (targetType === 'taxa') {
+                    const ancestors = taxon.ancestors || selected.ancestors || [];
+                    immediateParent = ancestors.length > 0 ? ancestors[ancestors.length - 1].name : null;
+                    const parentId = taxon.parent_id || selected.parent_id;
+                    if (!immediateParent && parentId) {
+                        const parentResponse = await fetch(`https://api.inaturalist.org/v1/taxa/${encodeURIComponent(parentId)}`);
+                        if (parentResponse.ok) {
+                            const parentData = await parentResponse.json();
+                            immediateParent = parentData.results?.[0]?.name || null;
+                        }
+                    }
+                }
+
+                if (!db[targetType]) db[targetType] = [];
+                const existingIdx = db[targetType].findIndex(record => String(record.taxonId) === String(taxon.id));
+                const importedRecord = targetType === 'taxa' ? {
+                    taxonId: taxon.id,
+                    name: taxon.name,
+                    rank: taxon.rank,
+                    parent: immediateParent || null
+                } : {
+                    taxonId: taxon.id,
+                    name: taxon.name,
+                    rank: taxon.rank
+                };
+
+                if (existingIdx === -1) {
+                    db[targetType].unshift(importedRecord);
+                    printLog(`Added ${taxon.name} to ${targetType === 'taxa' ? 'Taxonomy' : 'Outgroup IDs'} from iNaturalist.`);
+                } else {
+                    db[targetType][existingIdx] = { ...db[targetType][existingIdx], ...importedRecord };
+                    printLog(`Updated ${taxon.name} in ${targetType === 'taxa' ? 'Taxonomy' : 'Outgroup IDs'} from iNaturalist.`);
+                }
+
+                input.value = '';
+                updateUIState();
+                renderTable();
+            } catch (error) {
+                printLog(`Could not import taxon from iNaturalist: ${error.message}`, true);
+                alert('Could not import that taxon from iNaturalist. Check your connection and try again.');
+            }
+        }
+
+        // ── Column info popovers ─────────────────────────────────────────────
         function toggleTaxonPopover(btn) {
             const pop = btn.nextElementSibling;
             const isOpen = pop.classList.contains('open');
@@ -402,8 +603,106 @@
             }
         }
 
+        function getControlledVocabularyInfo(type, key) {
+            if (type === 'taxa' || type === 'outgroupTaxa') {
+                if (key.toLowerCase() === 'taxonid') {
+                    return '<strong>iNaturalist taxon ID.</strong> Use the numeric ID assigned to this taxon by iNaturalist so identification links and submissions work correctly.';
+                }
+                if (key === 'rank') {
+                    return '<strong>iNaturalist taxon rank.</strong> Any rank supported by iNaturalist is allowed; examples include genus, complex, species, subspecies, and variety.';
+                }
+                if (type === 'taxa' && key === 'parent') {
+                    const count = (db.taxa || []).filter(taxon => String(taxon.name || '').trim()).length;
+                    return `<strong>Taxonomy parent.</strong> Use the exact name of another record in this Taxonomy tab (${count} currently defined). Leave this blank for a root taxon; blank values are saved as <code>null</code>.`;
+                }
+            }
+
+            if (type === 'flyData') {
+                if (key === 'm_or_f') {
+                    return '<strong>Sex.</strong> Use <code>male</code>, <code>female</code>, or leave the value blank when sex is not applicable.';
+                }
+                if (key === 'species') {
+                    const count = (db.taxa || []).filter(taxon => String(taxon.name || '').trim()).length;
+                    return `<strong>Result taxon.</strong> Use the exact name of a record in the Taxonomy tab (${count} currently defined). Despite this column name, the result may be at any taxonomic rank.`;
+                }
+                if (key === 'distribution') {
+                    const count = (db.regions || []).filter(region => String(region.code || '').trim()).length;
+                    return `<strong>Distribution codes.</strong> Select codes defined in the Regions tab (${count} currently defined).`;
+                }
+
+                const trait = (db.traits || []).find(candidate => candidate.id === key);
+                if (trait) {
+                    const labels = (trait.options || []).map(option => option.label).filter(Boolean);
+                    const preview = labels.length > 0 && labels.length <= 6
+                        ? ` Current options: ${labels.map(label => `<code>${escapeHtml(label)}</code>`).join(', ')}.`
+                        : ` ${labels.length} options are currently defined.`;
+                    return `<strong>Trait vocabulary.</strong> Values come from the options for “${escapeHtml(trait.title || trait.id)}” in the Traits tab.${preview}`;
+                }
+            }
+
+            if (type === 'traits' && key === 'category') {
+                const count = (db.categories || []).filter(category => String(category.id || '').trim()).length;
+                return `<strong>Trait menu category.</strong> Use the exact ID of a record in the Categories tab (${count} currently defined). Category names, icons, and menu order are managed there; diagnostic priority still comes from trait weight.`;
+            }
+
+            if (type === 'regions' && key === 'code') {
+                return '<strong>Region code.</strong> This code is used by Fly Database distribution values and should correspond to the appropriate region in the identification map.';
+            }
+
+            return '';
+        }
+
+        function renderControlledVocabularyInfo(type, key) {
+            const info = getControlledVocabularyInfo(type, key);
+            if (!info) return '';
+            return `
+                <span style="position:relative; display:inline-flex; align-items:center;">
+                    <button class="taxon-info-btn" onclick="event.stopPropagation(); toggleTaxonPopover(this);" aria-label="Controlled vocabulary information">i</button>
+                    <span class="taxon-popover">${info}</span>
+                </span>`;
+        }
+
+        function getTaxonomyCycleIssues() {
+            if (!db.taxa) return [];
+
+            const nameToIndex = new Map();
+            db.taxa.forEach((taxon, idx) => {
+                const name = String(taxon.name || '').trim();
+                if (name && !nameToIndex.has(name)) nameToIndex.set(name, idx);
+            });
+
+            const state = new Array(db.taxa.length).fill(0); // 0 = unseen, 1 = visiting, 2 = done
+            const issues = [];
+
+            function visit(idx) {
+                state[idx] = 1;
+                const parentName = String(db.taxa[idx].parent || '').trim();
+                const parentIdx = nameToIndex.get(parentName);
+
+                if (parentIdx !== undefined) {
+                    if (state[parentIdx] === 1) {
+                        issues.push({
+                            rowIdx: idx,
+                            taxonName: db.taxa[parentIdx].name,
+                            message: `Circular reference detected at "${db.taxa[parentIdx].name}".`
+                        });
+                    } else if (state[parentIdx] === 0) {
+                        visit(parentIdx);
+                    }
+                }
+                state[idx] = 2;
+            }
+
+            db.taxa.forEach((taxon, idx) => {
+                if (state[idx] === 0) visit(idx);
+            });
+            return issues;
+        }
+
         function renderTable() {
             const data = db[currentTab];
+            const taxonomyCycleIssues = currentTab === 'taxa' ? getTaxonomyCycleIssues() : [];
+            const taxonomyCycleIssuesByRow = new Map(taxonomyCycleIssues.map(issue => [issue.rowIdx, issue]));
 
             const tableWrapper = document.getElementById('table-wrapper');
             const headerSettingsView = document.getElementById('header-settings-view');
@@ -421,7 +720,9 @@
             if (currentTab === 'flyData') {
                 keys = ['id', 'm_or_f', 'species', 'distribution'];
                 if (db.traits) {
-                    db.traits.forEach(t => { if (!keys.includes(t.id)) keys.push(t.id); });
+                    db.traits.forEach(t => {
+                        if (t.id !== 'region' && !keys.includes(t.id)) keys.push(t.id);
+                    });
                 }
                 if (data && data.length > 0) {
                     Object.keys(data[0]).forEach(k => {
@@ -444,13 +745,29 @@
 
             if (currentTab === 'regions') { renderRegionsTable(); return; }
 
-            const filteredData = data.filter(row => {
+            let filteredData = data.filter(row => {
                 if (!searchQuery) return true;
-                return JSON.stringify(row).toLowerCase().includes(searchQuery.toLowerCase());
+                const searchableText = JSON.stringify(row).toLowerCase();
+                const searchTerms = searchQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
+                return searchTerms.every(term => searchableText.includes(term));
             });
 
+            if (currentTab === 'flyData' && flyDataSort.key && flyDataSort.direction) {
+                const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+                filteredData = filteredData
+                    .map((row, order) => ({ row, order }))
+                    .sort((a, b) => {
+                        const comparison = collator.compare(getFlyDataSortValue(a.row, flyDataSort.key), getFlyDataSortValue(b.row, flyDataSort.key));
+                        return comparison === 0 ? a.order - b.order : comparison * (flyDataSort.direction === 'asc' ? 1 : -1);
+                    })
+                    .map(item => item.row);
+            }
+
             const traitMap = {};
-            if (db.traits) db.traits.forEach(t => { traitMap[t.id] = t.title; });
+            if (db.traits) db.traits.forEach(t => {
+                // Region remains backed by Fly Database's special distribution field.
+                if (t.id !== 'region') traitMap[t.id] = t.title;
+            });
 
             renderHeader(keys, traitMap);
 
@@ -477,21 +794,47 @@
                 keys.forEach(k => {
                     let val = row[k];
                     let display = "";
+                    const stickyIdClass = currentTab === 'flyData' && k === 'id' ? ' flydata-id-column' : '';
                     let isTrait = (currentTab === 'flyData' && traitMap[k]);
                     let isComplex = Array.isArray(val) || (typeof val === 'object' && val !== null) || (currentTab === 'header' && typeof val === 'string' && val.length > 160);
 
                     if (isTrait) {
-                        display = Array.isArray(val) ? val.map(v => `<span class="trait-pill">${v}</span>`).join('') : (val ? `<span class="trait-pill">${val}</span>` : '');
-                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openTraitPicker(${originalIdx}, '${k}')">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
+                        const traitDef = db.traits.find(t => t.id === k);
+                        const validLabels = new Set((traitDef?.options || []).map(opt => opt.label));
+                        const values = Array.isArray(val) ? val : (val ? [val] : []);
+                        display = values.map(v => {
+                            const escapedValue = escapeHtml(v);
+                            return validLabels.has(v)
+                                ? `<span class="trait-pill" style="${getTraitOptionStyle(k, v)}">${escapedValue}</span>`
+                                : `<span class="trait-pill bg-red-50 text-red-700 ring-1 ring-red-200" title="This value is no longer defined in the Traits tab">${escapedValue} ⚠</span>`;
+                        }).join('');
+                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openTraitPicker(${originalIdx}, '${k}')">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
+                    } else if (currentTab === 'traits' && k === 'category') {
+                        const categoryOptions = (db.categories || []).map(category => {
+                            const selected = category.id === val ? ' selected' : '';
+                            const label = `${category.icon || ''}${category.icon ? ' ' : ''}${category.title || category.id}`;
+                            return `<option value="${escapeHtml(category.id)}"${selected}>${escapeHtml(label)}</option>`;
+                        }).join('');
+                        const preservedUnknown = val && !(db.categories || []).some(category => category.id === val)
+                            ? `<option value="${escapeHtml(val)}" selected>${escapeHtml(val)} (undefined)</option>`
+                            : '';
+                        bodyHtml += `<td class="px-4 py-3"><select class="w-full p-2 border border-slate-200 rounded-lg bg-white" onchange="updateCell('traits', ${originalIdx}, 'category', this.value, this)">${preservedUnknown}${categoryOptions}</select></td>`;
                     } else if (currentTab === 'flyData' && k === 'distribution') {
                         display = Array.isArray(val) ? val.map(v => `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] mr-1">${v}</span>`).join('') : val;
-                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openRegionPicker(${originalIdx})">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
+                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openRegionPicker(${originalIdx})">${display || '<span class="text-slate-300 italic">Select...</span>'}</td>`;
+                    } else if (currentTab === 'traits' && k === 'id' && row.id === 'region') {
+                        bodyHtml += `<td class="px-4 py-3 bg-slate-100 text-slate-500 font-mono" title="The Region trait ID is required by the specialized region interface and cannot be changed.">${escapeHtml(val)} <i class="fas fa-lock ml-1 text-[10px]"></i></td>`;
                     } else if (isComplex) {
                         display = Array.isArray(val) ? `<span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium">${val.length} items</span>` : `<span class="px-2 py-1 bg-purple-50 text-purple-600 rounded text-xs font-medium">Object</span>`;
-                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50" onclick="openComplexEditor('${currentTab}', ${originalIdx}, '${k}')">${display}</td>`;
+                        bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openComplexEditor('${currentTab}', ${originalIdx}, '${k}')">${display}</td>`;
                     } else {
                         display = (val === null || val === undefined) ? '<span class="text-slate-300 italic">null</span>' : val;
-                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal" contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText, this)">${display}</td>`;
+                        const cycleIssue = currentTab === 'taxa' && k === 'parent'
+                            ? taxonomyCycleIssuesByRow.get(originalIdx)
+                            : null;
+                        const cycleClass = cycleIssue ? ' taxonomy-cycle-error' : '';
+                        const cycleAttribute = cycleIssue ? ` data-cycle-error="${escapeHtml(cycleIssue.message)}"` : '';
+                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal${cycleClass}${stickyIdClass}"${cycleAttribute} contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText, this)">${display}</td>`;
                     }
                 });
 
@@ -503,6 +846,7 @@
                 </tr>`;
             });
             document.getElementById('table-body').innerHTML = bodyHtml;
+            sizeFlyDataRowsToFocusedColumn(keys);
         }
 
         function escapeHtml(value) {
@@ -569,24 +913,22 @@
                 let quickAddBtn = (currentTab === 'flyData' && traitMap[k]) ? `<button onclick="quickAddTraitOption('${k}')" class="ml-2 text-blue-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-all" title="Add new option to this trait"><i class="fas fa-plus-circle"></i></button>` : '';
                 const uniqueBadge = renderUniqueBadge(currentTab, k);
                 const behaviorClasses = getColumnClasses(currentTab, k).join(' ');
+                const stickyIdClass = currentTab === 'flyData' && k === 'id' ? 'flydata-id-column' : '';
+                const isActiveSort = currentTab === 'flyData' && flyDataSort.key === k && flyDataSort.direction;
+                const escapedHeaderText = escapeHtml(displayHeader);
+                const headerLabelClass = currentTab === 'flyData' ? `flydata-header-label${isActiveSort ? ' expanded' : ''}` : 'flex items-center';
+                const sortDirectionIcon = isActiveSort ? `<i class="fas fa-arrow-${flyDataSort.direction === 'asc' ? 'up' : 'down'} text-[9px]"></i>` : '';
+                const sortButton = currentTab === 'flyData'
+                    ? `<button type="button" onclick="event.stopPropagation(); toggleFlyDataSort('${k}')" class="column-sort-btn ${isActiveSort ? 'active' : ''}" title="${isActiveSort ? `Size rows to this column and ${flyDataSort.direction === 'asc' ? 'sort descending' : 'restore original row heights and order'}` : 'Size rows to this column and sort ascending'}" aria-label="Focus and sort by ${escapedHeaderText}"><i class="fas fa-search text-[10px]"></i>${sortDirectionIcon}</button>`
+                    : '';
 
-                let taxonInfoWidget = '';
-                if (currentTab === 'taxa' && k.toLowerCase() === 'taxonid') {
-                    taxonInfoWidget = `
-                        <span style="position:relative; display:inline-flex; align-items:center;">
-                            <button class="taxon-info-btn" onclick="event.stopPropagation(); toggleTaxonPopover(this);">i</button>
-                            <span class="taxon-popover">
-                                <strong>${k}</strong> must be retrieved from the
-                                <strong>iNaturalist database</strong> to ensure compatibility
-                                with the iNat integration features.
-                            </span>
-                        </span>`;
-                }
+                const controlledVocabularyInfo = renderControlledVocabularyInfo(currentTab, k);
                 
                 headHtml += `
-                    <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top ${behaviorClasses}" style="width: ${width}px" data-key="${k}">
+                    <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top ${behaviorClasses} ${stickyIdClass}" style="width: ${width}px" data-key="${k}">
                         <div class="flex items-center">
-                            <div class="break-words whitespace-normal leading-tight flex-1 flex items-center">${displayHeader}${taxonInfoWidget}${uniqueBadge}</div>
+                            <div class="break-words whitespace-normal leading-tight flex-1 ${headerLabelClass}" title="${escapedHeaderText}">${displayHeader}${controlledVocabularyInfo}${uniqueBadge}</div>
+                            ${sortButton}
                             ${quickAddBtn}
                         </div>
                         <div class="text-[10px] text-slate-400 font-mono mt-1 opacity-0 group-hover:opacity-100 transition-opacity">${k}</div>
@@ -697,9 +1039,17 @@
 
         function updateCell(type, idx, key, val, element) {
             const oldVal = db[type][idx][key];
+            if (type === 'traits' && key === 'id' && oldVal === 'region') {
+                if (element) element.innerText = oldVal;
+                printLog('The Region trait ID is required by the specialized region interface and cannot be changed.', true);
+                return false;
+            }
             let newVal = val;
             if (typeof oldVal === 'number') newVal = parseFloat(val);
             if (val === 'null') newVal = null;
+            if (type === 'taxa' && key === 'parent' && (!String(val).trim() || String(val).trim().toLowerCase() === 'null')) {
+                newVal = null;
+            }
 
             const duplicateIdx = findDuplicateId(type, key, newVal, idx);
             if (duplicateIdx !== -1) {
@@ -714,6 +1064,11 @@
                 if (type === 'header' && key === 'SHORT_TITLE') {
                     document.getElementById('dataset-short-title').innerText = newVal || 'Identification Dataset';
                 }
+            }
+            if (type === 'taxa' && (key === 'name' || key === 'parent')) {
+                const cycleIssues = getTaxonomyCycleIssues();
+                renderTable();
+                if (cycleIssues.length > 0) printLog(cycleIssues[0].message, true);
             }
             return true;
         }
@@ -900,7 +1255,8 @@
             activeEdit = { type: 'flyData', idx, key: traitId };
             const traitDef = db.traits.find(t => t.id === traitId);
             if (!traitDef) return;
-            const currentValues = db.flyData[idx][traitId] || [];
+            const storedValues = db.flyData[idx][traitId] || [];
+            const currentValues = Array.isArray(storedValues) ? storedValues : [storedValues];
             const modal = document.getElementById('modal');
             const content = document.getElementById('modal-content');
             const saveBtn = document.getElementById('modal-save-btn');
@@ -909,7 +1265,17 @@
             modal.classList.remove('hidden');
             saveBtn.classList.remove('hidden');
 
+            const validLabels = new Set(traitDef.options.map(opt => opt.label));
+            const invalidValues = currentValues.filter(value => !validLabels.has(value));
             let html = `<div class="space-y-3">`;
+            invalidValues.forEach(value => {
+                const escapedValue = escapeHtml(value);
+                html += `
+                    <label class="flex items-start gap-3 p-4 rounded-xl border-2 border-red-300 bg-red-50 transition-all cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-red-600 rounded focus:ring-red-500" value="${escapedValue}" checked onchange="toggleTraitOption(this)">
+                        <div><div class="font-bold text-red-800">${escapedValue}</div><div class="text-sm text-red-600 mt-1">This selected value is no longer an option in the Traits tab. It has been preserved; uncheck it to remove it from this fly.</div></div>
+                    </label>`;
+            });
             traitDef.options.forEach((opt, i) => {
                 const isSelected = currentValues.includes(opt.label);
                 html += `
@@ -1007,7 +1373,9 @@
             } else {
                 template = JSON.parse(JSON.stringify(defaultTemplates[type]));
                 if (type === 'flyData' && db.traits) {
-                    db.traits.forEach(t => { template[t.id] = []; });
+                    db.traits.forEach(t => {
+                        if (t.id !== 'region') template[t.id] = [];
+                    });
                 }
             }
 
@@ -1048,12 +1416,28 @@
         function getTaxonomyHierarchy(speciesName) {
             if (!db.taxa) return [];
             let hierarchy = [], current = db.taxa.find(t => t.name === speciesName), visited = new Set();
-            while (current) { if (visited.has(current.name)) break; visited.add(current.name); hierarchy.unshift(current.name); current = db.taxa.find(t => t.name === current.parent); }
+            while (current) {
+                if (visited.has(current.name)) throw new Error(`Circular reference detected at "${current.name}".`);
+                visited.add(current.name);
+                hierarchy.unshift(current.name);
+                current = db.taxa.find(t => t.name === current.parent);
+            }
             return hierarchy;
         }
 
         function exportFile(type) {
             if (!db[type]) return;
+            if (type === 'taxa' || type === 'flyData') {
+                const cycleIssues = getTaxonomyCycleIssues();
+                if (cycleIssues.length > 0) {
+                    const message = cycleIssues[0].message;
+                    printLog(`Cannot export ${type}: ${message}`, true);
+                    alert(`Cannot export ${type}. ${message}`);
+                    if (currentTab !== 'taxa') switchTab('taxa');
+                    else renderTable();
+                    return false;
+                }
+            }
             const duplicateColumns = getColumnsWithClass(type, 'unique')
                 .map(key => ({ key, values: getDuplicateValues(type, key) }))
                 .filter(result => result.values.length > 0);
@@ -1072,15 +1456,30 @@
             }
 
             let dataToExport = JSON.parse(JSON.stringify(db[type]));
+            if (type === 'taxa') {
+                dataToExport.forEach(taxon => {
+                    if (!String(taxon.parent ?? '').trim()) taxon.parent = null;
+                });
+            }
             if (type === 'flyData') dataToExport.forEach(fly => { fly.taxonomy = getTaxonomyHierarchy(fly.species); });
-            const text = (type === 'taxa' || type === 'regions') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
+            const text = (type === 'taxa' || type === 'outgroupTaxa' || type === 'regions' || type === 'categories') ? `const ${type} = Object.freeze(${JSON.stringify(dataToExport, null, 2)});\n` : `const ${type} = ${JSON.stringify(dataToExport, null, 2)};\n`;
             const blob = new Blob([text], { type: 'text/javascript' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${type === 'flyData' ? 'flydata' : type}.js`; a.click();
+            const exportFilename = type === 'flyData' ? 'flydata.js' : type === 'outgroupTaxa' ? 'outgroup_taxa.js' : `${type}.js`;
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = exportFilename; a.click();
             return true;
         }
 
         function exportAll() {
-            const types = ['header', 'taxa', 'traits', 'flyData', 'regions'];
+            const cycleIssues = getTaxonomyCycleIssues();
+            if (cycleIssues.length > 0) {
+                const message = cycleIssues[0].message;
+                printLog(`Cannot export files: ${message}`, true);
+                alert(`Cannot export files. ${message}`);
+                if (currentTab !== 'taxa') switchTab('taxa');
+                else renderTable();
+                return false;
+            }
+            const types = ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'];
             const results = types.filter(type => db[type]).map(type => exportFile(type));
             if (results.every(Boolean)) printLog("All available files exported.");
         }

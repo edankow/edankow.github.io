@@ -111,7 +111,7 @@ const flyData = [
       "pale, similar to upper calypter"
     ],
     "Abdominalpubescence": [
-      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed."
     ],
     "Tsetae": [
       "without especially strong or erect median marginal setae (Whitworth 2006)"
@@ -124,6 +124,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown"
+    ],
+    "Bodycolorcopper": [
+      "extensively and rather uniformly coppery brown (unique to Lucilia cuprina)",
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -248,7 +270,7 @@ const flyData = [
       "pale, similar to upper calypter"
     ],
     "Abdominalpubescence": [
-      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed."
     ],
     "Tsetae": [
       "without especially strong or erect median marginal setae (Whitworth 2006)"
@@ -261,6 +283,31 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "extensively and rather uniformly coppery brown (unique to Lucilia cuprina)",
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -351,6 +398,34 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -441,6 +516,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "yellowish green, emerald green, or bluish",
+      "orangish green, reddish-orange brown, or coppery brown"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -538,6 +635,35 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width",
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -632,6 +758,28 @@ const flyData = [
     "Fronswidthversusthirty": [
       "at least 30% head width",
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "reclinate"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -782,7 +930,7 @@ const flyData = [
       "pale, similar to upper calypter"
     ],
     "Abdominalpubescence": [
-      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed."
     ],
     "Tsetae": [
       "without especially strong or erect median marginal setae (Whitworth 2006)"
@@ -795,6 +943,34 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -954,7 +1130,7 @@ const flyData = [
       "pale, similar to upper calypter"
     ],
     "Abdominalpubescence": [
-      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)"
+      "with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry. See reference images if explanation needed."
     ],
     "Tsetae": [
       "without especially strong or erect median marginal setae (Whitworth 2006)"
@@ -967,6 +1143,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -1127,6 +1325,34 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1286,6 +1512,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1404,6 +1652,36 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3",
+      "With long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "with long, erect discal setae on tergite 4",
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1513,6 +1791,31 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1623,6 +1926,35 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteDiscalSetae": [
+      "Without long, erect discal setae on tergite 3"
+    ],
+    "FourthTergiteDiscalSetae": [
+      "with long, erect discal setae on tergite 4",
+      "without long, erect discal setae on tergite 4"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1724,6 +2056,32 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "FronswidthatnarrowesttohelpIDfemales": [
+      "less than 35% head width",
+      "at least 35% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -1812,6 +2170,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "with 1-2 pairs of long, erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -1904,6 +2284,28 @@ const flyData = [
     "Fronswidthversusthirty": [
       "at least 30% head width",
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -2017,8 +2419,7 @@ const flyData = [
       "no setae"
     ],
     "Basicostacolor": [
-      "orange, yellow, or whitish",
-      "brown or black"
+      "orange, yellow, or whitish"
     ],
     "Lowercalyptercolor": [
       "light brown, somewhat darker than upper calypter"
@@ -2037,6 +2438,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -2171,6 +2594,28 @@ const flyData = [
     "Fronswidthversusthirty": [
       "less than 30% head width",
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "reclinate"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "at least partially orange, yellow, or whitish."
     ]
   },
   {
@@ -2310,6 +2755,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2450,6 +2917,28 @@ const flyData = [
     "Fronswidthversusthirty": [
       "less than 30% head width",
       "at least 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2550,6 +3039,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2648,6 +3159,28 @@ const flyData = [
     "Fronswidthversusthirty": [
       "at least 30% head width",
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "reclinate"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2751,6 +3284,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "erect"
+    ],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2849,6 +3404,28 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "not shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "orangish green, reddish-orange brown, or coppery brown",
+      "yellowish green, emerald green, or bluish"
+    ],
+    "ThirdTergiteMarginalSetae": [
+      "without especially strong or erect median marginal setae"
+    ],
+    "FourthTergiteMarginalSetae": [
+      "reclinate"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
+    ],
+    "TrueBasicostaColor": [
+      "entirely brown or black"
     ]
   },
   {
@@ -2885,6 +3462,19 @@ const flyData = [
     ],
     "Fronswidthversusthirty": [
       "less than 30% head width"
+    ],
+    "Bodycolorblack": [
+      "shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "shining black"
+    ],
+    "ThirdTergiteMarginalSetae": [],
+    "FronsWidthVersusEleven": [
+      "less than 11% of head width"
     ]
   },
   {
@@ -2909,6 +3499,18 @@ const flyData = [
     ],
     "Abdominalpubescence": [
       "without extensive areas of abdominal pubescence that appear white-dusted"
+    ],
+    "Bodycolorblack": [
+      "shining black"
+    ],
+    "Bodycolorcopper": [
+      "not extensively and rather uniformly coppery brown (may be other shades of brown, or other colors altogether)"
+    ],
+    "Bodycolorreddish": [
+      "shining black"
+    ],
+    "FronsWidthVersusEleven": [
+      "at least 11% of head width"
     ]
   }
 ];
