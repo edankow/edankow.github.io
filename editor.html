@@ -130,6 +130,9 @@
             </nav>
 
             <div class="p-4 border-t border-slate-100 space-y-3">
+                <button onclick="createNewDataset()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-file-circle-plus"></i> New Dataset
+                </button>
                 <div class="relative">
                     <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
                         <i class="fas fa-file-import"></i> Import Files
@@ -452,6 +455,39 @@
             }
         }
 
+        function createNewDataset() {
+            if (!confirm('Start a new dataset? Any unexported changes in the current workspace will be lost.')) return;
+
+            const linkedRegionSet = db.header?.[0]?.REGION_SET || window.REGION_SET || '';
+            const linkedRegions = db.regions ? cloneLoadedData(db.regions) : [];
+            db = {
+                header: [{
+                    SHORT_TITLE: 'New Identification Dataset',
+                    LONG_TITLE: 'New Identification Dataset',
+                    REGION_SET: linkedRegionSet,
+                    DEFAULT_PLACE_ID: '',
+                    DEFAULT_TAXON: '',
+                    ABOUT_CONTENT: ''
+                }],
+                taxa: [],
+                outgroupTaxa: [],
+                traits: [],
+                categories: [],
+                flyData: [],
+                regions: linkedRegions
+            };
+            distributionClipboard = null;
+            activeEdit = { type: null, index: null, key: null };
+            searchQuery = '';
+            columnWidths = {};
+            flyDataSort = { key: null, direction: null };
+            document.getElementById('search-input').value = '';
+            currentTab = null;
+            updateUIState();
+            switchTab('header');
+            printLog(`Started a new dataset linked to the "${linkedRegionSet || 'unassigned'}" region set.`);
+        }
+
         function updateUIState() {
             let count = 0;
             ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData', 'regions'].forEach(t => {
@@ -739,12 +775,9 @@
             }
 
             if (!data || data.length === 0) {
-                if (currentTab === 'flyData') {
-                    renderHeader(keys);
-                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" class="p-12 text-center text-slate-400 italic">No data found. Click "Add New" to start.</td></tr>';
-                } else {
-                    document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" class="p-12 text-center text-slate-400 italic">No data found. Click "Add New" to start.</td></tr>';
-                }
+                if (currentTab !== 'flyData') keys = Object.keys(defaultTemplates[currentTab] || {});
+                renderHeader(keys);
+                document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" class="p-12 text-center text-slate-400 italic">No data found. Click "Add New" to start.</td></tr>';
                 return;
             }
 
