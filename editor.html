@@ -115,11 +115,11 @@
                 <button onclick="switchTab('outgroupTaxa')" id="btn-outgroupTaxa" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-arrow-up-right-dots w-5"></i> Outgroup IDs
                 </button>
-                <button onclick="switchTab('traits')" id="btn-traits" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
-                    <i class="fas fa-list-check w-5"></i> Traits
-                </button>
                 <button onclick="switchTab('categories')" id="btn-categories" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-folder-tree w-5"></i> Categories
+                </button>
+                <button onclick="switchTab('traits')" id="btn-traits" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
+                    <i class="fas fa-list-check w-5"></i> Traits
                 </button>
                 <button onclick="switchTab('flyData')" id="btn-flyData" class="w-full text-left px-4 py-3 rounded-lg font-medium transition-all hover:bg-slate-100 flex items-center gap-3">
                     <i class="fas fa-database w-5"></i> Fly Database
@@ -401,7 +401,7 @@
             updateUIState();
             const hasData = Object.values(db).some(Boolean);
             if (!currentTab && hasData) {
-                const firstAvailable = ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'].find(type => db[type]);
+                const firstAvailable = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData', 'regions'].find(type => db[type]);
                 switchTab(firstAvailable);
             }
         }
@@ -449,7 +449,7 @@
 
         function updateUIState() {
             let count = 0;
-            ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'].forEach(t => {
+            ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData', 'regions'].forEach(t => {
                 const btn = document.getElementById(`btn-${t}`);
                 if (db[t]) { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; count++; }
                 else { btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.disabled = false; }
@@ -1479,7 +1479,7 @@
                 else renderTable();
                 return false;
             }
-            const types = ['header', 'taxa', 'outgroupTaxa', 'traits', 'categories', 'flyData', 'regions'];
+            const types = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData', 'regions'];
             const results = types.filter(type => db[type]).map(type => exportFile(type));
             if (results.every(Boolean)) printLog("All available files exported.");
         }
