@@ -42,6 +42,23 @@ const traits = [
     ]
   },
   {
+    "id": "palpuscolor",
+    "category": "head",
+    "title": "Palpus color",
+    "weight": 2,
+    "link": "",
+    "options": [
+      {
+        "label": "dark brown or black",
+        "description": "Palpus dark brown or black."
+      },
+      {
+        "label": "orange, light brown, or medium brown",
+        "description": "Palpus orange, light brown, or medium brown"
+      }
+    ]
+  },
+  {
     "id": "thoracicStripe",
     "category": "bodycolor",
     "title": "Anterior scutum markings?",
@@ -213,8 +230,8 @@ const traits = [
   },
   {
     "id": "Terminaliashape",
-    "category": "abdomen",
-    "title": "Male terminalia shape?",
+    "category": "terminalia",
+    "title": "Male terminalia: angustigena vs griseotomentosa",
     "weight": 1,
     "link": "https://cjai.biologicalsurvey.ca/wp-content/uploads/2022/07/jmw_19.pdf#page=22",
     "options": [
@@ -225,6 +242,23 @@ const traits = [
       {
         "label": "matching P. griseotomentosa; surstyli hook-shaped and cerci more slender",
         "description": "Male terminalia match P. griseotomentosa; surstyli hook-shaped and cerci more slender (see Jewiss-Gaines et al., 2012)."
+      }
+    ]
+  },
+  {
+    "id": "Vagabundaterminalia",
+    "category": "terminalia",
+    "title": "Male terminalia: vagabunda vs others",
+    "weight": 1,
+    "link": "https://bhl-open-data.s3.us-east-2.amazonaws.com/web/proceedingsofent1082006ento/proceedingsofent1082006ento_0727_large.webp",
+    "options": [
+      {
+        "label": "broad and flattened when viewed from posterior (see fig. 77 in Whitworth, 2006)",
+        "description": "Male cerci broad and flattened when viewed from posterior (see fig. 77 in Whitworth, 2006)."
+      },
+      {
+        "label": "not broad and flattened when viewed from posterior (see fig. 79b in Whitworth, 2006)",
+        "description": "Male cerci not broad and flattened when viewed from posterior (see fig. 79b in Whitworth, 2006)."
       }
     ]
   }

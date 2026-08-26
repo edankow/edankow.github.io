@@ -86,6 +86,15 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia pediculata"
+    ],
+    "Vagabundaterminalia": [
+      "not broad and flattened when viewed from posterior (see fig. 79b in Whitworth, 2006)"
+    ],
+    "facialcarina": [
+      "well-developed"
+    ],
+    "palpuscolor": [
+      "dark brown or black"
     ]
   },
   {
@@ -175,6 +184,12 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia pediculata"
+    ],
+    "facialcarina": [
+      "well-developed"
+    ],
+    "palpuscolor": [
+      "dark brown or black"
     ]
   },
   {
@@ -269,6 +284,9 @@ const flyData = [
       "Pollenia",
       "P. vagabunda complex",
       "Pollenia vagabunda"
+    ],
+    "Vagabundaterminalia": [
+      "broad and flattened when viewed from posterior (see fig. 77 in Whitworth, 2006)"
     ]
   },
   {
@@ -447,7 +465,8 @@ const flyData = [
       "three pale markings divided by two narrow, off-center black stripes"
     ],
     "basicosta": [
-      "dark brown to black."
+      "dark brown to black.",
+      "light brown or medium brown, not dark brown"
     ],
     "posterior spiracle": [
       "dark brown"
@@ -461,6 +480,12 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia labialis"
+    ],
+    "Vagabundaterminalia": [
+      "not broad and flattened when viewed from posterior (see fig. 79b in Whitworth, 2006)"
+    ],
+    "facialcarina": [
+      "reduced or absent"
     ]
   },
   {
@@ -545,7 +570,8 @@ const flyData = [
       "dark brown"
     ],
     "basicosta": [
-      "dark brown to black."
+      "dark brown to black.",
+      "light brown or medium brown, not dark brown"
     ],
     "PostpronotalLobe": [
       "without anterior setae"
@@ -556,6 +582,9 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia labialis"
+    ],
+    "facialcarina": [
+      "reduced or absent"
     ]
   },
   {
@@ -666,6 +695,12 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia griseotomentosa"
+    ],
+    "Vagabundaterminalia": [
+      "not broad and flattened when viewed from posterior (see fig. 79b in Whitworth, 2006)"
+    ],
+    "palpuscolor": [
+      "orange, light brown, or medium brown"
     ]
   },
   {
@@ -767,6 +802,9 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia griseotomentosa"
+    ],
+    "palpuscolor": [
+      "orange, light brown, or medium brown"
     ]
   },
   {
@@ -887,6 +925,12 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia angustigena"
+    ],
+    "Vagabundaterminalia": [
+      "not broad and flattened when viewed from posterior (see fig. 79b in Whitworth, 2006)"
+    ],
+    "palpuscolor": [
+      "orange, light brown, or medium brown"
     ]
   },
   {
@@ -998,6 +1042,9 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia angustigena"
+    ],
+    "palpuscolor": [
+      "orange, light brown, or medium brown"
     ]
   },
   {
@@ -1115,6 +1162,13 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia rudis"
+    ],
+    "Vagabundaterminalia": [
+      "not broad and flattened when viewed from posterior (see fig. 79b in Whitworth, 2006)"
+    ],
+    "palpuscolor": [
+      "orange, light brown, or medium brown",
+      "dark brown or black"
     ]
   },
   {
@@ -1227,6 +1281,10 @@ const flyData = [
     "taxonomy": [
       "Pollenia",
       "Pollenia rudis"
+    ],
+    "palpuscolor": [
+      "orange, light brown, or medium brown",
+      "dark brown or black"
     ]
   }
 ];

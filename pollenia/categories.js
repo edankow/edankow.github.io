@@ -33,5 +33,10 @@ const categories = Object.freeze([
     "id": "abdomen",
     "icon": "🛡️",
     "title": "Abdomen"
+  },
+  {
+    "id": "terminalia",
+    "icon": "🔬",
+    "title": "Terminalia"
   }
 ]);
