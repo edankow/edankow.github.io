@@ -1503,9 +1503,27 @@ function finishConfirmedImmediateID(observationId) {
             });
         });
 
-        const shortcutTaxa = remainingNames
-            .map(name => taxa.find(taxon => taxon.name === name))
-            .filter(taxon => taxon?.taxonId);
+        const remainingNameSet = new Set(remainingNames);
+        const remainingTaxa = taxa.filter(taxon =>
+            taxon?.taxonId && remainingNameSet.has(taxon.name)
+        );
+        const remainingTaxonNames = new Set(remainingTaxa.map(taxon => taxon.name));
+        const shortcutTaxa = [];
+        const addedTaxonNames = new Set();
+
+        function addTaxonAndDescendants(taxon) {
+            if (!taxon || addedTaxonNames.has(taxon.name)) return;
+            addedTaxonNames.add(taxon.name);
+            shortcutTaxa.push(taxon);
+            remainingTaxa
+                .filter(candidate => candidate.parent === taxon.name)
+                .forEach(addTaxonAndDescendants);
+        }
+
+        remainingTaxa
+            .filter(taxon => !taxon.parent || !remainingTaxonNames.has(taxon.parent))
+            .forEach(addTaxonAndDescendants);
+        remainingTaxa.forEach(addTaxonAndDescendants);
 
         view.innerHTML = `
             <div class="identification-shortcuts-header">
