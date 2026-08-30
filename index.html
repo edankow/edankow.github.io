@@ -267,6 +267,7 @@
 	let HAS_SHOWN_WELCOME_MODAL = false;
 	let SHOW_IDENTIFICATION_SHORTCUTS = false;
 	let IDENTIFICATION_SHORTCUTS_READY = false;
+	const IDENTIFICATION_SHORTCUT_KEYS = [...'1234567890qwertyuiop'];
 	const GOATCOUNTER_EVENT_QUEUE = [];
 	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
@@ -1171,7 +1172,10 @@ function postShortcutComment(observationId, cannotIdFurther) {
 
 function submitIdentificationShortcut(taxonId, cannotIdFurther) {
     if (!MY_USER_ID || !CURRENT_OBS_ID || !IDENTIFICATION_SHORTCUTS_READY) return;
-    const taxonInfo = taxa.find(taxon => Number(taxon.taxonId) === Number(taxonId));
+    const configuredOutgroups = typeof outgroupTaxa !== 'undefined' ? outgroupTaxa : [];
+    const taxonInfo = [...taxa, ...configuredOutgroups].find(
+        taxon => Number(taxon.taxonId) === Number(taxonId)
+    );
     if (!taxonInfo) return;
 
     const observationId = CURRENT_OBS_ID;
@@ -1507,8 +1511,8 @@ function finishConfirmedImmediateID(observationId) {
         const target = event.target;
         if (target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
 
-        const shortcutKey = event.key >= '0' && event.key <= '9' ? event.key : null;
-        if (shortcutKey === null) return;
+        const shortcutKey = event.key.toLowerCase();
+        if (!IDENTIFICATION_SHORTCUT_KEYS.includes(shortcutKey)) return;
         const button = document.querySelector(
             `.identification-shortcut[data-shortcut-key="${shortcutKey}"]`
         );
@@ -1518,6 +1522,24 @@ function finishConfirmedImmediateID(observationId) {
     }
 
     document.addEventListener('keydown', handleIdentificationShortcutKeydown);
+
+    function handleZoomKeyboardShortcut(event) {
+        if (event.key.toLowerCase() !== 'z' || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+        const container = document.querySelector('.viewer-panel .img-container');
+        if (!container || container.offsetParent === null) return;
+        const image = container.querySelector('.main-photo');
+        if (!image) return;
+
+        event.preventDefault();
+        isPinned = false;
+        container.dataset.zoomState = 'active';
+        container.classList.add('zoomed-active');
+        container.classList.remove('zoomed-pinned', 'pinned');
+        image.style.transformOrigin = 'center center';
+    }
+
+    document.addEventListener('keydown', handleZoomKeyboardShortcut);
 
     function renderIdentificationShortcuts() {
         const view = document.getElementById('identification-shortcuts-view');
@@ -1573,23 +1595,25 @@ function finishConfirmedImmediateID(observationId) {
             </div>
             <p class="identification-shortcuts-help">Choose an identification to post and continue to the next observation.</p>
             <div class="identification-shortcuts-list"></div>
+            <section class="identification-shortcuts-outgroups" style="display:none;">
+                <h5>Outgroup shortcuts</h5>
+                <div class="identification-shortcuts-list identification-shortcuts-outgroup-list"></div>
+            </section>
         `;
 
         const list = view.querySelector('.identification-shortcuts-list');
         if (!shortcutTaxa.length) {
             list.innerHTML = '<div class="identification-shortcuts-empty">No matching taxa available.</div>';
-            return;
         }
 
-        shortcutTaxa.forEach((taxon, index) => {
-            const cannotIdFurther = taxon.rank !== 'species';
-            const shortcutKey = index < 9 ? String(index + 1) : index === 9 ? '0' : null;
+        function appendShortcutButton(container, taxon, shortcutIndex, cannotIdFurther, isOutgroup = false) {
+            const shortcutKey = IDENTIFICATION_SHORTCUT_KEYS[shortcutIndex];
             const button = document.createElement('button');
             button.type = 'button';
-            button.className = `identification-shortcut${cannotIdFurther ? ' cannot-id-further' : ''}`;
+            button.className = `identification-shortcut${cannotIdFurther ? ' cannot-id-further' : ''}${isOutgroup ? ' outgroup-shortcut' : ''}`;
             if (shortcutKey) {
                 button.dataset.shortcutKey = shortcutKey;
-                button.title = `Press ${shortcutKey} to select ${taxon.name}`;
+                button.title = `Press ${shortcutKey.toUpperCase()} to select ${taxon.name}`;
             }
             const labelRow = document.createElement('span');
             labelRow.className = 'identification-shortcut-label-row';
@@ -1600,7 +1624,7 @@ function finishConfirmedImmediateID(observationId) {
             if (shortcutKey) {
                 const keyHint = document.createElement('span');
                 keyHint.className = 'identification-shortcut-key';
-                keyHint.textContent = `(${shortcutKey})`;
+                keyHint.textContent = `(${shortcutKey.toUpperCase()})`;
                 labelRow.appendChild(keyHint);
             }
             button.appendChild(labelRow);
@@ -1611,8 +1635,28 @@ function finishConfirmedImmediateID(observationId) {
                 button.appendChild(qualifier);
             }
             button.addEventListener('click', () => submitIdentificationShortcut(taxon.taxonId, cannotIdFurther));
-            list.appendChild(button);
+            container.appendChild(button);
+        }
+
+        shortcutTaxa.forEach((taxon, index) => {
+            appendShortcutButton(list, taxon, index, taxon.rank !== 'species');
         });
+
+        const configuredOutgroups = typeof outgroupTaxa !== 'undefined' ? outgroupTaxa : [];
+        if (configuredOutgroups.length) {
+            const outgroupSection = view.querySelector('.identification-shortcuts-outgroups');
+            const outgroupList = view.querySelector('.identification-shortcuts-outgroup-list');
+            outgroupSection.style.display = 'block';
+            configuredOutgroups.forEach((taxon, index) => {
+                appendShortcutButton(
+                    outgroupList,
+                    taxon,
+                    shortcutTaxa.length + index,
+                    false,
+                    true
+                );
+            });
+        }
     }
 
     function selectQuestion(id) {

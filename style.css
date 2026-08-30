@@ -346,6 +346,10 @@ body.wide-layout .summary-box { grid-area: summary; margin-top: 0 !important; }
         .identification-shortcut-key { margin-left: auto; color: #81918b; font-size: 0.82rem; font-style: normal; font-weight: 500; }
         .identification-shortcut.cannot-id-further .identification-shortcut-key { color: #a39168; }
         .identification-shortcut-qualifier { font-size: 0.78rem; font-weight: 600; }
+        .identification-shortcuts-outgroups { margin-top: 24px; padding-top: 18px; border-top: 1px solid #dbe2e8; }
+        .identification-shortcuts-outgroups h5 { margin: 0 0 12px; color: #52606d; font-size: 0.95rem; }
+        .identification-shortcut.outgroup-shortcut { background: #f3f5f7; border-color: #b9c2cb; color: #41505e; }
+        .identification-shortcut.outgroup-shortcut:hover { background: #e7ebef; border-color: #8f9ca8; }
         .identification-shortcuts-empty { padding: 12px; color: #888; font-size: 0.82rem; font-style: italic; }
 .active-question-section {
     max-width: 800px; 
