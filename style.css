@@ -26,6 +26,8 @@
         .status-good { background: var(--inat-green); }
         .status-bad { background: #d9534f; animation: pulse 2.5s ease-in-out infinite; }
         #token-status.status-bad { padding: 0; }
+        .workspace-view-controls { display: flex; align-items: center; gap: 8px; }
+        .workspace-view-controls .btn-toggle { margin-right: 0; }
         .status-alert-button {
             appearance: none;
             display: block;
@@ -329,6 +331,18 @@ body.wide-layout .summary-box { grid-area: summary; margin-top: 0 !important; }
         .outgroup-id-shortcut-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
         .outgroup-id-shortcut { padding: 6px 9px; border: 1px solid #b8c4c0; border-radius: 4px; background: white; color: #245b49; cursor: pointer; font: inherit; }
         .outgroup-id-shortcut:hover { background: #e8f4ef; border-color: #70a793; }
+        .identification-shortcuts-view { width: 100%; max-width: 1400px; min-height: 520px; padding: 24px; box-sizing: border-box; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .identification-shortcuts-header { padding-bottom: 12px; border-bottom: 1px solid #e5e7eb; }
+        .identification-shortcuts-header h4 { margin: 0; color: var(--primary); font-size: 1.35rem; }
+        .identification-shortcuts-help { margin: 0; padding: 14px 0; color: #64748b; font-size: 0.9rem; line-height: 1.4; }
+        .identification-shortcuts-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+        .identification-shortcut { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px; width: 100%; min-height: 68px; padding: 12px 14px; border: 1px solid #9ac6b5; border-radius: 7px; background: #e8f4ef; color: #174f3d; cursor: pointer; text-align: left; font: inherit; }
+        .identification-shortcut:hover { background: #d7eee5; border-color: #5b9e84; }
+        .identification-shortcut.cannot-id-further { background: #fff6df; border-color: #d9b96e; color: #604b16; }
+        .identification-shortcut.cannot-id-further:hover { background: #ffedbd; }
+        .identification-shortcut-name { font-size: 1rem; font-weight: 700; font-style: italic; }
+        .identification-shortcut-qualifier { font-size: 0.78rem; font-weight: 600; }
+        .identification-shortcuts-empty { padding: 12px; color: #888; font-size: 0.82rem; font-style: italic; }
 .active-question-section {
     max-width: 800px; 
 

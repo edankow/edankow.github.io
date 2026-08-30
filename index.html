@@ -149,7 +149,10 @@
         </div>
     </div>
 
-<button id="toggle-viewer-btn" onclick="toggleViewerPanel()" class="btn-toggle">Hide iNat interface</button>
+<div class="workspace-view-controls">
+    <button id="identification-shortcuts-btn" onclick="toggleIdentificationShortcuts()" class="btn-toggle hidden">Identification shortcuts</button>
+    <button id="toggle-viewer-btn" onclick="toggleViewerPanel()" class="btn-toggle">Hide iNat interface</button>
+</div>
 
 	<div id="token-controls" class="hidden">
 	    <button onclick="openTokenModal()" class="btn-toggle" style="background: var(--inat-green); border: none;" title="Link your account to load the observation queue and post identifications directly.">	Link iNaturalist account</button>
@@ -220,6 +223,7 @@
                 </div>
             </div>
         </div>
+        <div id="identification-shortcuts-view" class="identification-shortcuts-view" style="display:none;"></div>
     </div>
 </div>
 
@@ -261,6 +265,7 @@
 	let SKIP_POST_REVIEW_FOR_SESSION = false;
 	let HAS_TRACKED_IDENTIFICATION_SESSION = false;
 	let HAS_SHOWN_WELCOME_MODAL = false;
+	let SHOW_IDENTIFICATION_SHORTCUTS = false;
 	const GOATCOUNTER_EVENT_QUEUE = [];
 	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
@@ -770,6 +775,7 @@ function copyNarrativeToClipboard() {
 	const filterDropdown = document.getElementById('filter-dropdown-container'); // Get the container
         const viewerPanel = document.querySelector('.viewer-panel');
 	const toggleBtn = document.getElementById('toggle-viewer-btn');
+	const shortcutsBtn = document.getElementById('identification-shortcuts-btn');
 	const toggleLocBtn = document.getElementById('change-loc-btn');
 	const queueCountEl = document.getElementById('queue-count'); // Get the counter element
         if (!isTokenValid(MY_TOKEN)) {
@@ -782,6 +788,8 @@ function copyNarrativeToClipboard() {
 	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide if not valid
             if (viewerPanel) viewerPanel.style.display = 'none';
             if (toggleBtn) toggleBtn.classList.add('hidden');
+	    if (shortcutsBtn) shortcutsBtn.classList.add('hidden');
+	    toggleIdentificationShortcuts(false);
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
             document.body.classList.add('wide-layout');
             showWelcomeModalOnce();
@@ -805,6 +813,7 @@ function copyNarrativeToClipboard() {
 		if (filterDropdown) filterDropdown.classList.remove('hidden'); // Show when linked
 		if (toggleLocBtn) toggleLocBtn.classList.remove('hidden');
                 if (toggleBtn) toggleBtn.classList.remove('hidden');
+                if (shortcutsBtn) shortcutsBtn.classList.remove('hidden');
                 if (viewerPanel) viewerPanel.style.display = 'block';
                 document.body.classList.remove('wide-layout');
             } else { throw new Error(); }
@@ -816,6 +825,8 @@ function copyNarrativeToClipboard() {
             controls.classList.remove('hidden');
 	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide on error
             if (toggleBtn) toggleBtn.classList.add('hidden');
+	    if (shortcutsBtn) shortcutsBtn.classList.add('hidden');
+	    toggleIdentificationShortcuts(false);
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
             if (viewerPanel) viewerPanel.style.display = 'none';
             document.body.classList.add('wide-layout');
@@ -1128,6 +1139,46 @@ function setSkipPostReviewForSession(shouldSkip) {
     SKIP_POST_REVIEW_FOR_SESSION = shouldSkip;
 }
 
+function getIdentificationSignature() {
+    const datasetKeyURL = `https://edankow.github.io/identify/?dataset=${encodeURIComponent(window.ACTIVE_DATASET)}`;
+    return MY_USER_LOGIN?.toLowerCase() === "edanko"
+        ? `I made this identification using my interactive key at ${datasetKeyURL}.`
+        : `This identification was made and posted using @edanko’s interactive key at ${datasetKeyURL}.`;
+}
+
+function postShortcutComment(observationId, cannotIdFurther) {
+    const prefix = cannotIdFurther
+        ? "Based on the features visible, it does not appear possible to identify this observation more precisely.<br><br>"
+        : "";
+    return fetch("https://api.inaturalist.org/v1/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MY_TOKEN}` },
+        body: JSON.stringify({
+            comment: {
+                body: prefix + getIdentificationSignature(),
+                parent_id: observationId,
+                parent_type: "Observation"
+            }
+        })
+    }).then(response => {
+        if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
+    }).catch(error => console.error("Shortcut comment failed to post", error));
+}
+
+function submitIdentificationShortcut(taxonId, cannotIdFurther) {
+    if (!MY_USER_ID || !CURRENT_OBS_ID) return;
+    const taxonInfo = taxa.find(taxon => Number(taxon.taxonId) === Number(taxonId));
+    if (!taxonInfo) return;
+
+    const observationId = CURRENT_OBS_ID;
+    sendIdentification(observationId, taxonInfo.taxonId).then(idPosted => {
+        if (!idPosted) console.error(`Identification failed for observation ${observationId}`);
+    });
+    postShortcutComment(observationId, cannotIdFurther);
+    if (cannotIdFurther) setCommunityTaxonStatus(taxonInfo);
+    excludeAndNext(observationId);
+}
+
 function postImmediateID() {
     // Calculate and preview the actions. Nothing is posted until the modal is submitted.
     const filtered = getCurrentFlyMatches();
@@ -1420,6 +1471,74 @@ function finishConfirmedImmediateID(observationId) {
         }).join('');
 
         menu.innerHTML = `<div><h4 style="margin: 0; color: var(--primary); text-align: center; font-size: 1.1rem;">Identification choices</h4></div>${messageHtml}${categoriesHtml}`;
+        if (SHOW_IDENTIFICATION_SHORTCUTS) renderIdentificationShortcuts();
+    }
+
+    function toggleIdentificationShortcuts(showShortcuts = !SHOW_IDENTIFICATION_SHORTCUTS) {
+        SHOW_IDENTIFICATION_SHORTCUTS = Boolean(showShortcuts && MY_USER_ID);
+        const matrixPanel = document.querySelector('.matrix-panel');
+        const shortcutsView = document.getElementById('identification-shortcuts-view');
+        const button = document.getElementById('identification-shortcuts-btn');
+        if (matrixPanel) matrixPanel.style.display = SHOW_IDENTIFICATION_SHORTCUTS ? 'none' : '';
+        if (shortcutsView) shortcutsView.style.display = SHOW_IDENTIFICATION_SHORTCUTS ? 'block' : 'none';
+        if (button) {
+            button.textContent = SHOW_IDENTIFICATION_SHORTCUTS ? 'Identification choices' : 'Identification shortcuts';
+            button.setAttribute('aria-pressed', String(SHOW_IDENTIFICATION_SHORTCUTS));
+        }
+        if (SHOW_IDENTIFICATION_SHORTCUTS) renderIdentificationShortcuts();
+    }
+
+    function renderIdentificationShortcuts() {
+        const view = document.getElementById('identification-shortcuts-view');
+        if (!view) return;
+        const currentMatches = getCurrentFlyMatches();
+        const remainingNames = [];
+        const seenNames = new Set();
+        currentMatches.forEach(match => {
+            [...match.taxonomy].reverse().forEach(name => {
+                if (!seenNames.has(name)) {
+                    seenNames.add(name);
+                    remainingNames.push(name);
+                }
+            });
+        });
+
+        const shortcutTaxa = remainingNames
+            .map(name => taxa.find(taxon => taxon.name === name))
+            .filter(taxon => taxon?.taxonId);
+
+        view.innerHTML = `
+            <div class="identification-shortcuts-header">
+                <h4>Identification shortcuts</h4>
+            </div>
+            <p class="identification-shortcuts-help">Choose an identification to post and continue to the next observation.</p>
+            <div class="identification-shortcuts-list"></div>
+        `;
+
+        const list = view.querySelector('.identification-shortcuts-list');
+        if (!shortcutTaxa.length) {
+            list.innerHTML = '<div class="identification-shortcuts-empty">No matching taxa available.</div>';
+            return;
+        }
+
+        shortcutTaxa.forEach(taxon => {
+            const cannotIdFurther = taxon.rank !== 'species';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = `identification-shortcut${cannotIdFurther ? ' cannot-id-further' : ''}`;
+            const name = document.createElement('span');
+            name.className = 'identification-shortcut-name';
+            name.textContent = taxon.name;
+            button.appendChild(name);
+            if (cannotIdFurther) {
+                const qualifier = document.createElement('span');
+                qualifier.className = 'identification-shortcut-qualifier';
+                qualifier.textContent = '(Cannot ID further)';
+                button.appendChild(qualifier);
+            }
+            button.addEventListener('click', () => submitIdentificationShortcut(taxon.taxonId, cannotIdFurther));
+            list.appendChild(button);
+        });
     }
 
     function selectQuestion(id) {
