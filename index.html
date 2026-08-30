@@ -1501,6 +1501,24 @@ function finishConfirmedImmediateID(observationId) {
         if (SHOW_IDENTIFICATION_SHORTCUTS) renderIdentificationShortcuts();
     }
 
+    function handleIdentificationShortcutKeydown(event) {
+        if (!SHOW_IDENTIFICATION_SHORTCUTS || !IDENTIFICATION_SHORTCUTS_READY) return;
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        const target = event.target;
+        if (target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+
+        const shortcutKey = event.key >= '0' && event.key <= '9' ? event.key : null;
+        if (shortcutKey === null) return;
+        const button = document.querySelector(
+            `.identification-shortcut[data-shortcut-key="${shortcutKey}"]`
+        );
+        if (!button || button.disabled) return;
+        event.preventDefault();
+        button.click();
+    }
+
+    document.addEventListener('keydown', handleIdentificationShortcutKeydown);
+
     function renderIdentificationShortcuts() {
         const view = document.getElementById('identification-shortcuts-view');
         if (!view) return;
@@ -1563,15 +1581,29 @@ function finishConfirmedImmediateID(observationId) {
             return;
         }
 
-        shortcutTaxa.forEach(taxon => {
+        shortcutTaxa.forEach((taxon, index) => {
             const cannotIdFurther = taxon.rank !== 'species';
+            const shortcutKey = index < 9 ? String(index + 1) : index === 9 ? '0' : null;
             const button = document.createElement('button');
             button.type = 'button';
             button.className = `identification-shortcut${cannotIdFurther ? ' cannot-id-further' : ''}`;
+            if (shortcutKey) {
+                button.dataset.shortcutKey = shortcutKey;
+                button.title = `Press ${shortcutKey} to select ${taxon.name}`;
+            }
+            const labelRow = document.createElement('span');
+            labelRow.className = 'identification-shortcut-label-row';
             const name = document.createElement('span');
             name.className = 'identification-shortcut-name';
             name.textContent = taxon.name;
-            button.appendChild(name);
+            labelRow.appendChild(name);
+            if (shortcutKey) {
+                const keyHint = document.createElement('span');
+                keyHint.className = 'identification-shortcut-key';
+                keyHint.textContent = `(${shortcutKey})`;
+                labelRow.appendChild(keyHint);
+            }
+            button.appendChild(labelRow);
             if (cannotIdFurther) {
                 const qualifier = document.createElement('span');
                 qualifier.className = 'identification-shortcut-qualifier';
