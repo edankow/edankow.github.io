@@ -266,6 +266,7 @@
 	let HAS_TRACKED_IDENTIFICATION_SESSION = false;
 	let HAS_SHOWN_WELCOME_MODAL = false;
 	let SHOW_IDENTIFICATION_SHORTCUTS = false;
+	let IDENTIFICATION_SHORTCUTS_READY = false;
 	const GOATCOUNTER_EVENT_QUEUE = [];
 	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
@@ -789,7 +790,7 @@ function copyNarrativeToClipboard() {
             if (viewerPanel) viewerPanel.style.display = 'none';
             if (toggleBtn) toggleBtn.classList.add('hidden');
 	    if (shortcutsBtn) shortcutsBtn.classList.add('hidden');
-	    toggleIdentificationShortcuts(false);
+	    setIdentificationShortcutsReady(false);
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
             document.body.classList.add('wide-layout');
             showWelcomeModalOnce();
@@ -826,7 +827,7 @@ function copyNarrativeToClipboard() {
 	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide on error
             if (toggleBtn) toggleBtn.classList.add('hidden');
 	    if (shortcutsBtn) shortcutsBtn.classList.add('hidden');
-	    toggleIdentificationShortcuts(false);
+	    setIdentificationShortcutsReady(false);
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
             if (viewerPanel) viewerPanel.style.display = 'none';
             document.body.classList.add('wide-layout');
@@ -860,6 +861,7 @@ function copyNarrativeToClipboard() {
 async function showNextFromQueue() {
     if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
     const obs = OBSERVATION_QUEUE.shift();
+    setIdentificationShortcutsReady(false);
     // Every observation starts with a clean identification matrix. Location is
     // applied for the new record below after its place hierarchy is fetched.
     resetMatrix();
@@ -886,7 +888,8 @@ async function showNextFromQueue() {
         } catch (e) { console.error("Place fetch failed", e); }
     }
 
-    autoSetRegionFromLocality(locationTerms);
+    const regionWasApplied = autoSetRegionFromLocality(locationTerms);
+    setIdentificationShortcutsReady(regionWasApplied);
 
     renderObservations([obs], geoHierarchy);
 }
@@ -894,7 +897,7 @@ async function showNextFromQueue() {
 
 
 function autoSetRegionFromLocality(terms) {
-    if (!terms || terms.length === 0) return;
+    if (!terms || terms.length === 0) return false;
 
     // Look for a match in your regions.js data
     // We check from most specific to most general (usually the order in the array)
@@ -915,6 +918,7 @@ function autoSetRegionFromLocality(terms) {
         console.log(`Auto-detected region: ${match.name}`);
     }
    jumpToNextQuestion() // could turn off.
+   return Boolean(match);
 }
 
 
@@ -1166,7 +1170,7 @@ function postShortcutComment(observationId, cannotIdFurther) {
 }
 
 function submitIdentificationShortcut(taxonId, cannotIdFurther) {
-    if (!MY_USER_ID || !CURRENT_OBS_ID) return;
+    if (!MY_USER_ID || !CURRENT_OBS_ID || !IDENTIFICATION_SHORTCUTS_READY) return;
     const taxonInfo = taxa.find(taxon => Number(taxon.taxonId) === Number(taxonId));
     if (!taxonInfo) return;
 
@@ -1474,6 +1478,15 @@ function finishConfirmedImmediateID(observationId) {
         if (SHOW_IDENTIFICATION_SHORTCUTS) renderIdentificationShortcuts();
     }
 
+    function setIdentificationShortcutsReady(isReady) {
+        IDENTIFICATION_SHORTCUTS_READY = Boolean(isReady && MY_USER_ID);
+        if (!MY_USER_ID) {
+            toggleIdentificationShortcuts(false);
+        } else if (SHOW_IDENTIFICATION_SHORTCUTS) {
+            renderIdentificationShortcuts();
+        }
+    }
+
     function toggleIdentificationShortcuts(showShortcuts = !SHOW_IDENTIFICATION_SHORTCUTS) {
         SHOW_IDENTIFICATION_SHORTCUTS = Boolean(showShortcuts && MY_USER_ID);
         const matrixPanel = document.querySelector('.matrix-panel');
@@ -1491,6 +1504,17 @@ function finishConfirmedImmediateID(observationId) {
     function renderIdentificationShortcuts() {
         const view = document.getElementById('identification-shortcuts-view');
         if (!view) return;
+        if (!IDENTIFICATION_SHORTCUTS_READY) {
+            view.innerHTML = `
+                <div class="identification-shortcuts-header">
+                    <h4>Identification shortcuts</h4>
+                </div>
+                <div class="identification-shortcuts-loading" role="status">
+                    Detecting region and narrowing matching taxa…
+                </div>
+            `;
+            return;
+        }
         const currentMatches = getCurrentFlyMatches();
         const remainingNames = [];
         const seenNames = new Set();
@@ -2148,6 +2172,7 @@ function escapeRegionString(value) {
     }
 
     function resetMatrix() {
+        setIdentificationShortcutsReady(false);
         wasConfirmationMode = false
         currentFilters = { region: null };
         traits.forEach(t => { currentFilters[t.id] = null; });

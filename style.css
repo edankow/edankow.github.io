@@ -335,6 +335,7 @@ body.wide-layout .summary-box { grid-area: summary; margin-top: 0 !important; }
         .identification-shortcuts-header { padding-bottom: 12px; border-bottom: 1px solid #e5e7eb; }
         .identification-shortcuts-header h4 { margin: 0; color: var(--primary); font-size: 1.35rem; }
         .identification-shortcuts-help { margin: 0; padding: 14px 0; color: #64748b; font-size: 0.9rem; line-height: 1.4; }
+        .identification-shortcuts-loading { display: flex; align-items: center; justify-content: center; min-height: 360px; color: #64748b; font-size: 0.95rem; text-align: center; }
         .identification-shortcuts-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
         .identification-shortcut { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px; width: 100%; min-height: 68px; padding: 12px 14px; border: 1px solid #9ac6b5; border-radius: 7px; background: #e8f4ef; color: #174f3d; cursor: pointer; text-align: left; font: inherit; }
         .identification-shortcut:hover { background: #d7eee5; border-color: #5b9e84; }
