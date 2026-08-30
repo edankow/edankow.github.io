@@ -1524,7 +1524,7 @@ function finishConfirmedImmediateID(observationId) {
     document.addEventListener('keydown', handleIdentificationShortcutKeydown);
 
     function handleZoomKeyboardShortcut(event) {
-        if (event.key.toLowerCase() !== 'z' || event.altKey || event.ctrlKey || event.metaKey) return;
+        if ((event.code !== 'Space' && event.key !== ' ') || event.altKey || event.ctrlKey || event.metaKey) return;
         if (event.target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
         const container = document.querySelector('.viewer-panel .img-container');
         if (!container || container.offsetParent === null) return;
