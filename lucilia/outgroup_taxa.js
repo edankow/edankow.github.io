@@ -5,6 +5,11 @@ const outgroupTaxa = Object.freeze([
     "rank": "order"
   },
   {
+    "taxonId": 122222,
+    "name": "Condylostylus",
+    "rank": "genus"
+  },
+  {
     "taxonId": 342767,
     "name": "Calyptratae",
     "rank": "zoosubsection"
@@ -13,6 +18,21 @@ const outgroupTaxa = Object.freeze([
     "taxonId": 356157,
     "name": "Oestroidea",
     "rank": "superfamily"
+  },
+  {
+    "taxonId": 61860,
+    "name": "Calliphoridae",
+    "rank": "family"
+  },
+  {
+    "taxonId": 387588,
+    "name": "Chrysomya rufifacies",
+    "rank": "species"
+  },
+  {
+    "taxonId": 329781,
+    "name": "Chrysomya megacephala",
+    "rank": "species"
   },
   {
     "taxonId": 70144,
