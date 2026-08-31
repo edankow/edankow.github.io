@@ -1118,12 +1118,17 @@ async function setCommunityTaxonStatus(taxonInfo) {
     }
 }
 
-function getImmediateIdNarrative(taxonInfo) {
+function shouldPostIdentificationSignature(taxonInfo) {
     const allIDsAreCV = CURRENT_OBSERVATION?.identifications?.every(id => id.vision) ?? false;
-    const shouldPostNarrative =
+    return (
         CURRENT_COMMUNITY_ID !== taxonInfo.taxonId ||
         taxonInfo.rank !== "species" ||
-        allIDsAreCV;
+        allIDsAreCV
+    );
+}
+
+function getImmediateIdNarrative(taxonInfo) {
+    const shouldPostNarrative = shouldPostIdentificationSignature(taxonInfo);
 
     if (!shouldPostNarrative) return "";
 
@@ -1149,6 +1154,11 @@ function getIdentificationSignature() {
     return MY_USER_LOGIN?.toLowerCase() === "edanko"
         ? `I made this identification using my interactive key at ${datasetKeyURL}.`
         : `This identification was made and posted using @edanko’s interactive key at ${datasetKeyURL}.`;
+}
+
+function shouldPostShortcutSignature(taxonInfo) {
+    const allIDsAreCV = CURRENT_OBSERVATION?.identifications?.every(id => id.vision) ?? false;
+    return CURRENT_COMMUNITY_ID !== taxonInfo.taxonId || allIDsAreCV;
 }
 
 function postShortcutComment(observationId, cannotIdFurther) {
@@ -1182,7 +1192,9 @@ function submitIdentificationShortcut(taxonId, cannotIdFurther) {
     sendIdentification(observationId, taxonInfo.taxonId).then(idPosted => {
         if (!idPosted) console.error(`Identification failed for observation ${observationId}`);
     });
-    postShortcutComment(observationId, cannotIdFurther);
+    if (cannotIdFurther || shouldPostShortcutSignature(taxonInfo)) {
+        postShortcutComment(observationId, cannotIdFurther);
+    }
     if (cannotIdFurther) setCommunityTaxonStatus(taxonInfo);
     excludeAndNext(observationId);
 }
