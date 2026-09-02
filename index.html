@@ -129,7 +129,10 @@
 	<div class="dropdown hidden" tabindex="0" id="filter-dropdown-container">
 	    <button class="btn-toggle" style="font-size: 0.7rem;">Change Filters ▼</button>
 	    <div class="dropdown-content">
-		<a href="#"  onclick="searchBoundaryObservation()">🔍 Start with a Focused Group</a>
+		<div class="focused-group-menu-row">
+			<a href="#" onclick="event.preventDefault(); searchBoundaryObservation()">🔍 Start with a Focused Group</a>
+			<button type="button" onclick="copyFocusedGroupStarterLink(event)" title="Copy a bookmarkable focused-group starter link" aria-label="Copy a bookmarkable focused-group starter link">📋</button>
+		</div>
 	        <a href="#" id="identify-own-observations-link" onclick="event.preventDefault(); toggleIdentifyOwnObservations()">👤 Go Thru My Observations</a>
 	        <a href="#" onclick="event.preventDefault(); openTaxonFilterModal()">🪰 Change Taxon</a>
 	        <a href="#" onclick="event.preventDefault(); openLocationModal()">📍 Change Location</a>
@@ -300,6 +303,7 @@ let isPinned = false;
 let CURRENT_TAXON_ID = window.DEFAULT_TAXON; // Default taxon ID
 let IDENTIFY_OWN_OBSERVATIONS = false;
 let UNREVIEWED_QUEUE_FILTERS = null;
+let AUTO_START_FOCUSED_GROUP = false;
 
 function refreshObservationApiBase() {
     API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}&only_id=false&fields=all`;
@@ -337,7 +341,7 @@ window.goatcounter = window.goatcounter || {
 
 // Keep queue settings in the page URL so configured searches can be bookmarked.
 const NON_FILTER_URL_PARAMS = new Set([
-    'code', 'state', 'error', 'error_description', 'error_uri', 'dataset'
+    'code', 'state', 'error', 'error_description', 'error_uri', 'dataset', 'focused_group'
 ]);
 
 function loadFiltersFromURL() {
@@ -346,6 +350,7 @@ function loadFiltersFromURL() {
         ? sessionStorage.getItem('inat_return_search')
         : '';
     const filterParams = savedSearch ? new URLSearchParams(savedSearch) : params;
+    AUTO_START_FOCUSED_GROUP = filterParams.get('focused_group') === 'true';
     IDENTIFY_OWN_OBSERVATIONS = filterParams.get('own_observations') === 'true';
     CURRENT_TAXON_ID = filterParams.get('taxon_id') || window.DEFAULT_TAXON;
     CURRENT_PLACE_ID = filterParams.get('place_id') || window.DEFAULT_PLACE_ID;
@@ -569,6 +574,49 @@ function flyMatchesCurrentFilters(fly) {
         if (String(recordedValues).trim() === '') return true;
         return String(recordedValues).includes(currentFilters[key]);
     });
+}
+
+async function copyFocusedGroupStarterLink(event) {
+    event?.preventDefault();
+    event?.stopPropagation();
+    const button = event?.currentTarget;
+    const starterURL = new URL(window.location.href);
+    starterURL.search = '';
+    starterURL.hash = '';
+    starterURL.searchParams.set('dataset', window.ACTIVE_DATASET);
+    starterURL.searchParams.set('focused_group', 'true');
+    const starterLink = starterURL.toString();
+
+    try {
+        if (!navigator.clipboard || !window.isSecureContext) throw new Error('Clipboard API unavailable');
+        await navigator.clipboard.writeText(starterLink);
+    } catch (error) {
+        const copyField = document.createElement('textarea');
+        copyField.value = starterLink;
+        copyField.setAttribute('readonly', '');
+        copyField.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+        document.body.appendChild(copyField);
+        copyField.focus();
+        copyField.select();
+        const copied = document.execCommand('copy');
+        copyField.remove();
+        if (!copied) {
+            prompt('Copy this focused-group starter link:', starterLink);
+            return;
+        }
+    }
+
+    if (button) {
+        const originalText = button.textContent;
+        button.textContent = '✓';
+        button.title = 'Focused-group starter link copied';
+        button.setAttribute('aria-label', 'Focused-group starter link copied');
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.title = 'Copy a bookmarkable focused-group starter link';
+            button.setAttribute('aria-label', 'Copy a bookmarkable focused-group starter link');
+        }, 2000);
+    }
 }
 
 function getCurrentFlyMatches() {
@@ -2310,8 +2358,13 @@ function escapeRegionString(value) {
             initMatrix();
         
             // 3. Update UI and fetch data
-            updateStatusUI().then(() => { 
-                if (MY_USER_ID) fetchObservations(); 
+            updateStatusUI().then(() => {
+                if (!MY_USER_ID) return;
+                if (AUTO_START_FOCUSED_GROUP) {
+                    searchBoundaryObservation();
+                } else {
+                    fetchObservations();
+                }
             });
         });
     };
@@ -2575,8 +2628,6 @@ async function checkLogin() {
 		MY_TOKEN = datatwo.api_token;
 		localStorage.setItem('inat_token', MY_TOKEN);
 
-		updateStatusUI();
-		fetchObservations();
             } else {
                 console.warn("⚠️ No access_token in response data. Full response:", data);
                 if (data.error) {
