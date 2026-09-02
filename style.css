@@ -28,6 +28,32 @@
         #token-status.status-bad { padding: 0; }
         .workspace-view-controls { display: flex; align-items: center; gap: 8px; }
         .workspace-view-controls .btn-toggle { margin-right: 0; }
+        .identification-mode-tabs {
+            display: inline-flex;
+            align-items: stretch;
+            padding: 2px;
+            border: 1px solid #666;
+            border-radius: 6px;
+            background: #222;
+        }
+        .identification-mode-tab {
+            border: 0;
+            border-radius: 4px;
+            padding: 5px 11px;
+            background: transparent;
+            color: #ddd;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.8rem;
+            line-height: 1.25;
+        }
+        .identification-mode-tab:hover { background: #444; color: #fff; }
+        .identification-mode-tab.active {
+            background: var(--inat-green);
+            color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+        }
+        .identification-mode-tab:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
         .status-alert-button {
             appearance: none;
             display: block;

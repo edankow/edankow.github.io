@@ -167,7 +167,10 @@
     </div>
 
 <div class="workspace-view-controls">
-    <button id="identification-shortcuts-btn" onclick="toggleIdentificationShortcuts()" class="btn-toggle hidden">Identification shortcuts</button>
+    <div id="identification-mode-tabs" class="identification-mode-tabs hidden" role="tablist" aria-label="Identification mode">
+        <button id="identification-choices-tab" type="button" class="identification-mode-tab active" role="tab" aria-selected="true" onclick="toggleIdentificationShortcuts(false)">ID Choices</button>
+        <button id="identification-shortcuts-tab" type="button" class="identification-mode-tab" role="tab" aria-selected="false" onclick="toggleIdentificationShortcuts(true)">ID Shortcuts</button>
+    </div>
     <button id="toggle-viewer-btn" onclick="toggleViewerPanel()" class="btn-toggle">Hide iNat interface</button>
 </div>
 
@@ -856,7 +859,7 @@ function copyNarrativeToClipboard() {
 	const filterDropdown = document.getElementById('filter-dropdown-container');
         const viewerPanel = document.querySelector('.viewer-panel');
 	const toggleBtn = document.getElementById('toggle-viewer-btn');
-	const shortcutsBtn = document.getElementById('identification-shortcuts-btn');
+	const identificationModeTabs = document.getElementById('identification-mode-tabs');
 	const toggleLocBtn = document.getElementById('change-loc-btn');
 	const queueCountEl = document.getElementById('queue-count');
         if (!isTokenValid(MY_TOKEN)) {
@@ -869,7 +872,7 @@ function copyNarrativeToClipboard() {
 	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide if not valid
             if (viewerPanel) viewerPanel.style.display = 'none';
             if (toggleBtn) toggleBtn.classList.add('hidden');
-	    if (shortcutsBtn) shortcutsBtn.classList.add('hidden');
+	    if (identificationModeTabs) identificationModeTabs.classList.add('hidden');
 	    setIdentificationShortcutsReady(false);
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
             document.body.classList.add('wide-layout');
@@ -894,7 +897,7 @@ function copyNarrativeToClipboard() {
 		if (filterDropdown) filterDropdown.classList.remove('hidden'); // Show when linked
 		if (toggleLocBtn) toggleLocBtn.classList.remove('hidden');
                 if (toggleBtn) toggleBtn.classList.remove('hidden');
-                if (shortcutsBtn) shortcutsBtn.classList.remove('hidden');
+                if (identificationModeTabs) identificationModeTabs.classList.remove('hidden');
                 if (viewerPanel) viewerPanel.style.display = 'block';
                 document.body.classList.remove('wide-layout');
             } else { throw new Error(); }
@@ -906,7 +909,7 @@ function copyNarrativeToClipboard() {
             controls.classList.remove('hidden');
 	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide on error
             if (toggleBtn) toggleBtn.classList.add('hidden');
-	    if (shortcutsBtn) shortcutsBtn.classList.add('hidden');
+	    if (identificationModeTabs) identificationModeTabs.classList.add('hidden');
 	    setIdentificationShortcutsReady(false);
 	    if (toggleLocBtn) toggleLocBtn.classList.add('hidden');
             if (viewerPanel) viewerPanel.style.display = 'none';
@@ -1641,12 +1644,19 @@ function finishConfirmedImmediateID(observationId) {
         SHOW_IDENTIFICATION_SHORTCUTS = Boolean(showShortcuts && MY_USER_ID);
         const matrixPanel = document.querySelector('.matrix-panel');
         const shortcutsView = document.getElementById('identification-shortcuts-view');
-        const button = document.getElementById('identification-shortcuts-btn');
+        const choicesTab = document.getElementById('identification-choices-tab');
+        const shortcutsTab = document.getElementById('identification-shortcuts-tab');
         if (matrixPanel) matrixPanel.style.display = SHOW_IDENTIFICATION_SHORTCUTS ? 'none' : '';
         if (shortcutsView) shortcutsView.style.display = SHOW_IDENTIFICATION_SHORTCUTS ? 'block' : 'none';
-        if (button) {
-            button.textContent = SHOW_IDENTIFICATION_SHORTCUTS ? 'Identification choices' : 'Identification shortcuts';
-            button.setAttribute('aria-pressed', String(SHOW_IDENTIFICATION_SHORTCUTS));
+        if (choicesTab) {
+            choicesTab.classList.toggle('active', !SHOW_IDENTIFICATION_SHORTCUTS);
+            choicesTab.setAttribute('aria-selected', String(!SHOW_IDENTIFICATION_SHORTCUTS));
+            choicesTab.tabIndex = SHOW_IDENTIFICATION_SHORTCUTS ? -1 : 0;
+        }
+        if (shortcutsTab) {
+            shortcutsTab.classList.toggle('active', SHOW_IDENTIFICATION_SHORTCUTS);
+            shortcutsTab.setAttribute('aria-selected', String(SHOW_IDENTIFICATION_SHORTCUTS));
+            shortcutsTab.tabIndex = SHOW_IDENTIFICATION_SHORTCUTS ? 0 : -1;
         }
         if (SHOW_IDENTIFICATION_SHORTCUTS) renderIdentificationShortcuts();
     }
