@@ -160,8 +160,21 @@
     <div id="modal-token" class="modal">
     <div class="modal-content">
         <h3>iNaturalist API Token</h3>
-        <p style="font-size: 0.8rem; color: #666;">
-            Link your iNaturalist account to load observations from your identification queue and submit IDs directly from this workspace. <br><br>
+		<div style="font-size: 1rem; line-height: 1.5; color: #555; margin-bottom: 1rem;">
+			<p style="margin-top: 0;">
+				Link your iNaturalist account to load observations from your identification queue and submit IDs directly from this workspace.
+			</p>
+			<p style="margin-bottom: 0.35rem;"><strong>What this workspace actually does:</strong></p>
+			<ul style="margin-top: 0; padding-left: 1.4rem;">
+				<li>Loads the account and observation information needed for your identification queue.</li>
+				<li>Only when you choose to do so, posts identifications and associated text or marks observations as &ldquo;cannot be improved.&rdquo;</li>
+			</ul>
+			<p style="padding: 0.75rem; background: #f3f7ed; border-left: 4px solid #74ac00;">
+				<strong>About the iNaturalist authorization warning:</strong><br>
+				iNaturalist displays a standard notice saying that this application can create, update, and delete content and access other account information. That describes the broad technical permission iNaturalist grants to connected applications. <strong>This workspace does not delete or edit your existing content.</strong> It only performs the actions listed above, and posting actions are manually controlled by you.
+			</p>
+		</div>
+		<p>
 		<button onclick="loginWithINat()" style="background:#74ac00; color:white; border:none; padding:14px 28px; border-radius:4px; cursor:pointer; font-weight:bold; font-size: 1rem;">
         Log in with iNaturalist
     </button>
@@ -230,7 +243,14 @@
 <script src="datasets.js"></script>
 <script>
     const indexDatasets = window.DATASET_LISTS?.index || [];
-    const requestedDataset = new URLSearchParams(window.location.search).get('dataset');
+    const initialUrlParams = new URLSearchParams(window.location.search);
+    const oauthReturnSearch = initialUrlParams.has('code')
+        ? sessionStorage.getItem('inat_return_search')
+        : '';
+    const datasetUrlParams = oauthReturnSearch
+        ? new URLSearchParams(oauthReturnSearch)
+        : initialUrlParams;
+    const requestedDataset = datasetUrlParams.get('dataset');
     window.ACTIVE_DATASET = indexDatasets.includes(requestedDataset) ? requestedDataset : indexDatasets[0];
     if (!window.ACTIVE_DATASET || !/^[a-z0-9-]+$/.test(window.ACTIVE_DATASET)) {
         throw new Error('datasets.js must provide at least one valid index dataset folder.');
