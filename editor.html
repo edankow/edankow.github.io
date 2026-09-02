@@ -279,6 +279,7 @@
         let flyDataSort = { key: null, direction: null };
         let inatTaxonSearchTimeout = null;
         let inatTaxonSearchResults = new Map();
+        const temporaryTaxonomyNameIssues = new WeakMap();
         const exportableTypes = ['header', 'taxa', 'outgroupTaxa', 'categories', 'traits', 'flyData'];
         const exportedFileSignatures = Object.fromEntries(
             exportableTypes.map(type => [type, JSON.stringify(db[type])])
@@ -319,7 +320,7 @@
         // Column behavior is driven by CSS-like classes. Add "unique" to any
         // column here to enable its badge, edit validation, copying, and export checks.
         const columnClasses = {
-            taxa: { taxonId: ['unique'] },
+            taxa: { taxonId: ['unique'], name: ['unique'] },
             outgroupTaxa: { taxonId: ['unique'] },
             traits: { id: ['unique'] },
             categories: { id: ['unique'] },
@@ -731,7 +732,7 @@
                     return `<strong>Trait menu category.</strong> Use the exact ID of a record in the Categories tab (${count} currently defined). Category names, icons, and menu order are managed there; diagnostic priority still comes from trait weight.`;
                 }
                 if (key === 'weight') {
-                    return '<strong>Question priority.</strong> Weight multiplies the trait\'s information score when the key chooses which unanswered question to show next. Use <code>1</code> for normal priority; higher values favor this trait when questions are similarly informative. Weight does not change which taxa match your selections.';
+                    return '<strong>Visibility in photos.</strong> Weight estimates how often this character can be evaluated from typical observation photos. Use <code>1</code> for characters that usually require microscopic examination and are rarely visible, <code>5</code> for characters visible about half the time, and <code>10</code> for characters that are almost always visible. This helps determine which unanswered question the key suggests next; it does not change which taxa match your selections.';
                 }
             }
 
@@ -785,10 +786,89 @@
             return issues;
         }
 
+        const taxonomyRankLevels = new Map(Object.entries({
+            stateofmatter: 100,
+            kingdom: 90,
+            phylum: 80,
+            subphylum: 75,
+            superclass: 70,
+            class: 65,
+            subclass: 60,
+            infraclass: 55,
+            cohort: 54,
+            superorder: 50,
+            order: 45,
+            suborder: 40,
+            infraorder: 35,
+            parvorder: 34,
+            zoosection: 33,
+            zoosubsection: 32,
+            superfamily: 31,
+            epifamily: 30,
+            family: 29,
+            subfamily: 28,
+            supertribe: 27,
+            tribe: 26,
+            subtribe: 25,
+            genus: 20,
+            genushybrid: 20,
+            subgenus: 15,
+            section: 14,
+            subsection: 13,
+            complex: 11,
+            species: 10,
+            hybrid: 10,
+            subspecies: 5,
+            variety: 5,
+            form: 5
+        }));
+
+        function getTaxonomyValidationIssues() {
+            if (!db.taxa) return [];
+            const issues = getTaxonomyCycleIssues().map(issue => ({ ...issue, key: 'parent' }));
+            const rowsByNormalizedName = new Map();
+
+            db.taxa.forEach((taxon, rowIdx) => {
+                const normalizedName = normalizeId(taxon.name);
+                if (normalizedName) {
+                    if (!rowsByNormalizedName.has(normalizedName)) rowsByNormalizedName.set(normalizedName, []);
+                    rowsByNormalizedName.get(normalizedName).push(rowIdx);
+                }
+
+                const temporaryIssue = temporaryTaxonomyNameIssues.get(taxon);
+                if (temporaryIssue) issues.push({ rowIdx, key: 'name', message: temporaryIssue });
+
+                const parentName = String(taxon.parent || '').trim();
+                const parent = db.taxa.find(candidate => String(candidate.name || '').trim() === parentName);
+                if (!parent) return;
+                const childRank = String(taxon.rank || '').trim().toLowerCase();
+                const parentRank = String(parent.rank || '').trim().toLowerCase();
+                const childLevel = taxonomyRankLevels.get(childRank);
+                const parentLevel = taxonomyRankLevels.get(parentRank);
+                if (childLevel !== undefined && parentLevel !== undefined && parentLevel <= childLevel) {
+                    issues.push({
+                        rowIdx,
+                        key: 'parent',
+                        message: `Parent "${parent.name}" has rank ${parent.rank}, which is the same as or lower than this taxon's rank (${taxon.rank}).`
+                    });
+                }
+            });
+
+            rowsByNormalizedName.forEach(rowIndexes => {
+                if (rowIndexes.length < 2) return;
+                rowIndexes.forEach(rowIdx => issues.push({
+                    rowIdx,
+                    key: 'name',
+                    message: `Duplicate taxon name "${db.taxa[rowIdx].name}". Taxonomy names must be unique.`
+                }));
+            });
+            return issues;
+        }
+
         function renderTable() {
             const data = db[currentTab];
-            const taxonomyCycleIssues = currentTab === 'taxa' ? getTaxonomyCycleIssues() : [];
-            const taxonomyCycleIssuesByRow = new Map(taxonomyCycleIssues.map(issue => [issue.rowIdx, issue]));
+            const taxonomyIssues = currentTab === 'taxa' ? getTaxonomyValidationIssues() : [];
+            const taxonomyIssuesByCell = new Map(taxonomyIssues.map(issue => [`${issue.rowIdx}:${issue.key}`, issue]));
 
             const tableWrapper = document.getElementById('table-wrapper');
             const headerSettingsView = document.getElementById('header-settings-view');
@@ -920,12 +1000,12 @@
                         bodyHtml += `<td class="px-4 py-3 cursor-pointer hover:bg-blue-50/50${stickyIdClass}" onclick="openComplexEditor('${currentTab}', ${originalIdx}, '${k}')">${display}</td>`;
                     } else {
                         display = (val === null || val === undefined) ? '<span class="text-slate-300 italic">null</span>' : val;
-                        const cycleIssue = currentTab === 'taxa' && k === 'parent'
-                            ? taxonomyCycleIssuesByRow.get(originalIdx)
+                        const taxonomyIssue = currentTab === 'taxa'
+                            ? taxonomyIssuesByCell.get(`${originalIdx}:${k}`)
                             : null;
-                        const cycleClass = cycleIssue ? ' taxonomy-cycle-error' : '';
-                        const cycleAttribute = cycleIssue ? ` data-cycle-error="${escapeHtml(cycleIssue.message)}"` : '';
-                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal${cycleClass}${stickyIdClass}"${cycleAttribute} contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText, this)">${display}</td>`;
+                        const validationClass = taxonomyIssue ? ' taxonomy-cycle-error' : '';
+                        const validationAttribute = taxonomyIssue ? ` data-cycle-error="${escapeHtml(taxonomyIssue.message)}"` : '';
+                        bodyHtml += `<td class="px-4 py-3 break-words whitespace-normal${validationClass}${stickyIdClass}"${validationAttribute} contenteditable="true" onblur="updateCell('${currentTab}', ${originalIdx}, '${k}', this.innerText, this)">${display}</td>`;
                     }
                 });
 
@@ -1137,10 +1217,22 @@
             if (!hasColumnClass(type, key, 'unique') || originalValue === null || originalValue === undefined || originalValue === '') return null;
             if (typeof originalValue === 'number') return null;
 
+            if (type === 'taxa' && key === 'name') return makeTemporaryTaxonName(originalValue);
+
             const base = `${String(originalValue).trim()}_copy`;
             let candidate = base;
             let suffix = 2;
             while (findDuplicateId(type, key, candidate) !== -1) candidate = `${base}_${suffix++}`;
+            return candidate;
+        }
+
+        function makeTemporaryTaxonName(value, excludedIdx = -1) {
+            const base = String(value || '').trim();
+            let suffix = 1;
+            let candidate = `${base}-${suffix}`;
+            while (findDuplicateId('taxa', 'name', candidate, excludedIdx) !== -1) {
+                candidate = `${base}-${++suffix}`;
+            }
             return candidate;
         }
 
@@ -1158,7 +1250,19 @@
                 newVal = null;
             }
 
-            const duplicateIdx = findDuplicateId(type, key, newVal, idx);
+            let duplicateIdx = findDuplicateId(type, key, newVal, idx);
+            if (type === 'taxa' && key === 'name' && duplicateIdx !== -1) {
+                const requestedName = String(newVal).trim();
+                newVal = makeTemporaryTaxonName(requestedName, idx);
+                temporaryTaxonomyNameIssues.set(
+                    db.taxa[idx],
+                    `"${requestedName}" is already used in row ${duplicateIdx + 1}. "${newVal}" is a temporary name; replace it with a unique taxon name.`
+                );
+                duplicateIdx = -1;
+                printLog(`Duplicate taxon name changed temporarily to "${newVal}". Replace it with a unique name before exporting.`, true);
+            } else if (type === 'taxa' && key === 'name' && oldVal !== newVal) {
+                temporaryTaxonomyNameIssues.delete(db.taxa[idx]);
+            }
             if (duplicateIdx !== -1) {
                 if (element) element.innerText = oldVal === null || oldVal === undefined ? 'null' : oldVal;
                 printLog(`${key} must be unique. "${newVal}" is already used in row ${duplicateIdx + 1}.`, true);
@@ -1220,10 +1324,10 @@
                     document.getElementById('dataset-short-title').innerText = newVal || 'Identification Dataset';
                 }
             }
-            if (type === 'taxa' && (key === 'name' || key === 'parent')) {
-                const cycleIssues = getTaxonomyCycleIssues();
+            if (type === 'taxa' && (key === 'name' || key === 'rank' || key === 'parent')) {
+                const taxonomyIssues = getTaxonomyValidationIssues();
                 renderTable();
-                if (cycleIssues.length > 0) printLog(cycleIssues[0].message, true);
+                if (taxonomyIssues.length > 0) printLog(taxonomyIssues[0].message, true);
             }
             return true;
         }
@@ -1536,6 +1640,12 @@
             getColumnsWithClass(currentTab, 'unique').forEach(key => {
                 copy[key] = makeUniqueCopyValue(currentTab, key, copy[key]);
             });
+            if (currentTab === 'taxa' && copy.name !== db[currentTab][idx].name) {
+                temporaryTaxonomyNameIssues.set(
+                    copy,
+                    `"${copy.name}" is a temporary name created for this duplicate row. Replace it with a unique taxon name.`
+                );
+            }
             db[currentTab].splice(idx + 1, 0, copy); 
             renderTable(); 
         }
@@ -1557,9 +1667,9 @@
         function exportFile(type) {
             if (!db[type]) return;
             if (type === 'taxa' || type === 'flyData') {
-                const cycleIssues = getTaxonomyCycleIssues();
-                if (cycleIssues.length > 0) {
-                    const message = cycleIssues[0].message;
+                const taxonomyIssues = getTaxonomyValidationIssues();
+                if (taxonomyIssues.length > 0) {
+                    const message = taxonomyIssues[0].message;
                     printLog(`Cannot export ${type}: ${message}`, true);
                     alert(`Cannot export ${type}. ${message}`);
                     if (currentTab !== 'taxa') switchTab('taxa');
@@ -1599,9 +1709,9 @@
         }
 
         function exportAll() {
-            const cycleIssues = getTaxonomyCycleIssues();
-            if (cycleIssues.length > 0) {
-                const message = cycleIssues[0].message;
+            const taxonomyIssues = getTaxonomyValidationIssues();
+            if (taxonomyIssues.length > 0) {
+                const message = taxonomyIssues[0].message;
                 printLog(`Cannot export files: ${message}`, true);
                 alert(`Cannot export files. ${message}`);
                 if (currentTab !== 'taxa') switchTab('taxa');
