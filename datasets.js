@@ -18,7 +18,9 @@ window.showDatasetChooser = function showDatasetChooser(pageKey, includeNewDatas
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-labelledby", "dataset-chooser-title");
-  overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(15,23,42,.72);font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
+  // Keep the chooser below the site's introductory and account modals so the
+  // welcome message is the first thing a new visitor sees.
+  overlay.style.cssText = "position:fixed;inset:0;z-index:199999;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(15,23,42,.72);font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
 
   const panel = document.createElement("div");
   panel.style.cssText = "width:min(440px,100%);padding:28px;border-radius:16px;background:#fff;box-shadow:0 24px 64px rgba(0,0,0,.3);color:#1e293b";
