@@ -42,7 +42,7 @@
         .taxon-info-btn:hover { background: #1e40af; transform: scale(1.1); }
         .taxon-popover { display: none; position: absolute; top: calc(100% + 12px); left: 0; z-index: 100; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 10px; padding: 14px 18px; width: 300px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1); font-size: 13px; color: #92400e; font-weight: 400; white-space: normal; line-height: 1.6; }
         .taxon-popover.open { display: block; }
-        .taxon-popover::before { content: ''; position: absolute; top: -6px; left: 18px; width: 10px; height: 10px; background: #fffbeb; border-left: 1px solid #fbbf24; border-top: 1px solid #fbbf24; transform: rotate(45deg); }
+        .taxon-popover::before { content: ''; position: absolute; top: -6px; left: var(--popover-arrow-left, 18px); width: 10px; height: 10px; background: #fffbeb; border-left: 1px solid #fbbf24; border-top: 1px solid #fbbf24; transform: rotate(45deg); }
         .unique-info-badge { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: 10px; font-weight: 900; cursor: help; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         .unique-info-badge:hover, .unique-info-badge:focus { background: #6d28d9; transform: scale(1.1); outline: none; }
         .unique-popover { display: none; position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); z-index: 110; width: 190px; padding: 9px 12px; border: 1px solid #c4b5fd; border-radius: 8px; background: #f5f3ff; color: #5b21b6; box-shadow: 0 8px 18px rgba(0,0,0,0.14); font-size: 12px; font-weight: 600; line-height: 1.4; white-space: normal; text-align: left; }
@@ -661,7 +661,23 @@
             const isOpen = pop.classList.contains('open');
             document.querySelectorAll('.taxon-popover.open').forEach(p => p.classList.remove('open'));
             if (!isOpen) {
+                pop.style.left = '0px';
                 pop.classList.add('open');
+                const viewportPadding = 12;
+                let popRect = pop.getBoundingClientRect();
+                let leftOffset = 0;
+                if (popRect.right > window.innerWidth - viewportPadding) {
+                    leftOffset -= popRect.right - (window.innerWidth - viewportPadding);
+                }
+                if (popRect.left + leftOffset < viewportPadding) {
+                    leftOffset += viewportPadding - (popRect.left + leftOffset);
+                }
+                pop.style.left = `${leftOffset}px`;
+
+                popRect = pop.getBoundingClientRect();
+                const btnRect = btn.getBoundingClientRect();
+                const arrowLeft = Math.max(10, Math.min(popRect.width - 20, btnRect.left + (btnRect.width / 2) - popRect.left - 5));
+                pop.style.setProperty('--popover-arrow-left', `${arrowLeft}px`);
                 setTimeout(() => { document.addEventListener('click', closeTaxonPopover, { once: true }); }, 0);
             }
         }
@@ -709,9 +725,14 @@
                 }
             }
 
-            if (type === 'traits' && key === 'category') {
-                const count = (db.categories || []).filter(category => String(category.id || '').trim()).length;
-                return `<strong>Trait menu category.</strong> Use the exact ID of a record in the Categories tab (${count} currently defined). Category names, icons, and menu order are managed there; diagnostic priority still comes from trait weight.`;
+            if (type === 'traits') {
+                if (key === 'category') {
+                    const count = (db.categories || []).filter(category => String(category.id || '').trim()).length;
+                    return `<strong>Trait menu category.</strong> Use the exact ID of a record in the Categories tab (${count} currently defined). Category names, icons, and menu order are managed there; diagnostic priority still comes from trait weight.`;
+                }
+                if (key === 'weight') {
+                    return '<strong>Question priority.</strong> Weight multiplies the trait\'s information score when the key chooses which unanswered question to show next. Use <code>1</code> for normal priority; higher values favor this trait when questions are similarly informative. Weight does not change which taxa match your selections.';
+                }
             }
 
             return '';
@@ -999,7 +1020,7 @@
                 const stickyIdClass = currentTab === 'flyData' && k === 'id' ? 'flydata-id-column' : '';
                 const isActiveSort = currentTab === 'flyData' && flyDataSort.key === k && flyDataSort.direction;
                 const escapedHeaderText = escapeHtml(displayHeader);
-                const headerLabelClass = currentTab === 'flyData' ? `flydata-header-label${isActiveSort ? ' expanded' : ''}` : 'flex items-center';
+                const headerLabelClass = currentTab === 'flyData' ? `flydata-header-label${isActiveSort ? ' expanded' : ''}` : '';
                 const sortDirectionIcon = isActiveSort ? `<i class="fas fa-arrow-${flyDataSort.direction === 'asc' ? 'up' : 'down'} text-[9px]"></i>` : '';
                 const sortButton = currentTab === 'flyData'
                     ? `<button type="button" onclick="event.stopPropagation(); toggleFlyDataSort('${k}')" class="column-sort-btn ${isActiveSort ? 'active' : ''}" title="${isActiveSort ? `Size rows to this column and ${flyDataSort.direction === 'asc' ? 'sort descending' : 'restore original row heights and order'}` : 'Size rows to this column and sort ascending'}" aria-label="Focus and sort by ${escapedHeaderText}"><i class="fas fa-search text-[10px]"></i>${sortDirectionIcon}</button>`
@@ -1010,7 +1031,10 @@
                 headHtml += `
                     <th class="px-4 py-3 text-left font-bold text-slate-600 group align-top ${behaviorClasses} ${stickyIdClass}" style="width: ${width}px" data-key="${k}">
                         <div class="flex items-center">
-                            <div class="break-words whitespace-normal leading-tight flex-1 ${headerLabelClass}" title="${escapedHeaderText}">${displayHeader}${controlledVocabularyInfo}${uniqueBadge}</div>
+                            <div class="break-words whitespace-normal leading-tight flex-1 flex items-start" title="${escapedHeaderText}">
+                                <span class="${headerLabelClass}">${displayHeader}</span>
+                                ${controlledVocabularyInfo}${uniqueBadge}
+                            </div>
                             ${sortButton}
                             ${quickAddBtn}
                         </div>
