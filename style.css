@@ -398,6 +398,10 @@ body.wide-layout .summary-box {
             z-index: 202000;
         }
 
+        #modal-comment-error {
+            z-index: 203000;
+        }
+
         #modal-token .modal-content {
             box-sizing: border-box;
             width: min(680px, calc(100vw - 32px));

@@ -89,6 +89,15 @@
     </div>
 </div>
 
+<div id="modal-comment-error" class="modal" role="alertdialog" aria-modal="true" aria-labelledby="comment-error-title" aria-describedby="comment-error-message">
+    <div class="modal-content" style="text-align:left;">
+        <h3 id="comment-error-title" style="margin:0; color:#b00020;">Comment was not posted</h3>
+        <p id="comment-error-message" style="margin:0; color:#444;"></p>
+        <a id="comment-error-observation-link" href="#" target="_blank" rel="noopener" style="display:none;">Open the observation on iNaturalist</a>
+        <button type="button" onclick="closeCommentPostError()" class="btn-id" style="cursor:pointer; padding:10px;">OK</button>
+    </div>
+</div>
+
 <div id="modal-post-confirmation" class="modal">
     <div class="modal-content" style="text-align:left;">
         <div class="post-confirm-heading">
@@ -1352,10 +1361,45 @@ function serializePostConfirmationComment(commentEditor) {
 
     // The rich editor needs <br> elements to display the attribution spacing,
     // but iNaturalist comments historically received real newlines here.
-    return commentEditor.innerHTML.trim().replace(
+    const formattedComment = commentEditor.innerHTML.trim().replace(
         /<br\s*\/?><br\s*\/?>\s*--------------------------\s*<br\s*\/?><br\s*\/?>/i,
         "\n\n--------------------------\n\n"
     );
+
+    if ([...formattedComment].length <= 5000) return formattedComment;
+
+    // iNaturalist rejects comments over 5,000 characters. Reference links use
+    // substantial hidden HTML, so preserve the text but remove all markup.
+    const plainTextSource = formattedComment
+        .replace(/<br\s*\/?>/gi, "\n")
+        .replace(/<\/(p|div|li)>/gi, "\n");
+    const plainTextContainer = document.createElement('div');
+    plainTextContainer.innerHTML = plainTextSource;
+    return plainTextContainer.textContent
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+}
+
+function showCommentPostError(error, observationId) {
+    const modal = document.getElementById('modal-comment-error');
+    const message = document.getElementById('comment-error-message');
+    const observationLink = document.getElementById('comment-error-observation-link');
+    const detail = error?.message ? ` iNaturalist reported: ${error.message}` : '';
+    message.textContent = `Your identification may have posted, but its diagnostic comment did not.${detail}`;
+
+    if (observationId) {
+        observationLink.href = `https://www.inaturalist.org/observations/${observationId}`;
+        observationLink.style.display = 'inline';
+    } else {
+        observationLink.style.display = 'none';
+    }
+
+    modal.style.display = 'flex';
+    modal.querySelector('button')?.focus();
+}
+
+function closeCommentPostError() {
+    document.getElementById('modal-comment-error').style.display = 'none';
 }
 
 function submitConfirmedImmediateID() {
@@ -1370,6 +1414,12 @@ function submitConfirmedImmediateID() {
 
     if (!Number.isInteger(taxonId) || taxonId <= 0) {
         errorArea.textContent = "Enter a valid Taxon ID before submitting.";
+        errorArea.style.display = 'block';
+        return;
+    }
+
+    if ([...commentBody].length > 5000) {
+        errorArea.textContent = "This comment is still over iNaturalist's 5,000-character limit after removing its formatting. Shorten the comment before submitting.";
         errorArea.style.display = 'block';
         return;
     }
@@ -1404,10 +1454,21 @@ function submitConfirmedImmediateID() {
                     }
                 })
             })
-            .then(response => {
-                if (!response.ok) throw new Error(`iNaturalist returned ${response.status}`);
+            .then(async response => {
+                if (response.ok) return;
+                let serverDetail = '';
+                try {
+                    const responseBody = await response.json();
+                    serverDetail = responseBody.error || responseBody.message || JSON.stringify(responseBody);
+                } catch (error) {
+                    serverDetail = await response.text().catch(() => '');
+                }
+                throw new Error(serverDetail || `HTTP ${response.status}`);
             })
-            .catch(error => console.error("Comment failed to post", error));
+            .catch(error => {
+                console.error("Comment failed to post", error);
+                showCommentPostError(error, pending.observationId);
+            });
     }
 
     finishConfirmedImmediateID(pending.observationId);
