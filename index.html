@@ -1,4 +1,9 @@
-<!-- # AI-Generated: The bulk of the code for this website was generated using Gemini in early 2026. I had AI come up with a simplified mock-up and then designed and implemented individual AI-written functions after that, with a lot of editing on my own. Mostly Gemini, some ChatGPT. Also a TON of manual editing and debugging. -->
+<!--
+    AI assistance disclosure: The initial workspace was developed with Gemini
+    and later expanded with ChatGPT/Codex and additional Gemini assistance.
+    The code has also been substantially reviewed, edited, debugged, and
+    maintained manually by its author.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -475,7 +480,7 @@ function openTaxonFilterModal() {
     document.getElementById('new-filter-taxon-id').value = CURRENT_TAXON_ID;
 }
 
-// Reusing your autocomplete logic but targeting the filter modal elements
+// Taxon autocomplete for the queue-filter modal.
 async function searchFilterTaxa(query) {
     const dropdown = document.getElementById('filter-taxon-results-dropdown');
     if (query.length < 3) { dropdown.style.display = 'none'; return; }
@@ -508,7 +513,7 @@ function updateTaxonFilter() {
     const newId = document.getElementById('new-filter-taxon-id').value.trim();
     if (newId) {
         CURRENT_TAXON_ID = newId;
-        // Update the API_BASE to reflect the new taxon ID
+        // Rebuild the observation endpoint with the selected taxon.
         refreshObservationApiBase();
         updateBookmarkURL();
         
@@ -566,7 +571,7 @@ function handleDblClick(event) {
     }
 }
 
-// Add these to handle the "Grab" feel
+// Mouse-drag handlers for a pinned zoomed image.
 function startDrag(e) { if(isPinned) isDragging = true; }
 function stopDrag(e) { isDragging = false; }
 
@@ -671,12 +676,12 @@ if (common && common.length > 0) {
             document.getElementById('suggested-id-area').style.display = 'block';
             document.getElementById('manual-taxon-id').value = taxonInfo.taxonId;
         } else {
-            // Case where common taxon name isn't in your taxa.js list
+            // Hide the suggestion when the common taxon is not configured.
             document.getElementById('suggested-id-area').style.display = 'none';
             document.getElementById('manual-taxon-id').value = '';
         }
     } else {
-        // THIS IS THE FIX: Clear everything if there are no matches
+        // Clear the suggestion when no taxa match the selected traits.
         document.getElementById('suggested-id-area').style.display = 'none';
         document.getElementById('manual-taxon-id').value = '';
     }
@@ -842,30 +847,24 @@ function copyNarrativeToClipboard() {
 
     /* --- iNAT VIEWER LOGIC --- */
     function isTokenValid(token) {
-	return (token && token.length > 20);
-        // this older code doesnt work with oath tokens:
-	//if (!token || token.length < 20) return false;
-        //try {
-        //    const payload = JSON.parse(atob(token.split('.')[1]));
-        //    return Date.now() < (payload.exp * 1000);
-        //} catch (e) { return false; }
+	return Boolean(token && token.length > 20);
     }
 
     async function updateStatusUI() {
         const statusEl = document.getElementById('token-status');
         const controls = document.getElementById('token-controls');
-	const filterDropdown = document.getElementById('filter-dropdown-container'); // Get the container
+	const filterDropdown = document.getElementById('filter-dropdown-container');
         const viewerPanel = document.querySelector('.viewer-panel');
 	const toggleBtn = document.getElementById('toggle-viewer-btn');
 	const shortcutsBtn = document.getElementById('identification-shortcuts-btn');
 	const toggleLocBtn = document.getElementById('change-loc-btn');
-	const queueCountEl = document.getElementById('queue-count'); // Get the counter element
+	const queueCountEl = document.getElementById('queue-count');
         if (!isTokenValid(MY_TOKEN)) {
 	    MY_USER_ID = null;
 	    MY_USER_LOGIN = null;
-            statusEl.innerText = "";//<!--versus "EXPIRED/MISSING" -->
-            statusEl.className = "";//<!-- versus "status-bad" -->
-	    queueCountEl.innerText = ""; // Clear the count
+	    statusEl.innerText = "";
+	    statusEl.className = "";
+	    queueCountEl.innerText = "";
             controls.classList.remove('hidden');
 	    if (filterDropdown) filterDropdown.classList.add('hidden'); // Hide if not valid
             if (viewerPanel) viewerPanel.style.display = 'none';
@@ -946,10 +945,11 @@ async function showNextFromQueue() {
     // Every observation starts with a clean identification matrix. Location is
     // applied for the new record below after its place hierarchy is fetched.
     resetMatrix();
-    CURRENT_OBSERVATION = obs; // saved and checked when posting comment to see if all IDs are CV
+    // Retain the observation so posting logic can inspect its existing identifications.
+    CURRENT_OBSERVATION = obs;
     CURRENT_OBS_ID = obs.id;
     document.getElementById('queue-count').innerText = `  (${1+TOTAL_API_RESULTS + OBSERVATION_QUEUE.length - Math.min(BATCH_SIZE, TOTAL_API_RESULTS)} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
-    //Capture the community taxon ID from the queue data	
+    // Capture the community taxon ID from the queue data.
     CURRENT_COMMUNITY_ID = obs.taxon?.id || null;
 
     let geoHierarchy = "Location Unknown";
@@ -957,7 +957,7 @@ async function showNextFromQueue() {
 
     if (obs.place_ids?.length > 0) {
         try {
-            // Using the API to get the names of the places
+            // Resolve place IDs to names used for automatic region selection.
             const pRes = await fetch(`https://api.inaturalist.org/v1/places/${obs.place_ids.join(',')}`);
             const pData = await pRes.json();
             
@@ -980,8 +980,8 @@ async function showNextFromQueue() {
 function autoSetRegionFromLocality(terms) {
     if (!terms || terms.length === 0) return false;
 
-    // Look for a match in your regions.js data
-    // We check from most specific to most general (usually the order in the array)
+    // Match locality terms against the configured region definitions, from
+    // the most specific term to the most general.
     const match = regions.find(r => 
         terms.some(term => term.toLowerCase() === r.name.toLowerCase())
     );
@@ -994,11 +994,12 @@ function autoSetRegionFromLocality(terms) {
 
 
 
-        // Update the UI to reflect the automatically selected region
+        // Reflect the automatically selected region in the matrix.
         updateUI();
         console.log(`Auto-detected region: ${match.name}`);
     }
-   jumpToNextQuestion() // could turn off.
+   // Continue to the first diagnostic trait after applying the location.
+   jumpToNextQuestion();
    return Boolean(match);
 }
 
@@ -1158,7 +1159,8 @@ async function setCommunityTaxonStatus(taxonInfo) {
         return;
     }
 
-    //storing constants before starting timer
+    // Preserve the observation and taxon while waiting for iNaturalist to
+    // recalculate the community taxon.
     const COMM_CURRENT = CURRENT_OBS_ID
     const TAXON_OLD = taxonInfo
 
@@ -1434,8 +1436,8 @@ function submitConfirmedImmediateID() {
 
     errorArea.style.display = 'none';
 
-    // Restore the original high-speed workflow: launch requests in the
-    // background and advance without waiting for iNaturalist's responses.
+    // Submit in the background so the queue can advance immediately. Any
+    // comment failure is reported asynchronously in a persistent dialog.
     sendIdentification(pending.observationId, taxonId).then(idPosted => {
         if (!idPosted) console.error(`Identification failed for observation ${pending.observationId}`);
     });
@@ -1829,10 +1831,8 @@ function finishConfirmedImmediateID(observationId) {
 	wasConfirmationMode = isConfirmationMode;
 
 
-    // 2. Check if a valid iNaturalist token is present
-    const hasValidToken = Boolean(MY_USER_ID); 
-	// used to be isTokenValid(MY_TOKEN); -- but new version means that 
-	// MY_USER_ID is only assigned after Firefox successfully verifies the account through /users/me, so the button 	// will appear only when the user is actually linked.
+    // MY_USER_ID is assigned only after /users/me verifies the linked account.
+    const hasValidToken = Boolean(MY_USER_ID);
  
     const area = document.getElementById('active-question-area');
     
@@ -1949,7 +1949,7 @@ function finishConfirmedImmediateID(observationId) {
 	        </button>
 	    `;
 	}
-        // If it's confirmation mode but NO token, we show nothing (as requested)
+        // Identification actions remain hidden until an account is linked.
 
         area.innerHTML = `
             <div style="display: block; margin-bottom: 5px;">
@@ -2271,7 +2271,7 @@ function escapeRegionString(value) {
             breadcrumbArea.innerHTML = `
                 <div class="breadcrumb-container">
                     ${commonTaxa.map((taxonName, index) => {
-                                // Find the taxon object in your database to get the ID
+                                // Resolve the configured taxon ID for the breadcrumb link.
                                 const taxonData = taxa.find(t => t.name === taxonName);
                                 const url = taxonData ? `https://www.inaturalist.org/taxa/${taxonData.taxonId}` : '#';
                                 const isActive = index === commonTaxa.length - 1 ? 'breadcrumb-active' : '';
@@ -2315,7 +2315,7 @@ function escapeRegionString(value) {
                     if (selectedOption && selectedOption.description) {
 			let text = selectedOption.description;
                 
-			                // If a link exists, append a bracketed number that acts as the link
+			                // Append a compact reference link when supporting material is available.
 			                if (trait.link) {
 			                    text += `<a href="${trait.link}" target="_blank" style="text-decoration:none; color:#2980b9; font-size: 0.85em; vertical-align: super; margin-left: 2px;">⁽ᶠⁱᵍᵘʳᵉˢ⁾</a>`;
 			                }
@@ -2403,7 +2403,7 @@ function escapeRegionString(value) {
 
     window.onload = () => {
         
-	// update the title text and about content on the page:
+	// Populate dataset-specific title and About content.
 	const titleDiv = document.getElementById("main-title");
   	  if (titleDiv) {
 	       titleDiv.innerHTML = window.LONG_TITLE || window.PAGE_TITLE || "Species Identification Workspace";
@@ -2413,7 +2413,7 @@ function escapeRegionString(value) {
   	  if (aboutdiv) {
  	       aboutdiv.innerHTML = window.ABOUT_CONTENT;
  	   }
-	// Check if we are returning from iNat with a login code
+	// Complete an iNaturalist login callback before initializing the workspace.
         checkLogin().then(() => {
             // 2. Initialize the matrix
             initMatrix();
@@ -2483,7 +2483,7 @@ function updateLocation() {
         CURRENT_PLACE_ID = newId;
         updateBookmarkURL();
         OBSERVATION_QUEUE = []; // Clear current buffer
-        FINISHED_OBS_IDS = [];  // Optional: Reset excluded list if changing regions
+        FINISHED_OBS_IDS = [];  // Restart exclusion tracking for the new location.
         closeModals();
         fetchObservations();    // Trigger new search
     }
@@ -2541,7 +2541,7 @@ function jumpToNextQuestion() {
     // 2. Filter for only unanswered and unskipped questions
     const remaining = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id) && !beginnerSkips.includes(q.id));
 
-    // 3. Sort them by score (matches your renderMenu logic)
+    // 3. Use the same utility ordering as the question menu.
     const sortedRemaining = remaining.map(q => {
         const hValue = parseFloat(calculateTraitUtility(q.id, currentMatches));
         const score = hValue * (q.weight || 1);
@@ -2680,8 +2680,7 @@ async function checkLogin() {
                 sessionStorage.removeItem('inat_return_search');
                 
 		TEMP_TOKEN = data.access_token;
-		//now need to exchange temp token for a JWT token!
-		// Swap your OAuth token for the API JWT
+		// Exchange the temporary OAuth token for the API JWT used by requests.
 		const tokenExchange = await fetch("https://www.inaturalist.org/users/api_token", {
 		    headers: { "Authorization": `Bearer ${TEMP_TOKEN}` }
 		});
@@ -2721,7 +2720,8 @@ async function generateCodeChallenge(verifier) {
 
 
 
-//finds the oldest observation that is needs ID and returns a series of observations with that ID and locality:
+// Find the oldest observation needing identification, then focus the queue on
+// observations with its taxon, rank, and state or province.
 async function searchBoundaryObservation() {
     try {
         // A focused-group search is a fresh unreviewed search. Do not inherit
@@ -2810,7 +2810,7 @@ async function searchBoundaryObservation() {
             `&only_id=false` +
             `&fields=all`;
 
-        // Make the subsequent normal search newest-first
+        // Keep the focused queue ordered oldest-first.
         OTHER_FILTERS = cleanedFilters + 
              `&rank=${encodeURIComponent(taxonRank)}` +"&order=asc";
         updateBookmarkURL();

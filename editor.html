@@ -1,7 +1,8 @@
-<!-- 
-    Lucilia Database Pro Editor
-    This editor was created by Manus AI by significantly modifying and enhancing 
-    an earlier version originally developed in Gemini. Further edits in Gemini and Manus.
+<!--
+    AI assistance disclosure: The initial editor was developed with Gemini and
+    later expanded with Manus AI, ChatGPT/Codex, and additional Gemini assistance.
+    The code has also been substantially reviewed, edited, debugged, and maintained
+    manually by its author.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -221,7 +222,8 @@
     </div>
     <datalist id="taxonomy-entry-options"></datalist>
 
-    <!-- The root dataset list selects a dataset; its header then selects the shared region set. -->
+    <!-- Dataset and region-set registries used by the editor. -->
+    <script src="region_sets.js"></script>
     <script src="datasets.js"></script>
     <script>
         const editorDatasets = window.DATASET_LISTS?.editor || [];
@@ -236,7 +238,7 @@
         } else if (!window.START_NEW_DATASET) {
             document.write(`<script src="${window.ACTIVE_DATASET}/header.js"><\/script>`);
         } else {
-            window.REGION_SET = 'us-canada';
+            window.REGION_SET = window.REGION_SETS?.[0] || '';
         }
     </script>
     <script>
@@ -694,7 +696,7 @@
                 }
                 if (key === 'distribution') {
                     const count = (db.regions || []).filter(region => String(region.code || '').trim()).length;
-                    return `<strong>Distribution codes.</strong> Select codes defined in the Regions tab (${count} currently defined).`;
+                    return `<strong>Distribution codes.</strong> Select codes supplied by the linked region set (${count} currently available).`;
                 }
 
                 const trait = (db.traits || []).find(candidate => candidate.id === key);
@@ -710,10 +712,6 @@
             if (type === 'traits' && key === 'category') {
                 const count = (db.categories || []).filter(category => String(category.id || '').trim()).length;
                 return `<strong>Trait menu category.</strong> Use the exact ID of a record in the Categories tab (${count} currently defined). Category names, icons, and menu order are managed there; diagnostic priority still comes from trait weight.`;
-            }
-
-            if (type === 'regions' && key === 'code') {
-                return '<strong>Region code.</strong> This code is used by Fly Database distribution values and should correspond to the appropriate region in the identification map.';
             }
 
             return '';
@@ -806,8 +804,6 @@
                 document.getElementById('table-body').innerHTML = '<tr><td colspan="100%" class="p-12 text-center text-slate-400 italic">No data found. Click "Add New" to start.</td></tr>';
                 return;
             }
-
-            if (currentTab === 'regions') { renderRegionsTable(); return; }
 
             let filteredData = data.filter(row => {
                 if (!searchQuery) return true;
@@ -935,22 +931,34 @@
         function renderHeaderSettings() {
             const settings = db.header?.[0] || {};
             const preferredOrder = ['SHORT_TITLE', 'LONG_TITLE', 'REGION_SET', 'DEFAULT_TAXON', 'DEFAULT_PLACE_ID', 'ABOUT_CONTENT'];
-            const keys = [...preferredOrder.filter(key => key in settings), ...Object.keys(settings).filter(key => !preferredOrder.includes(key))];
+            const keys = [...preferredOrder.filter(key => key === 'REGION_SET' || key in settings), ...Object.keys(settings).filter(key => !preferredOrder.includes(key))];
             const descriptions = {
                 SHORT_TITLE: 'Compact dataset name shown in the editor.',
                 LONG_TITLE: 'Full heading displayed in the identification workspace. HTML formatting is supported.',
                 DEFAULT_TAXON: 'Default iNaturalist taxon ID used by the observation queue.',
                 DEFAULT_PLACE_ID: 'Default comma-separated iNaturalist place IDs.',
-                REGION_SET: 'Folder name under regions/ that supplies regions.js and map_paths.js for this dataset.',
+                REGION_SET: 'Shared folder under regions/ that supplies regions.js and map_paths.js. Changing it reloads the distribution map; existing distribution values are retained for review.',
                 ABOUT_CONTENT: 'About text and references displayed below the identification workspace. HTML formatting is supported.'
             };
 
             const fieldsHtml = keys.map(key => {
                 const value = settings[key] ?? '';
                 const isLargeField = key === 'LONG_TITLE' || key === 'ABOUT_CONTENT' || String(value).length > 160;
-                const control = isLargeField
-                    ? `<textarea class="w-full ${key === 'ABOUT_CONTENT' ? 'h-80' : 'h-24'} p-3 border border-slate-200 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="updateHeaderField('${key}', this.value)">${escapeHtml(value)}</textarea>`
-                    : `<input type="text" value="${escapeHtml(value)}" class="w-full p-3 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="updateHeaderField('${key}', this.value)">`;
+                let control;
+                if (key === 'REGION_SET') {
+                    const availableRegionSets = [...new Set([
+                        ...(window.REGION_SETS || []),
+                        String(value || '').trim()
+                    ].filter(Boolean))];
+                    control = `<select class="w-full p-3 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" onchange="changeRegionSet(this.value)">
+                        ${value ? '' : '<option value="" selected disabled>Select a region set</option>'}
+                        ${availableRegionSets.map(regionSet => `<option value="${escapeHtml(regionSet)}" ${regionSet === value ? 'selected' : ''}>${escapeHtml(regionSet)}</option>`).join('')}
+                    </select>`;
+                } else {
+                    control = isLargeField
+                        ? `<textarea class="w-full ${key === 'ABOUT_CONTENT' ? 'h-80' : 'h-24'} p-3 border border-slate-200 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="updateHeaderField('${key}', this.value)">${escapeHtml(value)}</textarea>`
+                        : `<input type="text" value="${escapeHtml(value)}" class="w-full p-3 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" oninput="updateHeaderField('${key}', this.value)">`;
+                }
 
                 return `<div class="grid grid-cols-[220px_minmax(0,1fr)] gap-6 py-5 border-b border-slate-100 last:border-0">
                     <div>
@@ -1194,32 +1202,6 @@
                 if (cycleIssues.length > 0) printLog(cycleIssues[0].message, true);
             }
             return true;
-        }
-
-        // --- Regions Table ---
-        function renderRegionsTable() {
-            const data = db.regions;
-            let headHtml = `<tr><th class="px-4 py-3 text-left font-bold text-slate-600 w-12">#</th><th class="px-4 py-3 text-left font-bold text-slate-600">Name</th><th class="px-4 py-3 text-left font-bold text-slate-600 unique"><span class="inline-flex items-center">Code${renderUniqueBadge('regions', 'code')}</span></th><th class="px-4 py-3 text-right font-bold text-slate-600 w-24">Actions</th></tr>`;
-            document.getElementById('table-head').innerHTML = headHtml;
-            let bodyHtml = '';
-            data.forEach((row, idx) => {
-                const isLastRow = idx === data.length - 1;
-                bodyHtml += `<tr class="hover:bg-slate-50 transition-all group/row" ondragover="handleRowDragOver(event)" ondragleave="handleRowDragLeave(event)" ondrop="handleRowDrop(event, 'regions', ${idx})">
-                    <td class="px-4 py-3 text-slate-400 font-mono text-xs relative overflow-visible">
-                        <button onclick="event.stopPropagation(); insertNewRowAt('regions', ${idx})" class="insert-row-button insert-row-before" title="Insert row above"><i class="fas fa-plus"></i></button>
-                        ${isLastRow ? `<button onclick="event.stopPropagation(); insertNewRowAt('regions', ${idx + 1})" class="insert-row-button insert-row-after" title="Insert row below"><i class="fas fa-plus"></i></button>` : ''}
-                        <span draggable="true" ondragstart="startRowDrag(event, 'regions', ${idx})" ondragend="finishRowDrag()" class="row-drag-handle inline-flex items-center gap-2 pr-7" title="Drag to reorder">
-                            <i class="fas fa-grip-vertical text-slate-300"></i>#${idx + 1}
-                        </span>
-                        <button onclick="duplicateRow(${idx})" class="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover/row:opacity-100 bg-blue-600 text-white w-7 h-7 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:bg-blue-700" title="Duplicate Row">
-                            <i class="fas fa-copy text-[10px]"></i>
-                        </button>
-                    </td>
-                    <td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'name', this.innerText, this)">${row.name}</td>
-                    <td class="px-4 py-3" contenteditable="true" onblur="updateCell('regions', ${idx}, 'code', this.innerText, this)">${row.code}</td>
-                    <td class="px-4 py-3 text-right"><button onclick="deleteRow(${idx})" class="text-slate-400 hover:text-red-600 transition-all"><i class="fas fa-trash"></i></button></td></tr>`;
-            });
-            document.getElementById('table-body').innerHTML = bodyHtml;
         }
 
         // ── Distribution editor (tabbed: Map | Checklist) ───────────────────
@@ -1479,7 +1461,7 @@
             container.classList.add('max-w-2xl');
         }
 
-        // Global Key Listener for ESC
+        // Pressing Escape saves the current modal edits and closes the modal.
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const modal = document.getElementById('modal');
@@ -1606,6 +1588,43 @@
             const results = availableTypes.map(type => exportFile(type));
             if (results.every(Boolean)) {
                 printLog("Download requested for all available files.");
+            }
+        }
+
+        async function changeRegionSet(regionSet) {
+            if (!window.REGION_SETS?.includes(regionSet)) {
+                alert('Select a configured region-set folder.');
+                renderHeaderSettings();
+                return;
+            }
+
+            const previousRegionSet = db.header?.[0]?.REGION_SET || '';
+            const previousRegions = cloneLoadedData(db.regions || []);
+            const previousMapData = cloneLoadedData(editorMapData);
+            try {
+                const basePath = `regions/${encodeURIComponent(regionSet)}`;
+                const [regionsResponse, mapResponse] = await Promise.all([
+                    fetch(`${basePath}/regions.js`),
+                    fetch(`${basePath}/map_paths.js`)
+                ]);
+                if (!regionsResponse.ok || !mapResponse.ok) {
+                    throw new Error(`Could not load the "${regionSet}" region-set files.`);
+                }
+
+                parseDataFile('regions.js', await regionsResponse.text());
+                parseDataFile('map_paths.js', await mapResponse.text());
+                updateHeaderField('REGION_SET', regionSet);
+                window.REGION_SET = regionSet;
+                ensureRegionTraitConfiguration();
+                if (currentTab === 'flyData') renderTable();
+                printLog(`Linked this dataset to the "${regionSet}" region set.`);
+            } catch (error) {
+                db.regions = previousRegions;
+                editorMapData = previousMapData;
+                updateHeaderField('REGION_SET', previousRegionSet);
+                renderHeaderSettings();
+                printLog(error.message, true);
+                alert(`${error.message} The previous region set is still linked.`);
             }
         }
 
