@@ -5,6 +5,11 @@ const outgroupTaxa = Object.freeze([
     "rank": "order"
   },
   {
+    "taxonId": 68020,
+    "name": "Dolichopodidae",
+    "rank": "family"
+  },
+  {
     "taxonId": 122222,
     "name": "Condylostylus",
     "rank": "genus"
@@ -15,14 +20,34 @@ const outgroupTaxa = Object.freeze([
     "rank": "zoosubsection"
   },
   {
-    "taxonId": 356157,
-    "name": "Oestroidea",
-    "rank": "superfamily"
+    "taxonId": 70144,
+    "name": "Muscidae",
+    "rank": "family"
+  },
+  {
+    "taxonId": 129218,
+    "name": "Neomyia cornicina",
+    "rank": "species"
+  },
+  {
+    "taxonId": 51953,
+    "name": "Tachinidae",
+    "rank": "family"
   },
   {
     "taxonId": 61860,
     "name": "Calliphoridae",
     "rank": "family"
+  },
+  {
+    "taxonId": 449683,
+    "name": "Phormia regina",
+    "rank": "species"
+  },
+  {
+    "taxonId": 120921,
+    "name": "Cochliomyia macellaria",
+    "rank": "species"
   },
   {
     "taxonId": 387588,
@@ -32,16 +57,6 @@ const outgroupTaxa = Object.freeze([
   {
     "taxonId": 329781,
     "name": "Chrysomya megacephala",
-    "rank": "species"
-  },
-  {
-    "taxonId": 70144,
-    "name": "Muscidae",
-    "rank": "family"
-  },
-  {
-    "taxonId": 129218,
-    "name": "Neomyia cornicina",
     "rank": "species"
   }
 ]);
