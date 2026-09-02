@@ -1,4 +1,4 @@
-// Dataset folders available to each entry page. The first item is that page's default.
+// Dataset folders available to each web page.
 window.DATASET_LISTS = Object.freeze({
   index: Object.freeze([
     "lucilia",
