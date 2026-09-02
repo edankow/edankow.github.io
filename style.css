@@ -389,6 +389,36 @@ body.wide-layout .summary-box {
         }
         .modal-content input, .modal-content textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
 
+        /* Startup modal order: introduction, account linking, then dataset choice. */
+        #modal-token {
+            z-index: 201000;
+        }
+
+        #modal-welcome {
+            z-index: 202000;
+        }
+
+        #modal-token .modal-content {
+            box-sizing: border-box;
+            width: min(680px, calc(100vw - 32px));
+            max-height: calc(100vh - 32px);
+            overflow-y: auto;
+            color: #333;
+        }
+
+        #modal-token .modal-content > h3 {
+            margin: 0;
+        }
+
+        #modal-token .token-login-action {
+            margin: 0;
+        }
+
+        #modal-token .token-manual-help {
+            display: block;
+            line-height: 1.45;
+        }
+
         #modal-post-confirmation .modal-content {
             box-sizing: border-box;
             width: min(720px, calc(100vw - 32px));

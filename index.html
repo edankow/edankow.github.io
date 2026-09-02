@@ -157,10 +157,12 @@
 	<div id="token-controls" class="hidden">
 	    <button onclick="openTokenModal()" class="btn-toggle" style="background: var(--inat-green); border: none;" title="Link your account to load the observation queue and post identifications directly.">	Link iNaturalist account</button>
 	</div>
+</div>
+
     <div id="modal-token" class="modal">
     <div class="modal-content">
-        <h3>iNaturalist API Token</h3>
-		<div style="font-size: 1rem; line-height: 1.5; color: #555; margin-bottom: 1rem;">
+        <h3>Link iNaturalist account</h3>
+		<div style="font-size: 1rem; line-height: 1.5; color: #555; margin-bottom: 0;">
 			<p style="margin-top: 0;">
 				Link your iNaturalist account to load observations from your identification queue and submit IDs directly from this workspace.
 			</p>
@@ -169,28 +171,26 @@
 				<li>Loads the account and observation information needed for your identification queue.</li>
 				<li>Only when you choose to do so, posts identifications and associated text or marks observations as &ldquo;cannot be improved.&rdquo;</li>
 			</ul>
-			<p style="padding: 0.75rem; background: #f3f7ed; border-left: 4px solid #74ac00;">
+			<p style="padding: 0.75rem; background: #f3f7ed; border-left: 4px solid #74ac00; font-size: 0.85rem;">
 				<strong>About the iNaturalist authorization warning:</strong><br>
 				iNaturalist displays a standard notice saying that this application can create, update, and delete content and access other account information. That describes the broad technical permission iNaturalist grants to connected applications. <strong>This workspace does not delete or edit your existing content.</strong> It only performs the actions listed above, and posting actions are manually controlled by you.
 			</p>
 		</div>
-		<p>
-		<button onclick="loginWithINat()" style="background:#74ac00; color:white; border:none; padding:14px 28px; border-radius:4px; cursor:pointer; font-weight:bold; font-size: 1rem;">
-        Log in with iNaturalist
-    </button>
-
-        </p>
-	<span style="font-size: 0.8rem; color: #666;"> <br><br>
-	If that doesn't work (e.g. if you are running a copy of this page on your computer), you can also link your account manually. Log in and copy the 'api_token' to your clipboard by visiting <br> <a href="https://www.inaturalist.org/users/api_token" target="_blank" class="token-link" style="color: var(--primary); font-weight: bold; font-size: 0.8rem;">https://www.inaturalist.org/users/api_token</a>
-	</span>
+		<div class="token-login-action">
+			<button onclick="loginWithINat()" style="background:#74ac00; color:white; border:none; padding:14px 28px; border-radius:4px; cursor:pointer; font-weight:bold; font-size: 1rem;">
+				Log in with iNaturalist
+			</button>
+		</div>
+		<span class="token-manual-help" style="font-size: 0.8rem; color: #666;">
+			If that doesn't work (e.g. if you are running a copy of this page on your computer), you can also link your account manually. Log in and copy the 'api_token' to your clipboard by visiting <a href="https://www.inaturalist.org/users/api_token" target="_blank" class="token-link" style="color: var(--primary); font-weight: bold; font-size: 0.8rem;">https://www.inaturalist.org/users/api_token</a>
+		</span>
         <input type="text" id="token-input-modal" placeholder="Paste api_token here..." style="width: 100%; padding: 10px; margin-bottom: 1px; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
         <div style="display:flex; gap:10px;">
             <button onclick="updateTokenFromModal()" style="cursor: pointer; flex:1; padding:5px;">Save Token</button>
             <button onclick="closeModals()" style="cursor: pointer; flex:1; padding:5px;">Cancel</button>
         </div>
     </div>
-    </div>	
-</div>
+    </div>
 
 <div id="modal-welcome" class="modal">
     <div class="modal-content" style="text-align:left;">
@@ -704,9 +704,12 @@ function closeModals() {
 
     const welcomeModal = document.getElementById('modal-welcome');
     if (welcomeModal) welcomeModal.style.display = 'none';
+
+    window.revealDatasetChooser?.();
 }
 
 function openWelcomeModal() {
+    window.hideDatasetChooser?.();
     document.getElementById('modal-welcome').style.display = 'flex';
 }
 
@@ -2440,6 +2443,7 @@ function jumpToNextQuestion() {
 // opens the modal to enter a token
 function openTokenModal() {
     trackGoatCounterEvent('link-inaturalist-clicked', 'Link iNaturalist account clicked');
+    window.hideDatasetChooser?.();
     document.getElementById('modal-token').style.display = 'flex';
     // Pre-fill with existing token if available
     document.getElementById('token-input-modal').value = MY_TOKEN;
