@@ -590,6 +590,23 @@ const traits = [
     ]
   },
   {
+    "id": "Abdomen shape",
+    "category": "bodycolor",
+    "title": "Abdomen normal, or conspicuously elongated? (see Tantawi and Whitworth, 2014)",
+    "weight": 1,
+    "link": "",
+    "options": [
+      {
+        "label": "normal",
+        "description": "Abdomen normal, not narrow and elongated."
+      },
+      {
+        "label": "narrow and elongated",
+        "description": "Abdomen narrow and elongated."
+      }
+    ]
+  },
+  {
     "id": "ThirdTergiteDiscalSetae",
     "category": "abdomen",
     "title": "Are there long, erect setae in the middle of tergite 3, anterior to the posterior margin of the tergite?",

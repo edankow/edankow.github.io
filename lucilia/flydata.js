@@ -1374,6 +1374,9 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "Abdomen shape": [
+      "normal"
     ]
   },
   {
@@ -1703,6 +1706,9 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "Abdomen shape": [
+      "normal"
     ]
   },
   {
@@ -1976,6 +1982,9 @@ const flyData = [
     ],
     "TrueBasicostaColor": [
       "entirely brown or black"
+    ],
+    "Abdomen shape": [
+      "narrow and elongated"
     ]
   },
   {
