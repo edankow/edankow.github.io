@@ -567,6 +567,19 @@ body.wide-layout .summary-box {
     background-color: #219150;
 }
 
+.btn-post .post-id-action,
+.btn-post .post-id-taxon {
+    display: block;
+}
+
+.btn-post .post-id-taxon {
+    margin-top: 3px;
+    font-size: 0.78em;
+    font-style: italic;
+    font-weight: normal;
+    line-height: 1.2;
+}
+
 .inline-link-button {
     appearance: none;
     border: 0;
