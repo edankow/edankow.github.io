@@ -1044,6 +1044,14 @@ function autoSetRegionFromLocality(terms) {
 }
 
 
+    function escapeHtmlWithLineBreaks(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replace(/\r?\n/g, '<br>');
+    }
+
     function renderObservations(observations, geoHierarchy) {
 	const grid = document.getElementById('observation-grid');
         grid.innerHTML = observations.map(obs => {
@@ -1164,7 +1172,7 @@ function autoSetRegionFromLocality(terms) {
 				</span>
                             ${item.type === 'id' ? `<span style="color:#2980b9; font-weight:bold;"> [ID: ${item.rank} <i>${item.taxonName}</i>]</span>` : ''}: 
                             <span style="${item.type === 'id' && item.body === 'added an identification.' ? 'font-style: italic; color: #888;' : ''}">
-                                ${item.body}
+                                ${escapeHtmlWithLineBreaks(item.body)}
                             </span>
                          </div>
                     `).join('') 
