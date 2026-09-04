@@ -540,6 +540,7 @@ function handleZoom(e) {
         if (zoomState === 'none') {
             // First click: Zoom in and start following mouse
             zoomState = 'active';
+            showOriginalPhoto(img);
             container.classList.add('zoomed-active');
             container.classList.remove('zoomed-pinned');
         } else if (zoomState === 'active') {
@@ -551,6 +552,7 @@ function handleZoom(e) {
             zoomState = 'none';
             container.classList.remove('zoomed-active', 'zoomed-pinned');
             img.style.transformOrigin = `center center`;
+            showLargePhoto(img);
         }
         container.dataset.zoomState = zoomState;
     }
@@ -562,6 +564,25 @@ function handleZoom(e) {
         const y = ((e.clientY - rect.top) / container.offsetHeight) * 100;
         img.style.transformOrigin = `${x}% ${y}%`;
     }
+}
+
+function showOriginalPhoto(img) {
+    const originalUrl = img?.dataset.originalSrc;
+    if (!originalUrl || img.src === originalUrl) return;
+
+    const fallbackUrl = img.dataset.largeSrc || img.src;
+    img.onerror = () => {
+        img.onerror = null;
+        img.src = fallbackUrl;
+    };
+    img.src = originalUrl;
+}
+
+function showLargePhoto(img) {
+    const largeUrl = img?.dataset.largeSrc;
+    if (!largeUrl || img.src === largeUrl) return;
+    img.onerror = null;
+    img.src = largeUrl;
 }
 
 function handleDblClick(event) {
@@ -1045,7 +1066,9 @@ function autoSetRegionFromLocality(terms) {
 
 				const img = card.querySelector('.main-photo');
 				const container = card.querySelector('.img-container');
-                            card.querySelector('.main-photo').src = largeUrl;
+				img.dataset.largeSrc = largeUrl;
+				img.dataset.originalSrc = origUrl;
+				img.src = largeUrl;
 				container.dataset.zoomState = 'none';
 				container.classList.remove('zoomed-active', 'zoomed-pinned');
 				img.style.transformOrigin = 'center center';
@@ -1099,7 +1122,7 @@ function autoSetRegionFromLocality(terms) {
 		     onmousedown="startDrag(event)"
 		     onmouseup="stopDrag(event)"
 		     onmouseleave="stopDrag(event)">
-            <img src="${mainPhoto}" class="main-photo">
+            <img src="${mainPhoto}" data-large-src="${mainPhoto}" data-original-src="${mainPhotoOrig}" class="main-photo">
             ${thumbnailsHtml}
             <div style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.5); color:white; padding:2px 6px; border-radius:4px; font-size:0.7rem; pointer-events:none;">
                 Click to Zoom (Space key)
@@ -1712,6 +1735,7 @@ function finishConfirmedImmediateID(observationId) {
 
         event.preventDefault();
         isPinned = false;
+        showOriginalPhoto(image);
         container.dataset.zoomState = 'active';
         container.classList.add('zoomed-active');
         container.classList.remove('zoomed-pinned', 'pinned');
