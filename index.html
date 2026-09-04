@@ -1752,6 +1752,28 @@ function finishConfirmedImmediateID(observationId) {
         });
 
         const remainingNameSet = new Set(remainingNames);
+        const fullTaxa = taxa.filter(taxon => taxon?.taxonId);
+        const fullTaxonNames = new Set(fullTaxa.map(taxon => taxon.name));
+        const fullShortcutTaxa = [];
+        const addedFullTaxonNames = new Set();
+
+        function addFullTaxonAndDescendants(taxon) {
+            if (!taxon || addedFullTaxonNames.has(taxon.name)) return;
+            addedFullTaxonNames.add(taxon.name);
+            fullShortcutTaxa.push(taxon);
+            fullTaxa
+                .filter(candidate => candidate.parent === taxon.name)
+                .forEach(addFullTaxonAndDescendants);
+        }
+
+        fullTaxa
+            .filter(taxon => !taxon.parent || !fullTaxonNames.has(taxon.parent))
+            .forEach(addFullTaxonAndDescendants);
+        fullTaxa.forEach(addFullTaxonAndDescendants);
+
+        const shortcutIndexByTaxonId = new Map(
+            fullShortcutTaxa.map((taxon, index) => [String(taxon.taxonId), index])
+        );
         const remainingTaxa = taxa.filter(taxon =>
             taxon?.taxonId && remainingNameSet.has(taxon.name)
         );
@@ -1822,8 +1844,13 @@ function finishConfirmedImmediateID(observationId) {
             container.appendChild(button);
         }
 
-        shortcutTaxa.forEach((taxon, index) => {
-            appendShortcutButton(list, taxon, index, taxon.rank !== 'species');
+        shortcutTaxa.forEach(taxon => {
+            appendShortcutButton(
+                list,
+                taxon,
+                shortcutIndexByTaxonId.get(String(taxon.taxonId)),
+                taxon.rank !== 'species'
+            );
         });
 
         const configuredOutgroups = typeof outgroupTaxa !== 'undefined' ? outgroupTaxa : [];
@@ -1835,7 +1862,7 @@ function finishConfirmedImmediateID(observationId) {
                 appendShortcutButton(
                     outgroupList,
                     taxon,
-                    shortcutTaxa.length + index,
+                    fullShortcutTaxa.length + index,
                     false,
                     true
                 );

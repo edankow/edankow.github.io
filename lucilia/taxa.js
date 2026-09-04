@@ -12,42 +12,6 @@ const taxa = Object.freeze([
     "parent": "Lucilia"
   },
   {
-    "taxonId": 1632739,
-    "name": "L. sericata complex",
-    "rank": "complex",
-    "parent": "Lucilia"
-  },
-  {
-    "taxonId": 333264,
-    "name": "Lucilia cuprina",
-    "rank": "species",
-    "parent": "L. sericata complex"
-  },
-  {
-    "taxonId": 1122227,
-    "name": "Lucilia magnicornis",
-    "rank": "species",
-    "parent": "Lucilia"
-  },
-  {
-    "taxonId": 700120,
-    "name": "Lucilia cluvia",
-    "rank": "species",
-    "parent": "Lucilia"
-  },
-  {
-    "taxonId": 128824,
-    "name": "Lucilia sericata",
-    "rank": "species",
-    "parent": "L. sericata complex"
-  },
-  {
-    "taxonId": 447133,
-    "name": "Lucilia silvarum",
-    "rank": "species",
-    "parent": "L. bufonivora complex"
-  },
-  {
     "taxonId": 498821,
     "name": "Lucilia bufonivora",
     "rank": "species",
@@ -60,20 +24,56 @@ const taxa = Object.freeze([
     "parent": "L. bufonivora complex"
   },
   {
+    "taxonId": 447133,
+    "name": "Lucilia silvarum",
+    "rank": "species",
+    "parent": "L. bufonivora complex"
+  },
+  {
+    "taxonId": 1632739,
+    "name": "L. sericata complex",
+    "rank": "complex",
+    "parent": "Lucilia"
+  },
+  {
+    "taxonId": 333264,
+    "name": "Lucilia cuprina",
+    "rank": "species",
+    "parent": "L. sericata complex"
+  },
+  {
+    "taxonId": 128824,
+    "name": "Lucilia sericata",
+    "rank": "species",
+    "parent": "L. sericata complex"
+  },
+  {
     "taxonId": 1552886,
     "name": "Lucilia thatuna",
     "rank": "species",
     "parent": "Lucilia"
   },
   {
-    "taxonId": 493838,
-    "name": "Lucilia coeruleiviridis",
+    "taxonId": 1122227,
+    "name": "Lucilia magnicornis",
     "rank": "species",
     "parent": "Lucilia"
   },
   {
     "taxonId": 494868,
     "name": "Lucilia illustris",
+    "rank": "species",
+    "parent": "Lucilia"
+  },
+  {
+    "taxonId": 700120,
+    "name": "Lucilia cluvia",
+    "rank": "species",
+    "parent": "Lucilia"
+  },
+  {
+    "taxonId": 493838,
+    "name": "Lucilia coeruleiviridis",
     "rank": "species",
     "parent": "Lucilia"
   },
