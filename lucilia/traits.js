@@ -643,7 +643,7 @@ const traits = [
   {
     "id": "ThirdTergiteMarginalSetae",
     "category": "abdomen",
-    "title": "Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)? Note that if there are no long, erect median setae on tergite 4, then there are definitely not any on tergite 3 either.",
+    "title": "Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)? Note that if long, erect median setae on tergite 4 are not obvious, then there are definitely not any on tergite 3 either.",
     "weight": 2,
     "link": "https://edankow.github.io/identify/lucilia/lucilia_us_canada.pdf#page=32",
     "options": [
