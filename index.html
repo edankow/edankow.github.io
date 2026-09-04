@@ -1631,12 +1631,21 @@ function finishConfirmedImmediateID(observationId) {
 
             const itemsHtml = categoryQuestions.map(q => {
                 const isAnswered = currentFilters[q.id] !== null;
+                const isImpossibleToScore = skippedQuestions.includes(q.id);
+                const isSkippedForConvenience = beginnerSkips.includes(q.id);
+                const statusMark = isAnswered
+                    ? '<span class="question-status question-status-answered" title="Answered" aria-label="Answered">&check;</span>'
+                    : isImpossibleToScore
+                        ? '<span class="question-status question-status-impossible" title="Impossible to score" aria-label="Impossible to score">&times;</span>'
+                        : isSkippedForConvenience
+                            ? '<span class="question-status question-status-skipped" title="Skipped for convenience" aria-label="Skipped for convenience">&#8631;</span>'
+                            : '';
                 return `
                     <div class="menu-item ${activeId === q.id ? 'active' : ''}"
                          style="background-color: ${activeId === q.id ? '' : q.bgColor};"
                          onclick="selectQuestion('${q.id}')">
                         <span>${q.title}</span>
-                        ${isAnswered ? '✓' : ''}
+                        ${statusMark}
                     </div>`;
             }).join('');
 

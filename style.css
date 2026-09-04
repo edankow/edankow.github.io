@@ -343,6 +343,10 @@ body.wide-layout .summary-box { grid-area: summary; margin-top: 0 !important; }
             display: flex; justify-content: space-between; align-items: center;
         }
         .menu-item.active { background: var(--accent) !important; color: white; border-left: 6px solid #1e8449; }
+        .question-status { margin-left: auto; flex: 0 0 auto; font-weight: 700; }
+        .question-status-impossible { color: #b42318; }
+        .question-status-skipped { color: #7a5b00; font-size: 1.1em; }
+        .menu-item.active .question-status { color: currentColor; }
         .trait-category { border-top: 1px solid #e8e8e8; }
         .trait-category-header {
             width: 100%; padding: 12px 14px; border: 0; background: #f7f8f8; color: #333;
