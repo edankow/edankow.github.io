@@ -304,6 +304,8 @@
 	let PENDING_IMMEDIATE_ID = null;
 	let SKIP_POST_REVIEW_FOR_SESSION = false;
 	let HAS_TRACKED_IDENTIFICATION_SESSION = false;
+	let EDANKO_MENTION_COUNT = 0;
+	const EDANKO_MENTION_LIMIT = 3;
 	let HAS_SHOWN_WELCOME_MODAL = false;
 	let SHOW_IDENTIFICATION_SHORTCUTS = false;
 	let IDENTIFICATION_SHORTCUTS_READY = false;
@@ -1275,13 +1277,7 @@ function getImmediateIdNarrative(taxonInfo) {
     let narrativeText = document.getElementById('summary-content').innerHTML;
     const placeholder = "Select traits to generate description.";
     if (!narrativeText || narrativeText === placeholder) return "";
-    const datasetKeyURL = `https://edankow.github.io/identify/?dataset=${encodeURIComponent(window.ACTIVE_DATASET)}`;
-
-    if (MY_USER_LOGIN?.toLowerCase() === "edanko") {
-        narrativeText += `<br><br>--------------------------<br><br>I made this identification using my interactive key at ${datasetKeyURL}.`;
-    } else {
-        narrativeText += `<br><br>--------------------------<br><br>This identification was made and posted using @edanko’s interactive key at ${datasetKeyURL}.`;
-    }
+    narrativeText += `<br><br>--------------------------<br><br>${getIdentificationSignature()}`;
     return narrativeText;
 }
 
@@ -1291,9 +1287,22 @@ function setSkipPostReviewForSession(shouldSkip) {
 
 function getIdentificationSignature() {
     const datasetKeyURL = `https://edankow.github.io/identify/?dataset=${encodeURIComponent(window.ACTIVE_DATASET)}`;
-    return MY_USER_LOGIN?.toLowerCase() === "edanko"
-        ? `I made this identification using my interactive key at ${datasetKeyURL}.`
-        : `This identification was made and posted using @edanko’s interactive key at ${datasetKeyURL}.`;
+    if (MY_USER_LOGIN?.toLowerCase() === "edanko") {
+        return `I made this identification using my interactive key at ${datasetKeyURL}.`;
+    }
+
+    const creatorName = EDANKO_MENTION_COUNT < EDANKO_MENTION_LIMIT ? "@edanko" : "edanko";
+    return `This identification was made and posted using ${creatorName}’s interactive key at ${datasetKeyURL}.`;
+}
+
+function recordEdankoMention(identificationBody) {
+    if (
+        MY_USER_LOGIN?.toLowerCase() !== "edanko" &&
+        EDANKO_MENTION_COUNT < EDANKO_MENTION_LIMIT &&
+        /@edanko\b/i.test(identificationBody)
+    ) {
+        EDANKO_MENTION_COUNT += 1;
+    }
 }
 
 function shouldPostShortcutSignature(taxonInfo) {
@@ -1320,6 +1329,7 @@ function submitIdentificationShortcut(taxonId, cannotIdFurther) {
     const identificationBody = cannotIdFurther || shouldPostShortcutSignature(taxonInfo)
         ? getShortcutIdentificationBody(cannotIdFurther)
         : "";
+    recordEdankoMention(identificationBody);
     sendIdentification(observationId, taxonInfo.taxonId, identificationBody).then(idPosted => {
         if (!idPosted) {
             console.error(`Identification failed for observation ${observationId}`);
@@ -1485,6 +1495,7 @@ function submitConfirmedImmediateID() {
     };
 
     errorArea.style.display = 'none';
+    recordEdankoMention(commentBody);
 
     // Submit the identification and explanation together in the background
     // so they cannot succeed or fail independently.
@@ -1962,19 +1973,25 @@ function finishConfirmedImmediateID(observationId) {
 	} else {
         const trait = traits.find(t => t.id === id);
         const referenceLink = typeof trait.link === 'string' ? trait.link.trim() : '';
-        const isResearchGateLink = (() => {
+        const referenceOpensInNewTab = (() => {
             if (!referenceLink) return false;
             try {
-                const hostname = new URL(referenceLink).hostname.toLowerCase();
-                return hostname === 'researchgate.net' || hostname.endsWith('.researchgate.net');
+                const url = new URL(referenceLink);
+                const hostname = url.hostname.toLowerCase();
+                const isResearchGate = hostname === 'researchgate.net' || hostname.endsWith('.researchgate.net');
+                const isPensoftElement = (
+                    (hostname === 'pensoft.net' || hostname.endsWith('.pensoft.net')) &&
+                    /\/element(?:\/|$)/i.test(url.pathname)
+                );
+                return isResearchGate || isPensoftElement;
             } catch (error) {
                 return false;
             }
         })();
-        const referenceImagesOpen = Boolean(referenceLink && !isResearchGateLink && referenceImagesOpenByDefault);
+        const referenceImagesOpen = Boolean(referenceLink && !referenceOpensInNewTab && referenceImagesOpenByDefault);
         
 	// Help Drawer Button and Expandable Frame Setup split into two parts
-        const helpButtonHtml = isResearchGateLink
+        const helpButtonHtml = referenceOpensInNewTab
             ? `
             <div style="margin: 6px 0 12px 0; width: 100%; display: flex; flex-direction: column;">
                 <a href="${referenceLink}" target="_blank" rel="noopener noreferrer" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: #eef9ff; border: 1px solid #b3e0ff; padding: 6px 12px; border-radius: 4px; cursor: pointer; color: #1c6394; font-size: 0.85rem; font-weight: 500; text-decoration: none;">
@@ -1990,7 +2007,7 @@ function finishConfirmedImmediateID(observationId) {
             </div>` 
             : "";
 
-        const drawerPanelHtml = referenceLink && !isResearchGateLink
+        const drawerPanelHtml = referenceLink && !referenceOpensInNewTab
             ? `
             <div id="drawer-${trait.id}" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fafafa; border-radius: 4px; margin-top: 12px; width: 100%;">
                 <div style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
